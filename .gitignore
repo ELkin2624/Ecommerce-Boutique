@@ -1,0 +1,83 @@
+# ========================
+# OS & Editor
+# ========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ========================
+# Node.js (NestJS / React / React Native)
+# ========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+coverage/
+.next/
+.nuxt/
+.out/
+
+# ========================
+# Python (FastAPI / AI)
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.sqlite3
+
+# ========================
+# React Native / Expo
+# ========================
+.expo/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+android/app/build/
+android/.gradle/
+android/app/src/main/assets/
+ios/build/
+ios/Pods/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+
+# ========================
+# Environment variables
+# ========================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+!.env.example
+
+# ========================
+# Database / Prisma
+# ========================
+*.db
+*.db-journal
+*.sqlite
+/backend/prisma/*.db
+
+# ========================
+# Vault / Brain (Obsidian)
+# ========================
+.obsidian/
