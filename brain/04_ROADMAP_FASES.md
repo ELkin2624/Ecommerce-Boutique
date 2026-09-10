@@ -53,48 +53,52 @@ created: 2026-09-09
 ## 📋 Detalle de Tareas por Fase
 
 ### FASE 0: Inicialización y Monorepo
-- [ ] Verificar y limpiar dependencias en `backend-python/` (FastAPI).
-- [ ] Inicializar proyecto `backend/` con NestJS CLI (`@nestjs/cli`).
-- [ ] Configurar TypeScript estricto en todos los proyectos.
-- [ ] Establecer `.env.example` unificado para puertos y credenciales.
+- [x] Configurar proyecto `backend/` con NestJS 12, TypeScript estricto, ESM y pnpm.
+- [x] Dependencias Core, Auth, Persistencia y Swagger instaladas y validadas.
+- [x] Variables de entorno `.env` y `.env.example` configuradas.
+- [x] Reglas de código (linter `oxlint`, `prettier`, Jest tests) verificadas al 100%.
 
 ### FASE 1: Persistencia Prisma y Core de Autenticación RBAC
-- [ ] Implementar `schema.prisma` completo definido en [[02_MODELO_DATOS_PRISMA]].
-- [ ] Ejecutar primera migración: `npx prisma migrate dev --name init_domain`.
-- [ ] Crear script de semillas (`seed.ts`) con:
-  - 4 Roles: `ADMIN`, `STORE_MANAGER`, `CASHIER`, `CLIENT`.
-  - 2 Ciudades y 3 Sucursales con sus Almacenes y Pisos de Venta.
-  - Catálogo inicial de 10 productos con variantes (tallas XS-XL, colores) y stock.
-- [ ] Módulo `auth/`: Login, Register con Argon2id y emisión de JWT con claims de permisos.
-- [ ] Módulo `common/guards/permissions.guard.ts` para verificar permisos granulares.
+- [x] Implementar `schema.prisma` completo con Variantes, Sucursales, Ubicaciones, Movimientos, Reservas y RBAC.
+- [x] Ejecutar migración inicial versionada: `20260909180603_init_fashionstore_core`.
+- [x] Crear y ejecutar script de semillas (`seed.ts`) con roles, permisos, admin (Argon2id), ciudades, sucursales y catálogo inicial.
+- [x] `PrismaService` y `PrismaModule` con hooks de conexión implementados.
+- [x] Módulo `auth/`: Register, Login (Argon2id), Refresh Tokens con rotación, Logout y Me.
+- [x] `PermissionsGuard` y decorador `@Permissions(...)` implementados y probados en vivo.
+- [x] Documentación interactiva Swagger operativa en `/api/docs`.
 
 ### FASE 2: Microservicio de IA en FastAPI (⭐ Foco del Parcial)
-- [ ] Crear estructura modular en `backend-python/app/modules/`:
-  - `recommendations/`: Algoritmo híbrido (talla + historial + stock en sucursal).
-  - `generative_reports/`: Parser LLM que convierte texto de consulta a JSON de filtros analíticos.
-  - `virtual_fitting/`: Estimación de tallas por medidas anatómicas.
-  - `assistant/`: Chatbot con FAQs y búsqueda de prendas.
-- [ ] Implementar capa `MOCK_MODE=True` para garantizar 100% de operatividad en vivo sin internet.
-- [ ] Levantar FastAPI y comprobar documentación interactiva en `http://localhost:8000/docs`.
+- [x] Crear estructura modular limpia en `backend-python/app/modules/`:
+  - `recommendations/`: Algoritmo híbrido contextual (talla + historial + stock en sucursal).
+  - `generative_reports/`: Parser generativo de texto y voz a JSON analítico seguro.
+  - `virtual_fitting/`: Estimación de tallas por medidas antropométricas y tablas de calce.
+  - `assistant/`: Chatbot conversacional con FAQs y sugerencias de compra.
+- [x] Implementar capa dual con `MOCK_MODE=True` para garantizar 100% de operatividad en vivo sin internet durante la defensa.
+- [x] Levantar FastAPI en puerto 8000 con documentación interactiva Swagger en `http://localhost:8000/docs`.
 
 ### FASE 3: Integración NestJS con FastAPI & Pipeline de Reportes
-- [ ] Crear módulo `ai-client/` en NestJS usando `@nestjs/axios` con interceptor de timeout y reintentos.
-- [ ] Endpoint en NestJS: `POST /api/v1/reports/query`:
-  - Recibe string de texto (o transcripción de voz).
-  - Llama a `POST http://fastapi:8000/ai/reports/parse-query`.
-  - Recibe el JSON validado con métricas y filtros.
-  - Ejecuta la consulta segura en Prisma agrupando ventas, inventario o reservas.
-  - Devuelve datos tabulares listos para gráficos.
+- [x] Crear módulo `ai-client/` en NestJS con cliente HTTP tipado (`AiClientService`).
+- [x] Módulo `reports/` con Safe Query Builder sobre Prisma (cero riesgo de SQL Injection).
+- [x] Endpoint `POST /api/v1/reports/query` para consultas en texto en lenguaje natural.
+- [x] Endpoint `POST /api/v1/reports/voice` para consultas por comando de voz.
+- [x] Endpoint `GET /api/v1/reports/dashboard` con métricas y KPIs en vivo.
+- [x] Verificación de seguridad RBAC (`REPORT:GENERATE` y `REPORT:VIEW`) con tests automáticos al 100%.
 
 ### FASE 4: Módulos de Negocio en NestJS (Variantes, Stock y Reservas)
-- [ ] Módulo `catalog/`: CRUD de productos, variantes y fotos.
-- [ ] Módulo `inventory/`:
-  - Endpoint de consulta de stock por sucursal y variante.
-  - Registro de movimientos inmutables (`InventoryMovement`).
-- [ ] Módulo `reservations/`:
-  - Crear reserva con retención de stock (`RESERVATION_HOLD`).
-  - Tarea programada (Cron Job con `@nestjs/schedule`) para expirar reservas vencidas y liberar stock (`RESERVATION_RELEASE`).
-- [ ] Módulo `orders/`: Carrito, checkout y registro de venta física o digital.
+- [x] Módulo `catalog/`: CRUD de productos, variantes y fotos con proyecciones optimizadas y cero consultas N+1.
+- [x] Módulo `inventory/`:
+  - Endpoint de consulta de stock por sucursal y variante con proyecciones y agrupaciones limpias.
+  - Transferencias atómicas entre ubicaciones con validación condicional a nivel de fila (`quantity: { gte: qty }`).
+  - Registro de movimientos inmutables de auditoría Kardex (`InventoryMovement`).
+- [x] Módulo `reservations/`:
+  - Crear reserva con retención atómica de stock en probador (`RESERVATION_HOLD`) y semántica de 48h.
+  - Cancelación segura con claim atómico condicional (`updateMany`) que previene doble liberación.
+  - Tarea programada (Cron Job con `@nestjs/schedule`) idempotente que expira reservas vencidas y libera stock (`RESERVATION_RELEASE`).
+- [x] Módulo `orders/`:
+  - Carrito de compras (`/api/v1/cart`) con upsert y validación de disponibilidad.
+  - Checkout transaccional con idempotencyKey (`Order.idempotencyKey` @unique).
+  - Reglas omnicanal: `IN_STORE + CASH` inmediato `PAID`/`SUCCESS`; `ONLINE + CASH` rechazado; venta desde reserva completada sin doble descuento físico de stock.
+- [x] Pruebas de concurrencia real ejecutadas sin mocks (colisión simultánea por `stock = 1`: exactamente 1 petición gana con 201, la otra 400, stock final = 0).
 
 ### FASE 5: Frontend Web React (Feature-Sliced Design)
 - [ ] Configurar routing y store global con Zustand.

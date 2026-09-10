@@ -2,18 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.modules.auth.router import router as auth_router
-from app.modules.catalog.router import router as catalog_router
-from app.modules.inventory.router import router as inventory_router
-from app.modules.orders.router import router as orders_router
-from app.modules.orders.router import cart_router
-from app.modules.orders.router import admin_order_router
+from app.modules.recommendations.router import router as recommendations_router
+from app.modules.generative_reports.router import router as reports_router
+from app.modules.virtual_fitting.router import router as fitting_router
+from app.modules.assistant.router import router as assistant_router
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version="1.0.0",
-    description="FashionStore Omnichannel E-commerce API — Modular Monolith Architecture",
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    title="FashionStore AI Microservice",
+    version="2.1.0",
+    description="Microservicio de Inteligencia Artificial para FashionStore — Recomendaciones, Reportes Generativos, Estimación de Talla y Asistente",
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -27,43 +24,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register Module Routers
+# Register AI Routers
 app.include_router(
-    auth_router,
-    prefix=f"{settings.API_V1_STR}/auth",
-    tags=["Authentication & Authorization"],
+    recommendations_router,
+    prefix="/ai",
+    tags=["1. Recomendador Inteligente"],
 )
 
 app.include_router(
-    catalog_router,
-    prefix=f"{settings.API_V1_STR}/catalog",
-    tags=["Catalog & Products"],
+    reports_router,
+    prefix="/ai/reports",
+    tags=["2. Reportes Generativos (Voz y Texto)"],
 )
 
 app.include_router(
-    inventory_router,
-    prefix=f"{settings.API_V1_STR}/inventory",
-    tags=["Inventory & Stock"],
+    fitting_router,
+    prefix="/ai/fitting",
+    tags=["3. Probador Virtual y Estimación de Tallas"],
 )
 
 app.include_router(
-    cart_router,
-)
-
-app.include_router(
-    orders_router,
-)
-
-app.include_router(
-    admin_order_router,
+    assistant_router,
+    prefix="/ai/assistant",
+    tags=["4. Asistente Conversacional"],
 )
 
 
 @app.get("/", tags=["Health Check"])
 def root():
     return {
-        "app": settings.PROJECT_NAME,
+        "service": "FashionStore AI Microservice",
         "status": "healthy",
+        "mock_mode": settings.MOCK_MODE,
         "docs": "/docs",
     }
 
@@ -73,4 +65,6 @@ def health_check():
     return {
         "status": "online",
         "environment": settings.ENVIRONMENT,
+        "mock_mode": settings.MOCK_MODE,
+        "model": settings.AI_MODEL_NAME,
     }

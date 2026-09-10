@@ -17,12 +17,18 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
     # CORS Origins (comma-separated string or list)
-    CORS_ORIGINS: List[str] = ["*"]
+    CORS_ORIGINS: Union[str, List[str]] = ["*"]
 
-    @field_validator("CORS_ORIGINS", mode="before")
+    @field_validator("CORS_ORIGINS", mode="after")
     @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
+        if isinstance(v, str):
+            if v.startswith("[") and v.endswith("]"):
+                import json
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
             return [i.strip() for i in v.split(",") if i.strip()]
         elif isinstance(v, list):
             return v
@@ -41,6 +47,8 @@ class Settings(BaseSettings):
     AI_SERVICE_API_KEY: str = ""
     AI_SERVICE_BASE_URL: str = "https://api.openai.com/v1"
     AI_MODEL_NAME: str = "gpt-4o-mini"
+    MOCK_MODE: bool = True
+    INTERNAL_SECRET: str = "supersecret_internal_fashionstore_2026_ai_key"
 
     model_config = SettingsConfigDict(
         env_file=".env",
