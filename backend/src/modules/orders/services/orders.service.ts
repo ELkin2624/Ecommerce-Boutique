@@ -348,6 +348,9 @@ export class OrdersService {
   async getOrders(query: QueryOrdersDto) {
     const { userId, branchId, status, type, page = 1, limit = 20 } = query;
 
+    const pageNum = Math.max(1, Number(page) || 1);
+    const limitNum = Math.max(1, Math.min(100, Number(limit) || 20));
+
     const where: Prisma.OrderWhereInput = {};
     if (userId) where.userId = userId;
     if (branchId) where.branchId = branchId;
@@ -358,8 +361,8 @@ export class OrdersService {
       this.prisma.order.count({ where }),
       this.prisma.order.findMany({
         where,
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (pageNum - 1) * limitNum,
+        take: limitNum,
         orderBy: { createdAt: 'desc' },
         include: {
           user: {
@@ -386,22 +389,22 @@ export class OrdersService {
     return {
       items: orders.map((o) => ({
         id: o.id,
-        client: `${o.user.firstName} ${o.user.lastName}`,
-        email: o.user.email,
+        client: o.user ? `${o.user.firstName} ${o.user.lastName}` : 'Venta Mostrador',
+        email: o.user?.email ?? '',
         type: o.type,
         status: o.status,
         total: Number(o.total),
-        branchName: o.branch.name,
+        branchName: o.branch?.name ?? 'Sucursal',
         createdAt: o.createdAt,
-        itemsCount: o.items.length,
-        paymentStatus: o.payments[0]?.status ?? null,
-        paymentMethod: o.payments[0]?.method ?? null,
+        itemsCount: o.items?.length ?? 0,
+        paymentStatus: o.payments?.[0]?.status ?? null,
+        paymentMethod: o.payments?.[0]?.method ?? null,
       })),
       meta: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum) || 1,
       },
     };
   }

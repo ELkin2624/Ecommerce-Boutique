@@ -101,13 +101,20 @@ created: 2026-09-09
 - [x] Pruebas de concurrencia real ejecutadas sin mocks (colisión simultánea por `stock = 1`: exactamente 1 petición gana con 201, la otra 400, stock final = 0).
 
 ### FASE 5: Frontend Web React (Feature-Sliced Design)
-- [ ] Configurar routing y store global con Zustand.
-- [ ] Implementar módulo de **Reportes Inteligentes**:
-  - Componente de captura de voz con Web Speech API (`SpeechRecognition`).
-  - Renderizado dinámico de gráficos (barras, torta, líneas) según `suggested_chart`.
-  - Resumen analítico generado por IA.
-- [ ] Catálogo interactivo con selector de variantes (color/talla) y disponibilidad en tiempo real por sucursal seleccionada.
-- [ ] Panel de administración con vistas protegidas por componente `<Can permission="...">`.
+- [x] Configurar routing (React Router lazy) y store global cliente con Zustand (`auth.store`, `ui.store` en `app/store/`).
+- [x] Separación estricta de responsabilidades: Zustand (estado cliente) vs TanStack Query v5 (estado servidor con queryKeys tipadas).
+- [x] Interceptor Axios con inyección Bearer, cola de peticiones ante 401 y refresh rotativo.
+- [x] Contratos OpenAPI derivados de NestJS Swagger (`api.generated.ts` y `shared/types/api.ts`).
+- [x] UI Kit modular con TailwindCSS + shadcn/ui style (`Button`, `Input`, `Dialog`, `Table`, `Badge`, `Card`, `Select`, `Toast`).
+- [x] Módulo de **Reportes Inteligentes (IA)**:
+  - Componente de captura de voz con interface desacoplada `SpeechAdapter` y proveedor `WebSpeechAdapter` (documentado como servicio de navegador online).
+  - Renderizado dinámico de gráficos Recharts (`BAR_CHART`, `LINE_CHART`, `PIE_CHART`, `AREA_CHART`, `TABLE`).
+  - Resumen analítico con copia y exportación CSV, con detección de umbral de confianza.
+- [x] Catálogo y Variantes con creación de modelos, definición de SKUs y tablas expandibles.
+- [x] Inventario físico con `StockBadge` por umbrales, diálogo de ajuste (`ADJUSTMENT`) y transferencias entre sucursales, junto con Kardex inmutable.
+- [x] Cola visual de Reservas en probador con máquina de estados (`PENDING → CONFIRMED → PREPARED → READY → COMPLETED / CANCELLED / EXPIRED`).
+- [x] Punto de Venta (POS) con escáner de código de barras, validación en tiempo real de stock, cobro (`CASH | CARD | QR`), checkout idempotente y comprobante imprimible.
+- [x] Panel de administración con vistas y acciones protegidas por `<Can permission="...">`, `useCan` y guardias de ruta `<RequirePermission>`.
 
 ### FASE 6: Aplicación Móvil React Native (AR y Offline)
 - [ ] Inicialización de proyecto React Native con Expo / Bare workflow.
