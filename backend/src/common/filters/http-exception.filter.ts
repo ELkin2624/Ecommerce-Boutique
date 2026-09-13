@@ -35,6 +35,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = exception.message;
     }
 
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      console.error('💥 [HttpExceptionFilter] Error no controlado:', exception);
+    }
+
     response.status(status).json({
       statusCode: status,
       code,

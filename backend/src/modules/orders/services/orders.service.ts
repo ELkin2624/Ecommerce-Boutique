@@ -352,8 +352,12 @@ export class OrdersService {
     const limitNum = Math.max(1, Math.min(100, Number(limit) || 20));
 
     const where: Prisma.OrderWhereInput = {};
-    if (userId) where.userId = userId;
-    if (branchId) where.branchId = branchId;
+    if (userId && userId.trim() !== '' && userId !== 'all') {
+      where.userId = userId;
+    }
+    if (branchId && branchId.trim() !== '' && branchId !== 'all' && branchId !== 'undefined') {
+      where.branchId = branchId;
+    }
     if (status) where.status = status;
     if (type) where.type = type;
 
@@ -397,8 +401,25 @@ export class OrdersService {
         branchName: o.branch?.name ?? 'Sucursal',
         createdAt: o.createdAt,
         itemsCount: o.items?.length ?? 0,
-        paymentStatus: o.payments?.[0]?.status ?? null,
-        paymentMethod: o.payments?.[0]?.method ?? null,
+        paymentStatus: o.payments?.[0]?.status ?? 'SUCCESS',
+        paymentMethod: o.payments?.[0]?.method ?? 'CASH',
+        items: (o.items || []).map((it) => ({
+          id: it.id,
+          variantId: it.variantId,
+          sku: it.variant?.sku || 'SKU-N/A',
+          productName: it.variant?.product?.name || 'Prenda',
+          size: it.variant?.size || '',
+          color: it.variant?.color || '',
+          quantity: it.quantity,
+          unitPrice: Number(it.unitPrice),
+        })),
+        payments: (o.payments || []).map((p) => ({
+          id: p.id,
+          method: p.method,
+          status: p.status,
+          amount: Number(p.amount),
+          transactionRef: p.transactionRef,
+        })),
       })),
       meta: {
         total,
@@ -441,18 +462,21 @@ export class OrdersService {
 
     return {
       ...order,
+      client: order.user ? `${order.user.firstName} ${order.user.lastName}` : 'Venta Mostrador',
+      email: order.user?.email ?? '',
+      branchName: order.branch?.name ?? 'Sucursal',
       total: Number(order.total),
-      items: order.items.map((it) => ({
+      items: (order.items || []).map((it) => ({
         id: it.id,
         variantId: it.variantId,
-        sku: it.variant.sku,
-        productName: it.variant.product.name,
-        size: it.variant.size,
-        color: it.variant.color,
+        sku: it.variant?.sku || 'SKU-N/A',
+        productName: it.variant?.product?.name || 'Prenda',
+        size: it.variant?.size || '',
+        color: it.variant?.color || '',
         quantity: it.quantity,
         unitPrice: Number(it.unitPrice),
       })),
-      payments: order.payments.map((p) => ({
+      payments: (order.payments || []).map((p) => ({
         id: p.id,
         method: p.method,
         status: p.status,

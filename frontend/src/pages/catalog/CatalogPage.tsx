@@ -1,48 +1,68 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Plus, Shirt, ChevronDown, ChevronRight, Tag } from 'lucide-react';
-import { apiClient } from '@/shared/api/axios-client';
-import { queryKeys } from '@/shared/api/query-keys';
-import type { Product } from '@/shared/types/api';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
+import { useState } from 'react';
+import { Plus, Shirt } from 'lucide-react';
+import type { Product, ProductVariant } from '@/shared/types/api';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/shared/ui/Card';
 import { Button } from '@/shared/ui/Button';
-import { Badge } from '@/shared/ui/Badge';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/shared/ui/Table';
 import { Can } from '@/shared/lib/rbac/Can';
-import { ProductFormDialog } from '@/features/catalog/ui/ProductFormDialog';
-import { VariantFormDialog } from '@/features/catalog/ui/VariantFormDialog';
-import { formatCurrency } from '@/shared/lib/utils';
+import { ConfirmDeleteDialog } from '@/shared/ui/ConfirmDeleteDialog';
+import {
+  type CatalogTab,
+  type MasterEntityType,
+  type DeleteTarget,
+  useCatalogData, useProductMutations, CatalogSubNavigation, ProductsFilters,
+  ProductsTable, CategoriesTable, SeasonsTable, CollectionsTable,
+  SuppliersTable, SizesColorsTable, ProductFormDialog, VariantFormDialog,
+  ProductImageDialog, MasterEntityDialog,
+} from '@/features/catalog';
 
 export function CatalogPage() {
+  const [activeTab, setActiveTab] = useState<CatalogTab>('products');
   const [expandedProductIds, setExpandedProductIds] = useState<Set<string>>(new Set());
+
+  // Filtros de Prendas
+  const [productSearch, setProductSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
+  const [seasonFilter, setSeasonFilter] = useState('');
+
+  // Modales de Prenda y Variante
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
-  const [selectedProductForVariant, setSelectedProductForVariant] = useState<{ id: string; name: string } | null>(null);
+  const [productToEdit, setProductToEdit] = useState<Product | null>(null);
 
-  // Consultar productos
-  const { data: productsData, isLoading, refetch } = useQuery<{ items: Product[]; meta: any }>({
-    queryKey: queryKeys.catalog.products(),
-    queryFn: async () => {
-      const res = await apiClient.get('/catalog/products', { params: { limit: 50 } });
-      return res.data;
-    },
+  const [isVariantDialogOpen, setIsVariantDialogOpen] = useState(false);
+  const [productForVariant, setProductForVariant] = useState<{ id: string; name: string } | null>(null);
+  const [variantToEdit, setVariantToEdit] = useState<ProductVariant | null>(null);
+
+  // Modal de Galería Multimedia (Fotos de Prenda)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [productForGallery, setProductForGallery] = useState<Product | null>(null);
+
+  // Modal para Entidades Maestras (Categorías, Temporadas, Colecciones, Proveedores)
+  const [masterModalType, setMasterModalType] = useState<MasterEntityType | null>(null);
+  const [masterItemToEdit, setMasterItemToEdit] = useState<any | null>(null);
+
+  // Estado para Confirmación de Eliminación
+  const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
+
+  // Hook de Datos
+  const {
+    allProducts, filteredProducts, categories, seasons, collections,
+    suppliers, isProductsLoading, isCategoriesLoading, isSeasonsLoading,
+    isCollectionsLoading, isSuppliersLoading, refetchProducts, refetchAll,
+  } = useCatalogData({
+    productSearch,
+    categoryFilter,
+    seasonFilter,
   });
 
-  // Consultar categorías y temporadas
-  const { data: categories = [] } = useQuery<Array<{ id: string; name: string }>>({
-    queryKey: queryKeys.catalog.categories,
-    queryFn: async () => {
-      const res = await apiClient.get('/catalog/categories');
-      return res.data;
-    },
-  });
-
-  const { data: seasons = [] } = useQuery<Array<{ id: string; name: string }>>({
-    queryKey: queryKeys.catalog.seasons,
-    queryFn: async () => {
-      const res = await apiClient.get('/catalog/seasons');
-      return res.data;
-    },
-  });
+  // Hook de Mutaciones
+  const {
+    deleteMutation,
+    saveMasterEntityMutation,
+    addImagesMutation,
+    deleteImageMutation,
+    setCoverImageMutation,
+    invalidateCatalog,
+  } = useProductMutations();
 
   const toggleExpand = (id: string) => {
     setExpandedProductIds((prev) => {
@@ -56,191 +76,299 @@ export function CatalogPage() {
     });
   };
 
-  const products: Product[] = Array.isArray(productsData) ? productsData : (productsData?.items as Product[]) || [];
+  // Apertura de modal para nueva variante
+  const handleOpenAddVariant = (productId: string, productName: string) => {
+    setProductForVariant({ id: productId, name: productName });
+    setVariantToEdit(null);
+    setIsVariantDialogOpen(true);
+  };
+
+  // Apertura de modal para editar variante
+  const handleOpenEditVariant = (
+    productId: string,
+    productName: string,
+    variant: ProductVariant
+  ) => {
+    setProductForVariant({ id: productId, name: productName });
+    setVariantToEdit(variant);
+    setIsVariantDialogOpen(true);
+  };
+
+  // Apertura de modal de galería de imágenes
+  const handleOpenGallery = (product: Product) => {
+    setProductForGallery(product);
+    setIsGalleryOpen(true);
+  };
+
+  // Apertura de modal para entidades maestras
+  const handleOpenMasterModal = (type: MasterEntityType, item?: any) => {
+    setMasterModalType(type);
+    setMasterItemToEdit(item || null);
+  };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* 1. Header Principal */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Catálogo de Prendas</h1>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <Shirt className="h-6 w-6 text-primary" />
+            <span>Catálogo y Gestión de Prendas</span>
+          </h1>
           <p className="text-xs text-muted-foreground">
-            Gestión de productos, colecciones y definición de variantes SKU
+            Administración omnicanal de prendas de moda, variantes por talla/color, galerías de fotos y clasificación
           </p>
         </div>
-        <Can permission="PRODUCT:CREATE">
-          <Button onClick={() => setIsProductDialogOpen(true)} className="gap-2 shadow-sm">
-            <Plus className="h-4 w-4" />
-            <span>Nuevo Producto</span>
-          </Button>
-        </Can>
       </div>
 
-      {/* Main Table */}
-      <Card className="shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Shirt className="h-4 w-4 text-primary" />
-            <span>Prendas Registradas ({products.length})</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="py-12 text-center text-sm text-muted-foreground">
-              Cargando catálogo...
+      {/* 2. SubNavegación por Pestañas */}
+      <CatalogSubNavigation
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        counts={{
+          products: allProducts.length,
+          categories: categories.length,
+          seasons: seasons.length,
+          collections: collections.length,
+          suppliers: suppliers.length,
+        }}
+      />
+
+      {/* 3. Contenido según pestaña activa */}
+      {activeTab === 'products' && (
+        <Card className="shadow-xs border-border">
+          <CardHeader className="pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shirt className="h-4 w-4 text-primary" />
+                  <span>
+                    Prendas Registradas ({filteredProducts.length}
+                    {filteredProducts.length !== allProducts.length ? ` de ${allProducts.length}` : ''})
+                  </span>
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Despliega cada prenda para gestionar sus variantes por talla, colorway, precio y stock
+                </CardDescription>
+              </div>
+
+              <Can permission="PRODUCT:CREATE">
+                <Button
+                  onClick={() => {
+                    setProductToEdit(null);
+                    setIsProductDialogOpen(true);
+                  }}
+                  size="sm"
+                  className="gap-1.5 shadow-xs"
+                >
+                  <Plus className="h-4 w-4" />
+                  <span>Nueva Prenda</span>
+                </Button>
+              </Can>
             </div>
-          ) : products.length === 0 ? (
-            <div className="py-12 text-center text-sm text-muted-foreground">
-              No hay prendas registradas en el catálogo.
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-10"></TableHead>
-                  <TableHead>Nombre / Modelo</TableHead>
-                  <TableHead>Categoría</TableHead>
-                  <TableHead>Temporada</TableHead>
-                  <TableHead>Variantes</TableHead>
-                  <TableHead>Rango de Precios</TableHead>
-                  <TableHead className="text-right">Acciones</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product) => {
-                  const isExpanded = expandedProductIds.has(product.id);
-                  const variants = product.variants || [];
-                  const minPrice = variants.length > 0 ? Math.min(...variants.map((v) => Number(v.price))) : 0;
-                  const maxPrice = variants.length > 0 ? Math.max(...variants.map((v) => Number(v.price))) : 0;
 
-                  return (
-                    <React.Fragment key={product.id}>
-                      <TableRow className="cursor-pointer hover:bg-muted/40" onClick={() => toggleExpand(product.id)}>
-                        <TableCell className="p-2">
-                          <button
-                            type="button"
-                            className="p-1 rounded hover:bg-accent text-muted-foreground"
-                          >
-                            {isExpanded ? (
-                              <ChevronDown className="h-4 w-4 text-primary" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                          </button>
-                        </TableCell>
-                        <TableCell className="font-semibold text-foreground">
-                          {product.name}
-                          <span className="block text-[11px] font-normal text-muted-foreground">
-                            {product.brand}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="gap-1">
-                            <Tag className="h-3 w-3" />
-                            <span>{product.category?.name || 'General'}</span>
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
-                          {product.season?.name || 'Permanente'}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline">{variants.length} SKUs</Badge>
-                        </TableCell>
-                        <TableCell className="text-sm font-medium">
-                          {variants.length > 0
-                            ? minPrice === maxPrice
-                              ? formatCurrency(minPrice)
-                              : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`
-                            : 'Sin variantes'}
-                        </TableCell>
-                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                          <Can permission="PRODUCT:CREATE">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-7 text-xs gap-1"
-                              onClick={() => setSelectedProductForVariant({ id: product.id, name: product.name })}
-                            >
-                              <Plus className="h-3 w-3" />
-                              <span>Variante</span>
-                            </Button>
-                          </Can>
-                        </TableCell>
-                      </TableRow>
+            {/* Barra de Filtros */}
+            <ProductsFilters
+              search={productSearch}
+              onSearchChange={setProductSearch}
+              categoryFilter={categoryFilter}
+              onCategoryFilterChange={setCategoryFilter}
+              seasonFilter={seasonFilter}
+              onSeasonFilterChange={setSeasonFilter}
+              categories={categories}
+              seasons={seasons}
+            />
+          </CardHeader>
 
-                      {/* Sub-table: Product Variants */}
-                      {isExpanded && (
-                        <TableRow className="bg-muted/20 hover:bg-muted/20">
-                          <TableCell colSpan={7} className="p-4 pl-12">
-                            <div className="rounded-md border border-border/80 bg-background p-3 shadow-inner">
-                              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
-                                Variantes Disponibles ({variants.length})
-                              </h4>
-                              {variants.length === 0 ? (
-                                <p className="text-xs text-muted-foreground italic">
-                                  No se han registrado variantes para este modelo aún.
-                                </p>
-                              ) : (
-                                <Table>
-                                  <TableHeader>
-                                    <TableRow className="bg-muted/30">
-                                      <TableHead className="text-xs">SKU</TableHead>
-                                      <TableHead className="text-xs">Talla</TableHead>
-                                      <TableHead className="text-xs">Color</TableHead>
-                                      <TableHead className="text-xs">Precio Venta</TableHead>
-                                      <TableHead className="text-xs">Costo</TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {variants.map((v) => (
-                                      <TableRow key={v.id}>
-                                        <TableCell className="font-mono text-xs font-bold text-primary">
-                                          {v.sku}
-                                        </TableCell>
-                                        <TableCell className="text-xs font-semibold">{v.size}</TableCell>
-                                        <TableCell className="text-xs">{v.color}</TableCell>
-                                        <TableCell className="text-xs font-bold text-emerald-600">
-                                          {formatCurrency(v.price)}
-                                        </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground">
-                                          {formatCurrency(v.cost)}
-                                        </TableCell>
-                                      </TableRow>
-                                    ))}
-                                  </TableBody>
-                                </Table>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </React.Fragment>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+          <CardContent>
+            {isProductsLoading ? (
+              <div className="py-12 text-center text-xs text-muted-foreground animate-pulse">
+                Cargando catálogo de prendas...
+              </div>
+            ) : (
+              <ProductsTable
+                products={filteredProducts}
+                expandedProductIds={expandedProductIds}
+                onToggleExpand={toggleExpand}
+                onNewProduct={() => {
+                  setProductToEdit(null);
+                  setIsProductDialogOpen(true);
+                }}
+                onEditProduct={(p) => {
+                  setProductToEdit(p);
+                  setIsProductDialogOpen(true);
+                }}
+                onDeleteProduct={(p) =>
+                  setDeleteTarget({ type: 'product', id: p.id, name: p.name })
+                }
+                onOpenGallery={handleOpenGallery}
+                onAddVariant={handleOpenAddVariant}
+                onEditVariant={handleOpenEditVariant}
+                onDeleteVariant={(id, label) =>
+                  setDeleteTarget({ type: 'variant', id, name: label })
+                }
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Dialogs */}
+      {activeTab === 'categories' && (
+        <CategoriesTable
+          categories={categories}
+          isLoading={isCategoriesLoading}
+          onNewCategory={() => handleOpenMasterModal('categories')}
+          onEditCategory={(cat) => handleOpenMasterModal('categories', cat)}
+          onDeleteCategory={(cat) =>
+            setDeleteTarget({ type: 'category', id: cat.id, name: cat.name })
+          }
+        />
+      )}
+
+      {activeTab === 'seasons' && (
+        <SeasonsTable
+          seasons={seasons}
+          isLoading={isSeasonsLoading}
+          onNewSeason={() => handleOpenMasterModal('seasons')}
+          onEditSeason={(s) => handleOpenMasterModal('seasons', s)}
+          onDeleteSeason={(s) =>
+            setDeleteTarget({ type: 'season', id: s.id, name: s.name })
+          }
+        />
+      )}
+
+      {activeTab === 'collections' && (
+        <CollectionsTable
+          collections={collections}
+          isLoading={isCollectionsLoading}
+          onNewCollection={() => handleOpenMasterModal('collections')}
+          onEditCollection={(c) => handleOpenMasterModal('collections', c)}
+          onDeleteCollection={(c) =>
+            setDeleteTarget({ type: 'collection', id: c.id, name: c.name })
+          }
+        />
+      )}
+
+      {activeTab === 'suppliers' && (
+        <SuppliersTable
+          suppliers={suppliers}
+          isLoading={isSuppliersLoading}
+          onNewSupplier={() => handleOpenMasterModal('suppliers')}
+          onEditSupplier={(sup) => handleOpenMasterModal('suppliers', sup)}
+          onDeleteSupplier={(sup) =>
+            setDeleteTarget({ type: 'supplier', id: sup.id, name: sup.name })
+          }
+        />
+      )}
+
+      {activeTab === 'sizes-colors' && <SizesColorsTable />}
+
+      {/* --- DIÁLOGOS MODALES --- */}
+
+      {/* 1. Modal de Prenda (Crear / Editar) */}
       <ProductFormDialog
         open={isProductDialogOpen}
         onOpenChange={setIsProductDialogOpen}
         categories={categories}
         seasons={seasons}
-        onSuccess={() => refetch()}
+        collections={collections}
+        suppliers={suppliers}
+        productToEdit={productToEdit}
+        onSuccess={() => {
+          refetchAll();
+          invalidateCatalog();
+        }}
       />
 
-      {selectedProductForVariant && (
+      {/* 2. Modal de Variante / Colorway (Estilo Nike / Adidas) */}
+      {productForVariant && (
         <VariantFormDialog
-          open={Boolean(selectedProductForVariant)}
-          onOpenChange={(open) => !open && setSelectedProductForVariant(null)}
-          productId={selectedProductForVariant.id}
-          productName={selectedProductForVariant.name}
-          onSuccess={() => refetch()}
+          open={isVariantDialogOpen}
+          onOpenChange={setIsVariantDialogOpen}
+          productId={productForVariant.id}
+          productName={productForVariant.name}
+          productImages={allProducts.find((p) => p.id === productForVariant.id)?.images || []}
+          variantToEdit={variantToEdit}
+          onSuccess={refetchProducts}
         />
       )}
+
+      {/* 3. Modal de Galería Multimedia / Fotos (Estilo Nike / Adidas / AWS) */}
+      <ProductImageDialog
+        open={isGalleryOpen}
+        onOpenChange={(open) => {
+          setIsGalleryOpen(open);
+          if (!open) setProductForGallery(null);
+        }}
+        product={
+          productForGallery
+            ? allProducts.find((p) => p.id === productForGallery.id) || productForGallery
+            : null
+        }
+        onAddImage={async (productId, images) => {
+          await addImagesMutation.mutateAsync({ productId, images });
+          refetchProducts();
+        }}
+        onDeleteImage={async (productId, imageId) => {
+          await deleteImageMutation.mutateAsync({ productId, imageId });
+          refetchProducts();
+        }}
+        onSetCoverImage={async (productId, imageId) => {
+          await setCoverImageMutation.mutateAsync({ productId, imageId });
+          refetchProducts();
+        }}
+      />
+
+      {/* 4. Modal para Entidades Maestras (Categoría, Temporada, Colección, Proveedor) */}
+      <MasterEntityDialog
+        open={Boolean(masterModalType)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setMasterModalType(null);
+            setMasterItemToEdit(null);
+          }
+        }}
+        type={masterModalType}
+        editingItem={masterItemToEdit}
+        onSubmit={async (payload) => {
+          if (!masterModalType) return;
+          await saveMasterEntityMutation.mutateAsync({
+            type: masterModalType,
+            id: masterItemToEdit?.id,
+            payload,
+          });
+          refetchAll();
+        }}
+      />
+
+      {/* 5. Diálogo de Confirmación para Eliminar */}
+      <ConfirmDeleteDialog
+        open={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title={
+          deleteTarget?.type === 'product'
+            ? '¿Dar de baja esta prenda?'
+            : deleteTarget?.type === 'variant'
+            ? '¿Eliminar variante de prenda?'
+            : `¿Eliminar ${deleteTarget?.type}?`
+        }
+        description={
+          deleteTarget?.type === 'product'
+            ? 'Esta acción dará de baja lógica la prenda y todas sus variantes de catálogo asociadas.'
+            : deleteTarget?.type === 'variant'
+            ? 'Esta variante dejará de estar disponible en el inventario y tienda.'
+            : 'Solo se puede eliminar si no tiene prendas activas asociadas.'
+        }
+        itemName={deleteTarget?.name}
+        isPending={deleteMutation.isPending}
+        onConfirm={async () => {
+          if (deleteTarget) {
+            await deleteMutation.mutateAsync(deleteTarget);
+            refetchAll();
+          }
+        }}
+      />
     </div>
   );
 }
+export default CatalogPage;

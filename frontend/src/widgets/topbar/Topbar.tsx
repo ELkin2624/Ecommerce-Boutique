@@ -1,7 +1,6 @@
 import { Sun, Moon, LogOut, User as UserIcon } from 'lucide-react';
 import { useAuthStore } from '@/app/store/auth.store';
 import { useUiStore } from '@/app/store/ui.store';
-import { BranchSwitcher } from './BranchSwitcher';
 import { apiClient } from '@/shared/api/axios-client';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
@@ -22,12 +21,7 @@ export function Topbar() {
   };
 
   return (
-    <header className="h-16 border-b bg-card/80 backdrop-blur-sm px-6 flex items-center justify-between sticky top-0 z-20">
-      {/* Left: Sucursal Switcher */}
-      <div className="flex items-center gap-4">
-        <BranchSwitcher />
-      </div>
-
+    <header className="h-16 border-b bg-card/80 backdrop-blur-sm px-6 flex items-center justify-end sticky top-0 z-20">
       {/* Right: Theme, User Profile & Logout */}
       <div className="flex items-center gap-4">
         {/* Theme Toggle */}

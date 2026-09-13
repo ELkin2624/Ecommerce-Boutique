@@ -1,0 +1,117 @@
+import { Plus, Tag, Edit2, Trash2 } from 'lucide-react';
+import type { Category } from '@/shared/types/api';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/shared/ui/Card';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/shared/ui/Table';
+import { Button } from '@/shared/ui/Button';
+import { Badge } from '@/shared/ui/Badge';
+import { Can } from '@/shared/lib/rbac/Can';
+
+interface CategoriesTableProps {
+  categories: Category[];
+  isLoading: boolean;
+  onNewCategory: () => void;
+  onEditCategory: (cat: Category) => void;
+  onDeleteCategory: (cat: Category) => void;
+}
+
+export function CategoriesTable({
+  categories,
+  isLoading,
+  onNewCategory,
+  onEditCategory,
+  onDeleteCategory,
+}: CategoriesTableProps) {
+  return (
+    <Card className="shadow-xs border-border">
+      <CardHeader className="pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Tag className="h-4 w-4 text-primary" />
+              <span>Gestión de Categorías de Ropa</span>
+            </CardTitle>
+            <CardDescription className="text-xs">
+              Estructuración taxonómica de prendas (Vestidos, Trajes, Pantalones, Blusas, Accesorios)
+            </CardDescription>
+          </div>
+          <Can permission="PRODUCT:CREATE">
+            <Button onClick={onNewCategory} size="sm" className="gap-1.5 shadow-xs">
+              <Plus className="h-4 w-4" />
+              <span>Nueva Categoría</span>
+            </Button>
+          </Can>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="py-8 text-center text-xs text-muted-foreground animate-pulse">
+            Cargando categorías...
+          </div>
+        ) : categories.length === 0 ? (
+          <div className="py-8 text-center text-xs text-muted-foreground border rounded-xl bg-muted/20">
+            No hay categorías registradas. ¡Crea la primera categoría!
+          </div>
+        ) : (
+          <div className="rounded-xl border overflow-hidden shadow-xs">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/40 text-xs">
+                  <TableHead>Nombre</TableHead>
+                  <TableHead>Slug / URL</TableHead>
+                  <TableHead>Prendas Activas</TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categories.map((cat) => {
+                  const productsCount = cat._count?.products ?? 0;
+                  return (
+                    <TableRow key={cat.id} className="hover:bg-muted/30 transition-colors">
+                      <TableCell className="font-semibold text-xs text-foreground">
+                        {cat.name}
+                      </TableCell>
+                      <TableCell className="font-mono text-[11px] text-muted-foreground">
+                        /{cat.slug}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-xs font-mono font-medium">
+                          {productsCount} {productsCount === 1 ? 'prenda' : 'prendas'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Can permission="PRODUCT:UPDATE">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-foreground"
+                              title="Editar Categoría"
+                              onClick={() => onEditCategory(cat)}
+                            >
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </Can>
+                          <Can permission="PRODUCT:UPDATE">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                              title="Eliminar Categoría"
+                              onClick={() => onDeleteCategory(cat)}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </Can>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}

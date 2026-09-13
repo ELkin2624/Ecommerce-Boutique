@@ -1,13 +1,6 @@
 import {
-  IsString,
-  IsOptional,
-  IsNumber,
-  IsArray,
-  ValidateNested,
-  IsBoolean,
-  Min,
-  Max,
-  IsIn,
+  IsString, IsOptional, IsNumber, IsArray, ValidateNested,
+  IsBoolean, Min, Max, IsIn, ValidateIf,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -119,16 +112,19 @@ export class UpdateProductDto {
   categoryId?: string;
 
   @IsOptional()
+  @ValidateIf((_, val) => val !== null && val !== undefined)
   @IsString()
-  seasonId?: string;
+  seasonId?: string | null;
 
   @IsOptional()
+  @ValidateIf((_, val) => val !== null && val !== undefined)
   @IsString()
-  collectionId?: string;
+  collectionId?: string | null;
 
   @IsOptional()
+  @ValidateIf((_, val) => val !== null && val !== undefined)
   @IsString()
-  supplierId?: string;
+  supplierId?: string | null;
 
   @IsOptional()
   @IsBoolean()
@@ -173,7 +169,7 @@ export class QueryProductsDto {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  @Max(50)
+  @Max(1000)
   limit: number = 12;
 
   @IsOptional()
@@ -221,3 +217,104 @@ export class QueryProductsDto {
   @IsIn(['newest', 'price_asc', 'price_desc'])
   sort: string = 'newest';
 }
+
+export class CreateCategoryDto {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+}
+
+export class UpdateCategoryDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  slug?: string;
+}
+
+export class CreateSeasonDto {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsString()
+  endDate?: string;
+}
+
+export class UpdateSeasonDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  startDate?: string;
+
+  @IsOptional()
+  @IsString()
+  endDate?: string;
+}
+
+export class CreateCollectionDto {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+
+export class UpdateCollectionDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+}
+
+export class CreateSupplierDto {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
+  contactEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+}
+
+export class UpdateSupplierDto {
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @IsOptional()
+  @IsString()
+  contactEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  phone?: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+}
+

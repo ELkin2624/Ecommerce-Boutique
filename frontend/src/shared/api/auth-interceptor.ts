@@ -26,7 +26,11 @@ export function setupAuthInterceptors(client: AxiosInstance, baseURL: string) {
     (config: InternalAxiosRequestConfig) => {
       const token = useAuthStore.getState().accessToken;
       if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+        if (typeof (config.headers as any).set === 'function') {
+          (config.headers as any).set('Authorization', `Bearer ${token}`);
+        } else {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
       return config;
     },
@@ -57,7 +61,11 @@ export function setupAuthInterceptors(client: AxiosInstance, baseURL: string) {
         })
           .then((token) => {
             if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
+              if (typeof (originalRequest.headers as any).set === 'function') {
+                (originalRequest.headers as any).set('Authorization', `Bearer ${token}`);
+              } else {
+                originalRequest.headers.Authorization = `Bearer ${token}`;
+              }
             }
             return client(originalRequest);
           })
@@ -87,7 +95,11 @@ export function setupAuthInterceptors(client: AxiosInstance, baseURL: string) {
         useAuthStore.getState().setTokens(newAccessToken, newRefreshToken);
 
         if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          if (typeof (originalRequest.headers as any).set === 'function') {
+            (originalRequest.headers as any).set('Authorization', `Bearer ${newAccessToken}`);
+          } else {
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+          }
         }
 
         processQueue(null, newAccessToken);

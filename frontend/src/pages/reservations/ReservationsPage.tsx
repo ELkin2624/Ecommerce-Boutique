@@ -7,7 +7,8 @@ import {
   CheckCircle2,
   XCircle,
   PackageCheck,
-  Sparkles,
+  UserCheck,
+  Globe,
 } from 'lucide-react';
 import { apiClient } from '@/shared/api/axios-client';
 import { queryKeys } from '@/shared/api/query-keys';
@@ -22,14 +23,24 @@ import { formatDate } from '@/shared/lib/utils';
 
 export function ReservationsPage() {
   const { activeBranchId, activeBranchName } = useAuthStore();
+  const [selectedBranchId, setSelectedBranchId] = useState<string>(activeBranchId || 'ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
 
+  // Consultar sucursales para filtro multitienda
+  const { data: branches = [] } = useQuery<any[]>({
+    queryKey: queryKeys.branches.all,
+    queryFn: async () => {
+      const res = await apiClient.get('/branches');
+      return res.data;
+    },
+  });
+
   const { data: rawReservationsData, isLoading, refetch } = useQuery<any>({
-    queryKey: queryKeys.reservations.queue(activeBranchId || undefined, selectedStatus),
+    queryKey: ['reservations', 'queue', selectedBranchId, selectedStatus],
     queryFn: async () => {
       const res = await apiClient.get('/reservations', {
         params: {
-          branchId: activeBranchId || undefined,
+          branchId: selectedBranchId !== 'ALL' ? selectedBranchId : undefined,
           status: selectedStatus !== 'ALL' ? selectedStatus : undefined,
         },
       });
@@ -80,27 +91,48 @@ export function ReservationsPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Cola de Reservas en Probador</h1>
           <p className="text-xs text-muted-foreground">
-            Gestión física en tiempo real para <span className="font-semibold text-foreground">{activeBranchName || 'General'}</span>
+            {selectedBranchId === 'ALL'
+              ? 'Supervisión de reservas de probadores en todas las sucursales'
+              : `Gestión física en tiempo real para ${branches.find(b => b.id === selectedBranchId)?.name || activeBranchName || 'Sucursal'}`}
           </p>
         </div>
 
-        {/* Filter Badges */}
-        <div className="flex flex-wrap gap-1.5 bg-muted p-1 rounded-lg border">
-          {['ALL', 'PENDING', 'CONFIRMED', 'PREPARED', 'READY', 'COMPLETED', 'CANCELLED', 'EXPIRED'].map(
-            (st) => (
-              <button
-                key={st}
-                onClick={() => setSelectedStatus(st)}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors ${
-                  selectedStatus === st
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {st === 'ALL' ? 'Todas' : st}
-              </button>
-            ),
-          )}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Selector de Sucursal */}
+          <div className="flex items-center gap-1.5 bg-card border rounded-lg px-2.5 py-1.5 shadow-sm">
+            <Globe className="h-3.5 w-3.5 text-muted-foreground" />
+            <select
+              value={selectedBranchId}
+              onChange={(e) => setSelectedBranchId(e.target.value)}
+              className="bg-transparent text-xs font-medium focus:outline-none cursor-pointer"
+            >
+              <option value="ALL">🌐 Todas las Sucursales</option>
+              {branches.map((b: any) => (
+                <option key={b.id} value={b.id}>
+                  {b.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Filter Badges */}
+          <div className="flex flex-wrap gap-1 bg-muted p-1 rounded-lg border">
+            {['ALL', 'PENDING', 'CONFIRMED', 'PREPARED', 'READY', 'COMPLETED', 'CANCELLED', 'EXPIRED'].map(
+              (st) => (
+                <button
+                  key={st}
+                  onClick={() => setSelectedStatus(st)}
+                  className={`px-2 py-1 text-xs font-semibold rounded-md transition-colors ${
+                    selectedStatus === st
+                      ? 'bg-background text-foreground shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {st === 'ALL' ? 'Todas' : st}
+                </button>
+              ),
+            )}
+          </div>
         </div>
       </div>
 
@@ -202,19 +234,18 @@ export function ReservationsPage() {
                             onClick={() => handleUpdateStatus(r.id, 'PREPARED')}
                           >
                             <PackageCheck className="h-3.5 w-3.5" />
-                            <span>Prendas en Probador</span>
+                            <span>Preparar Prendas</span>
                           </Button>
                         )}
 
                         {r.status === 'PREPARED' && (
                           <Button
                             size="sm"
-                            variant="success"
-                            className="h-8 text-xs gap-1"
+                            className="h-8 text-xs gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
                             onClick={() => handleUpdateStatus(r.id, 'READY')}
                           >
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>Avisar Cliente Listo</span>
+                            <UserCheck className="h-3.5 w-3.5" />
+                            <span>Confirmar Recepción del Cliente</span>
                           </Button>
                         )}
 
@@ -222,11 +253,11 @@ export function ReservationsPage() {
                           <Button
                             size="sm"
                             variant="default"
-                            className="h-8 text-xs gap-1 bg-emerald-600 hover:bg-emerald-700"
+                            className="h-8 text-xs gap-1 bg-sky-600 hover:bg-sky-700 text-white"
                             onClick={() => handleUpdateStatus(r.id, 'COMPLETED')}
                           >
                             <CheckCircle2 className="h-3.5 w-3.5" />
-                            <span>Venta Concluida</span>
+                            <span>Venta Concluida / POS</span>
                           </Button>
                         )}
 

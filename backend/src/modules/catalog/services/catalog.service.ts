@@ -108,10 +108,19 @@ export class CatalogService {
           category: {
             select: { id: true, name: true, slug: true },
           },
+          season: {
+            select: { id: true, name: true },
+          },
+          collection: {
+            select: { id: true, name: true },
+          },
+          supplier: {
+            select: { id: true, name: true },
+          },
           images: {
             orderBy: [{ isCover: 'desc' }, { sortOrder: 'asc' }],
-            take: 2,
-            select: { id: true, imageUrl: true, isCover: true },
+            take: 12,
+            select: { id: true, imageUrl: true, isCover: true, sortOrder: true },
           },
           variants: {
             where: { isActive: true },
@@ -121,6 +130,8 @@ export class CatalogService {
               size: true,
               color: true,
               price: true,
+              cost: true,
+              measurementsJson: true,
               stocks: branchId
                 ? {
                     where: { location: { branchId } },
@@ -155,8 +166,16 @@ export class CatalogService {
         name: product.name,
         description: product.description,
         brand: product.brand,
+        categoryId: product.categoryId,
         category: product.category,
+        seasonId: product.seasonId,
+        season: product.season,
+        collectionId: product.collectionId,
+        collection: product.collection,
+        supplierId: product.supplierId,
+        supplier: product.supplier,
         coverImage,
+        images: product.images,
         priceRange: { min: minP, max: maxP },
         availableStock: totalStock,
         variantsCount: product.variants.length,
@@ -166,6 +185,8 @@ export class CatalogService {
           size: v.size,
           color: v.color,
           price: Number(v.price),
+          cost: Number(v.cost),
+          measurementsJson: v.measurementsJson,
           stock: v.stocks.reduce((sAcc, s) => sAcc + s.quantity, 0),
         })),
       };
@@ -249,17 +270,35 @@ export class CatalogService {
   }
 
   async createProduct(dto: CreateProductDto, userId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    if (!dto.categoryId) {
+      let defaultCat = await this.prisma.category.findFirst();
+      if (!defaultCat) {
+        defaultCat = await this.prisma.category.create({
+          data: { name: 'General', slug: 'general' },
+        });
+      }
+      dto.categoryId = defaultCat.id;
+    } else {
+      const category = await this.prisma.category.findUnique({
+        where: { id: dto.categoryId },
+      });
+      if (!category) {
+        throw new NotFoundException(`Categoría con ID ${dto.categoryId} no encontrada`);
+      }
+    }
+
+    const newProductId = await this.prisma.$transaction(async (tx) => {
       // 1. Crear producto maestro
       const product = await tx.product.create({
         data: {
-          name: dto.name,
-          description: dto.description,
-          brand: dto.brand ?? 'FashionStore',
+          name: dto.name.trim(),
+          description: dto.description?.trim() || null,
+          brand: dto.brand?.trim() || 'FashionStore',
           categoryId: dto.categoryId,
-          seasonId: dto.seasonId,
-          collectionId: dto.collectionId,
-          supplierId: dto.supplierId,
+          seasonId: dto.seasonId?.trim() || null,
+          collectionId: dto.collectionId?.trim() || null,
+          supplierId: dto.supplierId?.trim() || null,
+          isActive: true,
         },
       });
 
@@ -326,8 +365,10 @@ export class CatalogService {
         }
       }
 
-      return this.findById(product.id);
+      return product.id;
     });
+
+    return this.findById(newProductId);
   }
 
   async updateProduct(id: string, dto: UpdateProductDto) {
@@ -338,7 +379,16 @@ export class CatalogService {
 
     return this.prisma.product.update({
       where: { id },
-      data: dto,
+      data: {
+        name: dto.name !== undefined ? dto.name.trim() : undefined,
+        description: dto.description !== undefined ? dto.description?.trim() || null : undefined,
+        brand: dto.brand !== undefined ? dto.brand?.trim() || 'FashionStore' : undefined,
+        categoryId: dto.categoryId !== undefined ? dto.categoryId || undefined : undefined,
+        seasonId: dto.seasonId !== undefined ? (dto.seasonId ? dto.seasonId : null) : undefined,
+        collectionId: dto.collectionId !== undefined ? (dto.collectionId ? dto.collectionId : null) : undefined,
+        supplierId: dto.supplierId !== undefined ? (dto.supplierId ? dto.supplierId : null) : undefined,
+        isActive: dto.isActive,
+      },
     });
   }
 
@@ -414,6 +464,63 @@ export class CatalogService {
     });
   }
 
+  async deleteImage(productId: string, imageId: string) {
+    const image = await this.prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!image) {
+      throw new NotFoundException(`Imagen no encontrada para este producto`);
+    }
+
+    await this.prisma.productImage.delete({
+      where: { id: imageId },
+    });
+
+    // Si era la de portada, asignar portada a la primera que quede
+    if (image.isCover) {
+      const nextCover = await this.prisma.productImage.findFirst({
+        where: { productId },
+        orderBy: { sortOrder: 'asc' },
+      });
+      if (nextCover) {
+        await this.prisma.productImage.update({
+          where: { id: nextCover.id },
+          data: { isCover: true },
+        });
+      }
+    }
+
+    return this.prisma.productImage.findMany({
+      where: { productId },
+      orderBy: [{ isCover: 'desc' }, { sortOrder: 'asc' }],
+    });
+  }
+
+  async setCoverImage(productId: string, imageId: string) {
+    const image = await this.prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!image) {
+      throw new NotFoundException(`Imagen no encontrada para este producto`);
+    }
+
+    await this.prisma.$transaction([
+      this.prisma.productImage.updateMany({
+        where: { productId },
+        data: { isCover: false },
+      }),
+      this.prisma.productImage.update({
+        where: { id: imageId },
+        data: { isCover: true },
+      }),
+    ]);
+
+    return this.prisma.productImage.findMany({
+      where: { productId },
+      orderBy: [{ isCover: 'desc' }, { sortOrder: 'asc' }],
+    });
+  }
+
   async getCategories() {
     return this.prisma.category.findMany({
       include: {
@@ -425,9 +532,272 @@ export class CatalogService {
     });
   }
 
+  async createCategory(dto: { name: string; slug?: string }) {
+    const slug = (dto.slug || dto.name)
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '');
+
+    return this.prisma.category.create({
+      data: {
+        name: dto.name.trim(),
+        slug,
+      },
+    });
+  }
+
+  async updateCategory(id: string, dto: { name?: string; slug?: string }) {
+    const existing = await this.prisma.category.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException(`Categoría con ID ${id} no encontrada`);
+    }
+
+    let slug: string | undefined = dto.slug;
+    if (dto.name && !slug) {
+      slug = dto.name
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w-]+/g, '');
+    }
+
+    return this.prisma.category.update({
+      where: { id },
+      data: {
+        name: dto.name ? dto.name.trim() : undefined,
+        slug,
+      },
+    });
+  }
+
   async getSeasons() {
     return this.prisma.season.findMany({
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
       orderBy: { startDate: 'desc' },
     });
   }
+
+  async createSeason(dto: { name: string; startDate?: string; endDate?: string }) {
+    return this.prisma.season.create({
+      data: {
+        name: dto.name.trim(),
+        startDate: dto.startDate ? new Date(dto.startDate) : null,
+        endDate: dto.endDate ? new Date(dto.endDate) : null,
+      },
+    });
+  }
+
+  async updateSeason(id: string, dto: { name?: string; startDate?: string; endDate?: string }) {
+    const existing = await this.prisma.season.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException(`Temporada con ID ${id} no encontrada`);
+    }
+
+    return this.prisma.season.update({
+      where: { id },
+      data: {
+        name: dto.name ? dto.name.trim() : undefined,
+        startDate: dto.startDate !== undefined ? (dto.startDate ? new Date(dto.startDate) : null) : undefined,
+        endDate: dto.endDate !== undefined ? (dto.endDate ? new Date(dto.endDate) : null) : undefined,
+      },
+    });
+  }
+
+  async getCollections() {
+    return this.prisma.collection.findMany({
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  async createCollection(dto: { name: string; description?: string }) {
+    return this.prisma.collection.create({
+      data: {
+        name: dto.name.trim(),
+        description: dto.description?.trim() || null,
+      },
+    });
+  }
+
+  async updateCollection(id: string, dto: { name?: string; description?: string }) {
+    const existing = await this.prisma.collection.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException(`Colección con ID ${id} no encontrada`);
+    }
+
+    return this.prisma.collection.update({
+      where: { id },
+      data: {
+        name: dto.name ? dto.name.trim() : undefined,
+        description: dto.description !== undefined ? dto.description.trim() || null : undefined,
+      },
+    });
+  }
+
+  async getSuppliers() {
+    return this.prisma.supplier.findMany({
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
+  }
+
+  async createSupplier(dto: { name: string; contactEmail?: string; phone?: string; address?: string }) {
+    return this.prisma.supplier.create({
+      data: {
+        name: dto.name.trim(),
+        contactEmail: dto.contactEmail?.trim() || null,
+        phone: dto.phone?.trim() || null,
+        address: dto.address?.trim() || null,
+      },
+    });
+  }
+
+  async updateSupplier(id: string, dto: { name?: string; contactEmail?: string; phone?: string; address?: string }) {
+    const existing = await this.prisma.supplier.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException(`Proveedor con ID ${id} no encontrado`);
+    }
+
+    return this.prisma.supplier.update({
+      where: { id },
+      data: {
+        name: dto.name ? dto.name.trim() : undefined,
+        contactEmail: dto.contactEmail !== undefined ? dto.contactEmail.trim() || null : undefined,
+        phone: dto.phone !== undefined ? dto.phone.trim() || null : undefined,
+        address: dto.address !== undefined ? dto.address.trim() || null : undefined,
+      },
+    });
+  }
+
+  async deleteCategory(id: string) {
+    const category = await this.prisma.category.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+    });
+    if (!category) {
+      throw new NotFoundException(`Categoría con ID ${id} no encontrada`);
+    }
+    if (category._count.products > 0) {
+      throw new BadRequestException(
+        `No se puede eliminar la categoría "${category.name}" porque tiene ${category._count.products} prenda(s) activa(s) asignada(s).`,
+      );
+    }
+    await this.prisma.category.delete({ where: { id } });
+    return { message: `Categoría "${category.name}" eliminada exitosamente` };
+  }
+
+  async deleteSeason(id: string) {
+    const season = await this.prisma.season.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+    });
+    if (!season) {
+      throw new NotFoundException(`Temporada con ID ${id} no encontrada`);
+    }
+    if (season._count.products > 0) {
+      throw new BadRequestException(
+        `No se puede eliminar la temporada "${season.name}" porque tiene ${season._count.products} prenda(s) activa(s) asignada(s).`,
+      );
+    }
+    await this.prisma.season.delete({ where: { id } });
+    return { message: `Temporada "${season.name}" eliminada exitosamente` };
+  }
+
+  async deleteCollection(id: string) {
+    const collection = await this.prisma.collection.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+    });
+    if (!collection) {
+      throw new NotFoundException(`Colección con ID ${id} no encontrada`);
+    }
+    if (collection._count.products > 0) {
+      throw new BadRequestException(
+        `No se puede eliminar la colección "${collection.name}" porque tiene ${collection._count.products} prenda(s) activa(s) asignada(s).`,
+      );
+    }
+    await this.prisma.collection.delete({ where: { id } });
+    return { message: `Colección "${collection.name}" eliminada exitosamente` };
+  }
+
+  async deleteSupplier(id: string) {
+    const supplier = await this.prisma.supplier.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } },
+        },
+      },
+    });
+    if (!supplier) {
+      throw new NotFoundException(`Proveedor con ID ${id} no encontrado`);
+    }
+    if (supplier._count.products > 0) {
+      throw new BadRequestException(
+        `No se puede eliminar el proveedor "${supplier.name}" porque tiene ${supplier._count.products} prenda(s) activa(s) asignada(s).`,
+      );
+    }
+    await this.prisma.supplier.delete({ where: { id } });
+    return { message: `Proveedor "${supplier.name}" eliminado exitosamente` };
+  }
+
+  async deleteProduct(id: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+      await tx.productVariant.updateMany({
+        where: { productId: id },
+        data: { isActive: false },
+      });
+      await tx.product.update({
+        where: { id },
+        data: { isActive: false },
+      });
+    });
+
+    return { message: `Prenda / Producto "${product.name}" dado de baja exitosamente (Baja Lógica)` };
+  }
+
+  async deleteVariant(id: string) {
+    const variant = await this.prisma.productVariant.findUnique({ where: { id } });
+    if (!variant) {
+      throw new NotFoundException(`Variante con ID ${id} no encontrada`);
+    }
+
+    await this.prisma.productVariant.update({
+      where: { id },
+      data: { isActive: false },
+    });
+
+    return { message: `Variante SKU "${variant.sku}" dada de baja exitosamente (Baja Lógica)` };
+  }
 }
+

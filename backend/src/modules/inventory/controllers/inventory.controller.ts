@@ -12,6 +12,7 @@ import {
   QueryStockDto,
   TransferStockDto,
   AdjustStockDto,
+  CreateMovementDto,
   QueryMovementsDto,
 } from '../dto/inventory.dto.js';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard.js';
@@ -51,5 +52,11 @@ export class InventoryController {
   @Permissions('INVENTORY:TRANSFER')
   async adjustStock(@Body() dto: AdjustStockDto, @Request() req: any) {
     return this.inventoryService.adjustStock(dto, req.user.id);
+  }
+
+  @Post('movements')
+  @Permissions('INVENTORY:TRANSFER')
+  async createMovement(@Body() dto: CreateMovementDto, @Request() req: any) {
+    return this.inventoryService.createMovement(dto, req.user.id);
   }
 }

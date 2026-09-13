@@ -13,6 +13,10 @@ const ReservationsPage = lazy(() => import('@/pages/reservations/ReservationsPag
 const PosPage = lazy(() => import('@/pages/pos/PosPage').then((m) => ({ default: m.PosPage })));
 const SalesPage = lazy(() => import('@/pages/sales/SalesPage').then((m) => ({ default: m.SalesPage })));
 const ReportsPage = lazy(() => import('@/pages/reports/ReportsPage').then((m) => ({ default: m.ReportsPage })));
+const BranchesPage = lazy(() => import('@/pages/branches/BranchesPage').then((m) => ({ default: m.BranchesPage })));
+const UsersPage = lazy(() => import('@/pages/users/UsersPage').then((m) => ({ default: m.UsersPage })));
+const PromotionsPage = lazy(() => import('@/pages/promotions/PromotionsPage').then((m) => ({ default: m.PromotionsPage })));
+const SuppliersPage = lazy(() => import('@/pages/suppliers/SuppliersPage').then((m) => ({ default: m.SuppliersPage })));
 
 export function AppRouter() {
   return (
@@ -46,7 +50,7 @@ export function AppRouter() {
             <Route
               path="pos"
               element={
-                <RequirePermission permission="ORDER:CREATE_IN_STORE">
+                <RequirePermission permission="ORDER:CREATE">
                   <PosPage />
                 </RequirePermission>
               }
@@ -82,12 +86,52 @@ export function AppRouter() {
               }
             />
 
-            {/* Catálogo y Variantes */}
+            {/* Catálogo y Prendas */}
             <Route
               path="catalog"
               element={
-                <RequirePermission permission="PRODUCT:VIEW">
+                <RequirePermission permission="PRODUCT:READ">
                   <CatalogPage />
+                </RequirePermission>
+              }
+            />
+
+            {/* Promociones y Cupones */}
+            <Route
+              path="promotions"
+              element={
+                <RequirePermission permission="PRODUCT:READ">
+                  <PromotionsPage />
+                </RequirePermission>
+              }
+            />
+
+            {/* Proveedores */}
+            <Route
+              path="suppliers"
+              element={
+                <RequirePermission permission="PRODUCT:READ">
+                  <SuppliersPage />
+                </RequirePermission>
+              }
+            />
+
+            {/* Sucursales y Ubicaciones */}
+            <Route
+              path="branches"
+              element={
+                <RequirePermission permission="USER:READ">
+                  <BranchesPage />
+                </RequirePermission>
+              }
+            />
+
+            {/* Gestión de Usuarios y Roles */}
+            <Route
+              path="users"
+              element={
+                <RequirePermission permission="USER:READ">
+                  <UsersPage />
                 </RequirePermission>
               }
             />

@@ -32,10 +32,16 @@ interface SalesChartProps {
 export function SalesChart({ report }: SalesChartProps) {
   const [copied, setCopied] = React.useState(false);
 
-  const { summary_text, chart_suggestion, data, meta } = report;
+  const { summary_text, chart_suggestion, data } = report;
+  const meta = report.meta || {
+    confidence: report.confidenceScore,
+    metric: report.metric,
+    groupBy: report.filtersApplied?.groupBy,
+    period: report.dateRange?.start_date ? `${report.dateRange.start_date} - ${report.dateRange.end_date || ''}` : undefined,
+  };
 
   const handleCopySummary = () => {
-    navigator.clipboard.writeText(summary_text);
+    navigator.clipboard.writeText(summary_text || report.executiveSummary || '');
     setCopied(true);
     toast.success('Copiado', 'Resumen analítico copiado al portapapeles');
     setTimeout(() => setCopied(false), 2000);

@@ -6,4 +6,22 @@
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
   --font-rounded: 'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
+
+  /* ==========================================================================
+     BOUTIQUE PALETTE - HOMBRES (Navy, Teal, Sky Blue, Beige, White)
+     ========================================================================== */
+  --men-navy: #2F4156;
+  --men-teal: #567C8D;
+  --men-sky: #C8D9E6;
+  --men-beige: #F5EFEB;
+  --men-white: #FFFFFF;
+
+  /* ==========================================================================
+     BOUTIQUE PALETTE - MUJERES (Soft Pink, Rose, Peach Cream, Mauve, Mint)
+     ========================================================================== */
+  --women-pink: #FFCAD4;
+  --women-rose: #F4ACB7;
+  --women-peach: #FFE5D9;
+  --women-mauve: #9D8189;
+  --women-mint: #D8E2DC;
 }

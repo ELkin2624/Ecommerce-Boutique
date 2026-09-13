@@ -8,6 +8,7 @@ import {
   QueryStockDto,
   TransferStockDto,
   AdjustStockDto,
+  CreateMovementDto,
   QueryMovementsDto,
 } from '../dto/inventory.dto.js';
 
@@ -67,6 +68,7 @@ export class InventoryService {
               size: true,
               color: true,
               price: true,
+              isActive: true,
               product: {
                 select: { id: true, name: true },
               },
@@ -80,20 +82,68 @@ export class InventoryService {
     const items = stocks.map((s) => ({
       id: s.id,
       variantId: s.variantId,
-      productName: s.variant.product.name,
-      sku: s.variant.sku,
-      size: s.variant.size,
-      color: s.variant.color,
-      price: Number(s.variant.price),
       locationId: s.locationId,
-      locationName: s.location.name,
-      locationType: s.location.type,
-      branchId: s.location.branchId,
-      branchName: s.location.branch.name,
-      cityName: s.location.branch.city.name,
       quantity: s.quantity,
       minStock: s.minStock,
+      updatedAt: s.updatedAt,
       isLowStock: s.quantity <= s.minStock,
+      productName: s.variant?.product?.name || 'Prenda sin nombre',
+      sku: s.variant?.sku || '',
+      size: s.variant?.size || '',
+      color: s.variant?.color || '',
+      price: s.variant ? Number(s.variant.price) : 0,
+      locationName: s.location?.name || '',
+      locationType: s.location?.type || 'SALES_FLOOR',
+      branchId: s.location?.branchId || '',
+      branchName: s.location?.branch?.name || '',
+      cityName: s.location?.branch?.city?.name || '',
+      variant: s.variant
+        ? {
+            id: s.variant.id,
+            productId: s.variant.product?.id,
+            sku: s.variant.sku,
+            size: s.variant.size,
+            color: s.variant.color,
+            price: Number(s.variant.price),
+            isActive: s.variant.isActive,
+            product: s.variant.product
+              ? {
+                  id: s.variant.product.id,
+                  name: s.variant.product.name,
+                }
+              : { id: '', name: 'Prenda' },
+          }
+        : {
+            id: s.variantId,
+            productId: '',
+            sku: 'SKU-N/A',
+            size: 'N/A',
+            color: 'N/A',
+            price: 0,
+            isActive: true,
+            product: { id: '', name: 'Prenda' },
+          },
+      location: s.location
+        ? {
+            id: s.location.id,
+            branchId: s.location.branchId,
+            name: s.location.name,
+            type: s.location.type,
+            branch: s.location.branch
+              ? {
+                  id: s.location.branch.id,
+                  name: s.location.branch.name,
+                  city: s.location.branch.city,
+                }
+              : { id: '', name: 'Sucursal General', city: { id: '', name: 'General' } },
+          }
+        : {
+            id: s.locationId,
+            branchId: '',
+            name: 'Ubicación General',
+            type: 'SALES_FLOOR' as const,
+            branch: { id: '', name: 'Sucursal General', city: { id: '', name: 'General' } },
+          },
     }));
 
     const filteredItems = lowStockOnly
@@ -215,6 +265,67 @@ export class InventoryService {
       return {
         success: true,
         message: 'Ajuste de inventario registrado',
+        currentQuantity: currentStock.quantity,
+        movementId: movement.id,
+      };
+    });
+  }
+
+  async createMovement(dto: CreateMovementDto, userId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      let currentStock;
+      if (dto.type === 'PURCHASE_RECEIPT' || dto.type === 'RETURN') {
+        currentStock = await tx.inventoryStock.upsert({
+          where: {
+            variantId_locationId: {
+              variantId: dto.variantId,
+              locationId: dto.locationId,
+            },
+          },
+          create: {
+            variantId: dto.variantId,
+            locationId: dto.locationId,
+            quantity: dto.quantity,
+          },
+          update: {
+            quantity: { increment: dto.quantity },
+          },
+        });
+      } else if (dto.type === 'ADJUSTMENT') {
+        currentStock = await tx.inventoryStock.upsert({
+          where: {
+            variantId_locationId: {
+              variantId: dto.variantId,
+              locationId: dto.locationId,
+            },
+          },
+          create: {
+            variantId: dto.variantId,
+            locationId: dto.locationId,
+            quantity: dto.quantity,
+          },
+          update: {
+            quantity: dto.quantity,
+          },
+        });
+      } else {
+        throw new BadRequestException(`Tipo de movimiento no soportado en este endpoint`);
+      }
+
+      const movement = await tx.inventoryMovement.create({
+        data: {
+          variantId: dto.variantId,
+          toLocationId: dto.locationId,
+          quantity: dto.quantity,
+          type: dto.type,
+          reason: dto.reason || `Movimiento manual tipo ${dto.type}`,
+          userId,
+        },
+      });
+
+      return {
+        success: true,
+        message: `Movimiento ${dto.type} registrado exitosamente`,
         currentQuantity: currentStock.quantity,
         movementId: movement.id,
       };

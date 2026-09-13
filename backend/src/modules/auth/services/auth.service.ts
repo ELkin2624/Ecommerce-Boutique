@@ -227,7 +227,7 @@ export class AuthService {
 
     const accessTokenExpiresIn = this.configService.get<string>(
       'JWT_ACCESS_EXPIRES_IN',
-      '15m',
+      '24h',
     );
     const refreshTokenExpiresIn = this.configService.get<string>(
       'JWT_REFRESH_EXPIRES_IN',

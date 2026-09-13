@@ -33,6 +33,32 @@ export default {
           DEFAULT: "hsl(var(--accent, 210 40% 96.1%))",
           foreground: "hsl(var(--accent-foreground, 222.2 47.4% 11.2%))",
         },
+        card: {
+          DEFAULT: "hsl(var(--card, 0 0% 100%))",
+          foreground: "hsl(var(--card-foreground, 222.2 84% 4.9%))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover, 0 0% 100%))",
+          foreground: "hsl(var(--popover-foreground, 222.2 84% 4.9%))",
+        },
+        boutique: {
+          // Paleta Masculina (Navy, Teal, Sky Blue, Beige, White)
+          men: {
+            navy: 'var(--men-navy, #2F4156)',
+            teal: 'var(--men-teal, #567C8D)',
+            sky: 'var(--men-sky, #C8D9E6)',
+            beige: 'var(--men-beige, #F5EFEB)',
+            white: 'var(--men-white, #FFFFFF)',
+          },
+          // Paleta Femenina (Soft Pink, Rose, Peach Cream, Dusty Mauve, Mint Mist)
+          women: {
+            pink: 'var(--women-pink, #FFCAD4)',
+            rose: 'var(--women-rose, #F4ACB7)',
+            peach: 'var(--women-peach, #FFE5D9)',
+            mauve: 'var(--women-mauve, #9D8189)',
+            mint: 'var(--women-mint, #D8E2DC)',
+          },
+        },
       },
     },
   },

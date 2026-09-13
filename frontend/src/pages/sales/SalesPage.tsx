@@ -13,30 +13,76 @@ import { ReceiptModal } from '@/features/pos/ui/ReceiptModal';
 import { formatCurrency, formatDate } from '@/shared/lib/utils';
 
 export function SalesPage() {
-  const { activeBranchId, activeBranchName } = useAuthStore();
+  const { activeBranchId } = useAuthStore();
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [branchFilter, setBranchFilter] = useState<string>(activeBranchId || 'all');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const { data: branches = [] } = useQuery<any[]>({
+    queryKey: queryKeys.branches.all,
+    queryFn: async () => {
+      const res = await apiClient.get('/branches');
+      return res.data;
+    },
+  });
 
   const { data: ordersData, isLoading } = useQuery<{ items: Order[]; meta: any }>({
-    queryKey: queryKeys.orders.list({ branchId: activeBranchId || undefined }),
+    queryKey: queryKeys.orders.list({ branchId: branchFilter !== 'all' ? branchFilter : undefined }),
     queryFn: async () => {
       const res = await apiClient.get('/orders', {
-        params: { branchId: activeBranchId || undefined, limit: 50 },
+        params: {
+          branchId: branchFilter !== 'all' ? branchFilter : undefined,
+          limit: 100,
+        },
       });
       return res.data;
     },
   });
 
-  const orders = Array.isArray(ordersData) ? ordersData : ordersData?.items || [];
+  const allOrders: Order[] = Array.isArray(ordersData) ? ordersData : ordersData?.items || [];
+
+  const orders = allOrders.filter((o) => {
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.toLowerCase();
+    const client = (o.client || '').toLowerCase();
+    const id = (o.id || '').toLowerCase();
+    const branch = (o.branchName || '').toLowerCase();
+    return client.includes(term) || id.includes(term) || branch.includes(term);
+  });
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Historial de Ventas</h1>
           <p className="text-xs text-muted-foreground">
-            Registro de pedidos canal digital (ONLINE) y mostrador (IN_STORE) en <span className="font-semibold text-foreground">{activeBranchName || 'General'}</span>
+            Registro de pedidos canal digital (ONLINE) y mostrador (IN_STORE)
           </p>
+        </div>
+
+        {/* Controls */}
+        <div className="flex flex-wrap items-center gap-3">
+          <select
+            value={branchFilter}
+            onChange={(e) => setBranchFilter(e.target.value)}
+            className="h-9 rounded-md border border-input bg-background px-3 py-1 text-xs font-medium shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="all">Todas las Sucursales</option>
+            {branches.map((b: any) => (
+              <option key={b.id} value={b.id}>
+                {b.name} ({b.city?.name || 'Ciudad'})
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="text"
+            placeholder="Buscar por cliente o N°..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-9 w-48 sm:w-64 rounded-md border border-input bg-background px-3 py-1 text-xs shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          />
         </div>
       </div>
 

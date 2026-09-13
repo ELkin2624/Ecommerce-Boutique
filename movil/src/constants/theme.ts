@@ -24,6 +24,46 @@ export const Colors = {
   },
 } as const;
 
+/**
+ * ============================================================================
+ * PALETAS BOUTIQUE OFICIALES (Hombres & Mujeres)
+ * ============================================================================
+ * Diseñadas para estilizar colecciones de ropa, temas por preferencia
+ * de usuario en la app móvil y resaltar prendas de manera armónica.
+ */
+export const BoutiquePalette = {
+  // Paleta Masculina (Navy, Teal, Sky Blue, Beige, White)
+  men: {
+    navy: '#2F4156',
+    teal: '#567C8D',
+    sky: '#C8D9E6',
+    beige: '#F5EFEB',
+    white: '#FFFFFF',
+    // Aliases semánticos para componentes UI
+    primary: '#2F4156',
+    accent: '#567C8D',
+    surface: '#F5EFEB',
+    highlight: '#C8D9E6',
+  },
+  // Paleta Femenina (Soft Pink, Rose, Peach Cream, Dusty Mauve, Mint Mist)
+  women: {
+    pink: '#FFCAD4',
+    rose: '#F4ACB7',
+    peach: '#FFE5D9',
+    mauve: '#9D8189',
+    mint: '#D8E2DC',
+    // Aliases semánticos para componentes UI
+    primary: '#9D8189',
+    accent: '#F4ACB7',
+    surface: '#FFE5D9',
+    highlight: '#FFCAD4',
+    secondary: '#D8E2DC',
+  },
+} as const;
+
+export type GenderTheme = 'men' | 'women';
+export type BoutiquePaletteType = typeof BoutiquePalette;
+
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
 
 export const Fonts = Platform.select({

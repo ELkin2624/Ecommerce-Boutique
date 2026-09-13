@@ -50,7 +50,7 @@ export class QueryStockDto {
   @Type(() => Number)
   @IsNumber()
   @Min(1)
-  @Max(100)
+  @Max(1000)
   limit: number = 20;
 }
 
@@ -113,4 +113,23 @@ export class QueryMovementsDto {
   @Min(1)
   @Max(100)
   limit: number = 20;
+}
+
+export class CreateMovementDto {
+  @IsString()
+  variantId!: string;
+
+  @IsString()
+  locationId!: string;
+
+  @IsNumber()
+  @Min(1)
+  quantity!: number;
+
+  @IsEnum(MovementType)
+  type!: MovementType;
+
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }

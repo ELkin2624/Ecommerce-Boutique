@@ -5,7 +5,7 @@ import { Toaster } from '@/shared/ui/Toast';
 
 export function AdminLayout() {
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-background text-foreground">
+    <div className="flex h-[100dvh] w-full overflow-hidden bg-background text-foreground">
       {/* Sidebar Navigation */}
       <Sidebar />
 

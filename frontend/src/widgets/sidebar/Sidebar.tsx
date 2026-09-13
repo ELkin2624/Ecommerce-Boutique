@@ -1,15 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  ShoppingCart,
-  ReceiptText,
-  Boxes,
-  CalendarCheck,
-  Shirt,
-  Sparkles,
-  ChevronLeft,
-  Store,
+  LayoutDashboard, ShoppingCart, ReceiptText, Boxes, CalendarCheck,
+  Shirt, Building2, Users, Sparkles, ChevronLeft, Store, Tag, Truck,
 } from 'lucide-react';
 import { useAuthStore } from '@/app/store/auth.store';
 import { useUiStore } from '@/app/store/ui.store';
@@ -29,10 +22,46 @@ const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
+    title: 'Usuarios & Roles',
+    href: '/users',
+    icon: Users,
+    permission: 'USER:READ',
+  },
+  {
+    title: 'Sucursales & Almacenes',
+    href: '/branches',
+    icon: Building2,
+    permission: 'USER:READ',
+  },
+  {
+    title: 'Catálogo & Prendas',
+    href: '/catalog',
+    icon: Shirt,
+    permission: 'PRODUCT:READ',
+  },
+  {
+    title: 'Inventario & Stock',
+    href: '/inventory',
+    icon: Boxes,
+    permission: 'INVENTORY:VIEW',
+  },
+   {
+    title: 'Proveedores',
+    href: '/suppliers',
+    icon: Truck,
+    permission: 'PRODUCT:READ',
+  },
+  {
+    title: 'Promociones & Cupones',
+    href: '/promotions',
+    icon: Tag,
+    permission: 'PRODUCT:READ',
+  },
+  {
     title: 'Punto de Venta (POS)',
     href: '/pos',
     icon: ShoppingCart,
-    permission: 'ORDER:CREATE_IN_STORE',
+    permission: 'ORDER:CREATE',
   },
   {
     title: 'Historial de Ventas',
@@ -41,22 +70,10 @@ const navItems: NavItem[] = [
     permission: 'ORDER:VIEW',
   },
   {
-    title: 'Inventario & Stock',
-    href: '/inventory',
-    icon: Boxes,
-    permission: 'INVENTORY:VIEW',
-  },
-  {
     title: 'Reservas Probador',
     href: '/reservations',
     icon: CalendarCheck,
     permission: 'RESERVATION:VIEW',
-  },
-  {
-    title: 'Catálogo & Variantes',
-    href: '/catalog',
-    icon: Shirt,
-    permission: 'PRODUCT:VIEW',
   },
   {
     title: 'Reportes IA (Voz/Texto)',

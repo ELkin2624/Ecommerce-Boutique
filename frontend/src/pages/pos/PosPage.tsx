@@ -59,34 +59,42 @@ export function PosPage() {
     : rawStockData?.items || [];
 
   // Filtrar productos disponibles con stock > 0
-  const availableItems = stockItems.filter(
-    (item) =>
-      item.quantity > 0 &&
-      (item.variant.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.variant.product.name.toLowerCase().includes(searchTerm.toLowerCase())),
-  );
+  const availableItems = stockItems.filter((item) => {
+    if (!item || item.quantity <= 0) return false;
+    const sku = (item.variant?.sku || (item as any).sku || '').toLowerCase();
+    const name = (item.variant?.product?.name || (item as any).productName || '').toLowerCase();
+    const term = searchTerm.toLowerCase();
+    return sku.includes(term) || name.includes(term);
+  });
 
   const addToCart = (item: InventoryStock) => {
+    const variantId = item.variantId || item.variant?.id;
+    const sku = item.variant?.sku || (item as any).sku || 'SKU-N/A';
+    const name = item.variant?.product?.name || (item as any).productName || 'Prenda';
+    const size = item.variant?.size || (item as any).size || '';
+    const color = item.variant?.color || (item as any).color || '';
+    const price = Number(item.variant?.price ?? (item as any).price ?? 0);
+
     setCart((prev) => {
-      const existing = prev.find((i) => i.variantId === item.variantId);
+      const existing = prev.find((i) => i.variantId === variantId);
       if (existing) {
         if (existing.quantity >= item.quantity) {
           toast.warning('Límite de stock', `Solo hay ${item.quantity} unidades disponibles`);
           return prev;
         }
         return prev.map((i) =>
-          i.variantId === item.variantId ? { ...i, quantity: i.quantity + 1 } : i,
+          i.variantId === variantId ? { ...i, quantity: i.quantity + 1 } : i,
         );
       }
       return [
         ...prev,
         {
-          variantId: item.variantId,
-          sku: item.variant.sku,
-          name: item.variant.product.name,
-          size: item.variant.size,
-          color: item.variant.color,
-          price: Number(item.variant.price),
+          variantId,
+          sku,
+          name,
+          size,
+          color,
+          price,
           quantity: 1,
           availableStock: item.quantity,
         },
@@ -121,16 +129,21 @@ export function PosPage() {
     e.preventDefault();
     if (!barcodeInput.trim()) return;
 
-    const match = stockItems.find(
-      (s) => s.variant.sku.toUpperCase() === barcodeInput.trim().toUpperCase(),
-    );
+    const querySku = barcodeInput.trim().toUpperCase();
+    const match = stockItems.find((s) => {
+      const sku = (s.variant?.sku || (s as any).sku || '').toUpperCase();
+      return sku === querySku;
+    });
 
     if (match) {
       if (match.quantity <= 0) {
-        toast.error('Prenda agotada', `El SKU ${match.variant.sku} no tiene existencias`);
+        const sku = match.variant?.sku || (match as any).sku;
+        toast.error('Prenda agotada', `El SKU ${sku} no tiene existencias`);
       } else {
         addToCart(match);
-        toast.success('Prenda escaneada', `${match.variant.product.name} (${match.variant.sku})`);
+        const name = match.variant?.product?.name || (match as any).productName || 'Prenda';
+        const sku = match.variant?.sku || (match as any).sku || '';
+        toast.success('Prenda escaneada', `${name} (${sku})`);
       }
     } else {
       toast.error('SKU no encontrado', `No se encontró inventario con el código ${barcodeInput}`);
@@ -235,39 +248,47 @@ export function PosPage() {
                 No se encontraron prendas con stock disponible para la búsqueda.
               </div>
             ) : (
-              availableItems.map((item) => (
-                <Card
-                  key={item.id}
-                  onClick={() => addToCart(item)}
-                  className="cursor-pointer hover:border-primary/50 transition-all shadow-sm flex flex-col justify-between p-3.5 hover:shadow-md"
-                >
-                  <div>
-                    <div className="flex justify-between items-start">
-                      <span className="font-semibold text-sm line-clamp-1">
-                        {item.variant.product.name}
-                      </span>
-                      <span className="font-bold text-sm text-emerald-600">
-                        {formatCurrency(item.variant.price)}
-                      </span>
+              availableItems.map((item) => {
+                const name = item.variant?.product?.name || (item as any).productName || 'Prenda';
+                const sku = item.variant?.sku || (item as any).sku || 'SKU-N/A';
+                const price = item.variant?.price ?? (item as any).price ?? 0;
+                const size = item.variant?.size || (item as any).size || '';
+                const color = item.variant?.color || (item as any).color || '';
+
+                return (
+                  <Card
+                    key={item.id}
+                    onClick={() => addToCart(item)}
+                    className="cursor-pointer hover:border-primary/50 transition-all shadow-sm flex flex-col justify-between p-3.5 hover:shadow-md"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span className="font-semibold text-sm line-clamp-1">
+                          {name}
+                        </span>
+                        <span className="font-bold text-sm text-emerald-600">
+                          {formatCurrency(price)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="font-mono text-[10px]">
+                          {sku}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {size} • {color}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="font-mono text-[10px]">
-                        {item.variant.sku}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {item.variant.size} • {item.variant.color}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center mt-3 pt-2 border-t text-xs">
+                    <div className="flex justify-between items-center mt-3 pt-2 border-t text-xs">
                     <span className="text-muted-foreground">Disponible: {item.quantity} unid.</span>
                     <span className="text-primary font-semibold flex items-center gap-1">
                       <Plus className="h-3 w-3" /> Agregar
                     </span>
                   </div>
                 </Card>
-              ))
-            )}
+              );
+            })
+          )}
           </div>
         </div>
 

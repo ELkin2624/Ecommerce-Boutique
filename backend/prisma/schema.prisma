@@ -5,7 +5,6 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
 }
 
 // ==========================================
@@ -211,12 +210,14 @@ model Branch {
   name      String              // Sucursal Centro, Sucursal Norte
   address   String
   phone     String?
+  isActive  Boolean             @default(true) @map("is_active")
   createdAt DateTime            @default(now()) @map("created_at")
 
   city         City                @relation(fields: [cityId], references: [id])
-  locations    InventoryLocation[]
-  reservations Reservation[]
-  orders       Order[]
+  locations        InventoryLocation[]
+  sharedWarehouses InventoryLocation[] @relation("SharedWarehouses")
+  reservations     Reservation[]
+  orders           Order[]
 
   @@map("branches")
 }
@@ -231,14 +232,17 @@ model InventoryLocation {
   branchId String       @map("branch_id")
   name     String       // Ej: Almacén Principal, Mostrador
   type     LocationType @default(SALES_FLOOR)
+  isActive Boolean      @default(true) @map("is_active")
 
-  branch        Branch              @relation(fields: [branchId], references: [id], onDelete: Cascade)
-  stocks        InventoryStock[]
-  movementsFrom InventoryMovement[] @relation("FromLocation")
+  branch           Branch              @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  sharedByBranches Branch[]            @relation("SharedWarehouses")
+  stocks           InventoryStock[]
+  movementsFrom    InventoryMovement[] @relation("FromLocation")
   movementsTo   InventoryMovement[] @relation("ToLocation")
 
   @@map("inventory_locations")
 }
+
 
 model InventoryStock {
   id         String            @id @default(uuid())
@@ -441,4 +445,25 @@ model Payment {
   @@index([orderId])
   @@index([status])
   @@map("payments")
+}
+
+// ==========================================
+// 6. PROMOCIONES Y DESCUENTOS
+// ==========================================
+
+model Promotion {
+  id                String    @id @default(uuid())
+  name              String
+  code              String    @unique
+  description       String?
+  discountPercent   Decimal   @map("discount_percent") @db.Decimal(5, 2)
+  minPurchaseAmount Decimal?  @map("min_purchase_amount") @db.Decimal(10, 2)
+  startDate         DateTime  @map("start_date")
+  endDate           DateTime  @map("end_date")
+  isActive          Boolean   @default(true) @map("is_active")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  @@index([code, isActive])
+  @@map("promotions")
 }

@@ -17,6 +17,10 @@ async function main() {
     { code: 'INVENTORY:TRANSFER', description: 'Trasladar stock' },
     { code: 'RESERVATION:CREATE', description: 'Crear reservas de prendas' },
     { code: 'RESERVATION:VIEW', description: 'Ver reservas' },
+    { code: 'RESERVATION:UPDATE_STATUS', description: 'Actualizar estado de reserva probador' },
+    { code: 'PROMOTION:READ', description: 'Consultar promociones y descuentos' },
+    { code: 'PROMOTION:CREATE', description: 'Crear promociones y cupones' },
+    { code: 'PROMOTION:UPDATE', description: 'Actualizar promociones y cupones' },
     { code: 'ORDER:CREATE', description: 'Crear pedidos y ventas' },
     { code: 'ORDER:VIEW', description: 'Ver pedidos' },
     { code: 'REPORT:VIEW', description: 'Ver reportes' },
@@ -51,6 +55,8 @@ async function main() {
         'INVENTORY:VIEW',
         'INVENTORY:TRANSFER',
         'RESERVATION:VIEW',
+        'RESERVATION:UPDATE_STATUS',
+        'PROMOTION:READ',
         'ORDER:VIEW',
         'REPORT:VIEW',
         'REPORT:GENERATE',
@@ -76,6 +82,13 @@ async function main() {
         'RESERVATION:VIEW',
         'ORDER:CREATE',
         'ORDER:VIEW',
+      ],
+    },
+    {
+      name: 'SUPPLIER',
+      description: 'Proveedor externo de productos',
+      permissions: [
+        'PRODUCT:READ',
       ],
     },
   ];
@@ -150,6 +163,83 @@ async function main() {
   });
   console.log(`✅ Usuario Admin creado: ${adminEmail}`);
 
+  // 3b. USUARIO CAJERO DE PRUEBA
+  const cashierEmail = 'cajero@fashionstore.com';
+  const cashierPassword = 'Cajero123!';
+  const cashierHash = await argon2.hash(cashierPassword, { type: argon2.argon2id });
+
+  const cashierUser = await prisma.user.upsert({
+    where: { email: cashierEmail },
+    update: { passwordHash: cashierHash, isActive: true },
+    create: {
+      email: cashierEmail,
+      passwordHash: cashierHash,
+      firstName: 'Juan',
+      lastName: 'Cajero',
+      phone: '+591 71111111',
+      isActive: true,
+    },
+  });
+
+  await prisma.userRole.upsert({
+    where: { userId_roleId: { userId: cashierUser.id, roleId: rolesMap['CASHIER'] } },
+    update: {},
+    create: { userId: cashierUser.id, roleId: rolesMap['CASHIER'] },
+  });
+  console.log(`✅ Usuario Cajero creado: ${cashierEmail} / ${cashierPassword}`);
+
+  // 3c. USUARIO ENCARGADO DE SUCURSAL DE PRUEBA
+  const managerEmail = 'encargado@fashionstore.com';
+  const managerPassword = 'Manager123!';
+  const managerHash = await argon2.hash(managerPassword, { type: argon2.argon2id });
+
+  const managerUser = await prisma.user.upsert({
+    where: { email: managerEmail },
+    update: { passwordHash: managerHash, isActive: true },
+    create: {
+      email: managerEmail,
+      passwordHash: managerHash,
+      firstName: 'María',
+      lastName: 'Encargada',
+      phone: '+591 72222222',
+      isActive: true,
+    },
+  });
+
+  await prisma.userRole.upsert({
+    where: { userId_roleId: { userId: managerUser.id, roleId: rolesMap['STORE_MANAGER'] } },
+    update: {},
+    create: { userId: managerUser.id, roleId: rolesMap['STORE_MANAGER'] },
+  });
+  console.log(`✅ Usuario Encargado creado: ${managerEmail} / ${managerPassword}`);
+
+  // 3d. USUARIO PROVEEDOR DE PRUEBA
+  const supplierEmail = 'proveedor@textiles.com';
+  const supplierPassword = 'Supplier123!';
+  const supplierHash = await argon2.hash(supplierPassword, { type: argon2.argon2id });
+
+  const supplierUser = await prisma.user.upsert({
+    where: { email: supplierEmail },
+    update: { passwordHash: supplierHash, isActive: true },
+    create: {
+      email: supplierEmail,
+      passwordHash: supplierHash,
+      firstName: 'Carlos',
+      lastName: 'Proveedor',
+      phone: '+591 73333333',
+      isActive: true,
+    },
+  });
+
+  if (rolesMap['SUPPLIER']) {
+    await prisma.userRole.upsert({
+      where: { userId_roleId: { userId: supplierUser.id, roleId: rolesMap['SUPPLIER'] } },
+      update: {},
+      create: { userId: supplierUser.id, roleId: rolesMap['SUPPLIER'] },
+    });
+  }
+  console.log(`✅ Usuario Proveedor creado: ${supplierEmail} / ${supplierPassword}`);
+
   // 4. CIUDADES Y SUCURSALES
   const cityLP = await prisma.city.upsert({
     where: { name: 'La Paz' },
@@ -177,7 +267,7 @@ async function main() {
   });
 
   const locLPWarehouse = await prisma.inventoryLocation.upsert({
-    where: { id: '00000000-0000-0000-0001-000000000001' },
+    where: { id: '00000000-0000-0001-0001-000000000001' },
     update: {},
     create: {
       id: '00000000-0000-0001-0001-000000000001',
@@ -188,7 +278,7 @@ async function main() {
   });
 
   const locLPFloor = await prisma.inventoryLocation.upsert({
-    where: { id: '00000000-0000-0000-0001-000000000002' },
+    where: { id: '00000000-0000-0001-0001-000000000002' },
     update: {},
     create: {
       id: '00000000-0000-0001-0001-000000000002',
@@ -212,7 +302,7 @@ async function main() {
   });
 
   const locSCFloor = await prisma.inventoryLocation.upsert({
-    where: { id: '00000000-0000-0000-0002-000000000001' },
+    where: { id: '00000000-0000-0002-0001-000000000001' },
     update: {},
     create: {
       id: '00000000-0000-0002-0001-000000000001',
