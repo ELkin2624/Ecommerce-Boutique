@@ -39,7 +39,15 @@ funcionalidades inteligentes que apoyen tanto al cliente como a la administraci�
 de la empresa. Entre ellas se podrá implementar un asistente 
 virtual/recomendador de prendas, capaz de sugerir productos considerando 
 preferencias del cliente, historial de navegación o compra, temporada, categoría, 
-talla y disponibilidad. 
+talla y disponibilidad.
+
+***Provador virtual***
+***Manejar la venta al por mayo y menor***
+***sistema de pagos (efectivo, QR y tarjeta)***
+***Soportar ventas en linea y fisica***
+***Reportes generativos***
+***Web offline con BD local y si hay conexion subida o actualizacion en la nube***
+
 
 2. Objetivo general 
 Desarrollar una plataforma inteligente de comercio electrónico para una cadena 

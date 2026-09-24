@@ -144,6 +144,7 @@ export interface Product {
   variants: ProductVariant[];
   images?: ProductImage[];
   coverImage?: string | null;
+  arImageUrl?: string | null;
   variantsCount?: number;
   availableStock?: number;
   priceRange?: { min: number; max: number };

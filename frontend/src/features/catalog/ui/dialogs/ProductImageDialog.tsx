@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Upload, Star, Trash2, Image as ImageIcon, Check, Plus } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Upload, Star, Trash2, Image as ImageIcon, Check, Plus, Sparkles } from 'lucide-react';
 import type { Product } from '@/shared/types/api';
 import { Dialog } from '@/shared/ui/Dialog';
 import { Button } from '@/shared/ui/Button';
@@ -7,6 +7,7 @@ import { Input } from '@/shared/ui/Input';
 import { Badge } from '@/shared/ui/Badge';
 import { toast } from '@/shared/ui/Toast';
 import { fileToOptimizedDataUrl } from '@/shared/lib/image-utils';
+import { apiClient } from '@/shared/api/axios-client';
 
 interface ProductImageDialogProps {
   open: boolean;
@@ -29,11 +30,59 @@ export function ProductImageDialog({
   const [isCover, setIsCover] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isProcessingFile, setIsProcessingFile] = useState(false);
+  const [arImageUrl, setArImageUrl] = useState<string | null>(product?.arImageUrl || null);
+  const [isProcessingAr, setIsProcessingAr] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (product) {
+      setArImageUrl(product.arImageUrl || null);
+    }
+  }, [product]);
 
   if (!product) return null;
 
   const images = product.images || [];
+
+  const handleRemoveBackgroundForAr = async (customImageUrl?: string) => {
+    setIsProcessingAr(true);
+    try {
+      const targetImage =
+        customImageUrl ||
+        imageUrl ||
+        product.images?.find((i) => i.isCover)?.imageUrl ||
+        product.images?.[0]?.imageUrl;
+
+      if (!targetImage) {
+        toast.error('Sin imagen', 'Debes tener al menos una foto de producto para aislar el fondo');
+        return;
+      }
+
+      const res = await apiClient.post(`/catalog/products/${product.id}/ar-image/remove-background`, {
+        imageUrl: targetImage,
+      });
+
+      setArImageUrl(res.data.arImageUrl);
+      toast.success(
+        '¡Prenda AR Lista!',
+        `Fondo eliminado con IA (${res.data.modelUsed}). Textura WebP con canal alfa optimizada.`
+      );
+    } catch (err: any) {
+      toast.error('Error al aislar prenda', err.response?.data?.message || err.message);
+    } finally {
+      setIsProcessingAr(false);
+    }
+  };
+
+  const handleRemoveArImage = async () => {
+    try {
+      await apiClient.delete(`/catalog/products/${product.id}/ar-image`);
+      setArImageUrl(null);
+      toast.info('Textura AR restablecida', 'Se usará la plantilla estándar en el probador');
+    } catch (err: any) {
+      toast.error('Error', err.response?.data?.message || err.message);
+    }
+  };
 
   // Manejador del selector de archivos del sistema operativo
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,6 +207,83 @@ export function ProductImageDialog({
                 </div>
               ))}
             </div>
+          )}
+        </div>
+
+        {/* Sección Probador Virtual AR (Textura Recortada sin Fondo WebP) */}
+        <div className="p-4 rounded-xl border border-indigo-500/20 bg-indigo-50/50 dark:bg-indigo-950/20 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-xs">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                  <span>Probador Virtual AR (Prenda sin Fondo)</span>
+                  {arImageUrl && (
+                    <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-[10px] font-semibold py-0">
+                      ✓ Textura WebP Activa
+                    </Badge>
+                  )}
+                </h4>
+                <p className="text-[11px] text-muted-foreground">
+                  Textura optimizada en WebP con canal alfa para renderizado Skia a 60 FPS en la app móvil.
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              isLoading={isProcessingAr}
+              onClick={() => handleRemoveBackgroundForAr()}
+              disabled={images.length === 0}
+              className="border-indigo-300 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 dark:border-indigo-800 text-xs gap-1.5 shadow-2xs font-semibold"
+            >
+              <Sparkles className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>{arImageUrl ? 'Re-recortar con IA' : 'Quitar Fondo con IA'}</span>
+            </Button>
+          </div>
+
+          {arImageUrl ? (
+            <div className="flex items-center gap-4 p-3 rounded-lg border bg-background/80">
+              <div
+                className="w-16 h-16 rounded-lg border p-1 flex items-center justify-center shrink-0 relative overflow-hidden"
+                style={{
+                  backgroundImage: 'repeating-conic-gradient(#cbd5e1 0% 25%, transparent 0% 50%)',
+                  backgroundSize: '10px 10px',
+                }}
+              >
+                <img
+                  src={arImageUrl}
+                  alt="Prenda AR transparente"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+              <div className="flex-1 min-w-0 space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-semibold text-foreground">Textura Lista para la Cámara</span>
+                  <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">WEBP / RGBA</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  Esta es la prenda que el cliente verá proyectada sobre su cuerpo en la cámara frontal.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                onClick={handleRemoveArImage}
+              >
+                Quitar
+              </Button>
+            </div>
+          ) : (
+            <p className="text-[11px] text-muted-foreground italic">
+              Aún no se ha generado la versión transparente para esta prenda. Haz clic en "Quitar Fondo con IA" para procesar la foto de portada.
+            </p>
           )}
         </div>
 

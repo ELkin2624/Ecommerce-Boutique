@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+  <xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+  <uml:Model xmi:type="uml:Model" name="FashionStore_DomainModel" xmi:id="Model_FashionStore">
+    <packagedElement xmi:type="uml:PrimitiveType" name="String" xmi:id="Type_String"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="Integer" xmi:id="Type_Integer"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="Boolean" xmi:id="Type_Boolean"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="Decimal" xmi:id="Type_Decimal"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="UUID" xmi:id="Type_UUID"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="DateTime" xmi:id="Type_DateTime"/>
+    <packagedElement xmi:type="uml:PrimitiveType" name="JSON" xmi:id="Type_JSON"/>
+    <packagedElement xmi:type="uml:Package" name="Security_and_Users" xmi:id="Pkg_Security">
+      <packagedElement xmi:type="uml:Class" name="User" xmi:id="Class_User">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_User_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_User_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="email" type="Type_String" visibility="private" xmi:id="Attr_Class_User_email"/>
+        <ownedAttribute xmi:type="uml:Property" name="password_hash" type="Type_String" visibility="private" xmi:id="Attr_Class_User_password_hash"/>
+        <ownedAttribute xmi:type="uml:Property" name="preferred_size" type="Type_String" visibility="private" xmi:id="Attr_Class_User_preferred_size"/>
+        <ownedAttribute xmi:type="uml:Property" name="is_active" type="Type_Boolean" visibility="private" xmi:id="Attr_Class_User_is_active"/>
+        <ownedAttribute xmi:type="uml:Property" name="created_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_User_created_at"/>
+        <ownedOperation xmi:type="uml:Operation" name="validatePassword" visibility="public" xmi:id="Op_Class_User_validatePassword">
+          <ownedParameter name="return" type="Type_Boolean" direction="return" xmi:id="Param_Class_User_validatePassword_ret"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" name="updateProfile" visibility="public" xmi:id="Op_Class_User_updateProfile">
+          <ownedParameter name="return" type="Type_Boolean" direction="return" xmi:id="Param_Class_User_updateProfile_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Role" xmi:id="Class_Role">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Role_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_Role_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="description" type="Type_String" visibility="private" xmi:id="Attr_Class_Role_description"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Permission" xmi:id="Class_Permission">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Permission_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="resource" type="Type_String" visibility="private" xmi:id="Attr_Class_Permission_resource"/>
+        <ownedAttribute xmi:type="uml:Property" name="action" type="Type_String" visibility="private" xmi:id="Attr_Class_Permission_action"/>
+        <ownedAttribute xmi:type="uml:Property" name="description" type="Type_String" visibility="private" xmi:id="Attr_Class_Permission_description"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="UserRole" xmi:id="Class_UserRole">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_UserRole_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="user_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_UserRole_user_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="role_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_UserRole_role_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="assigned_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_UserRole_assigned_at"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" name="Catalog_and_Products" xmi:id="Pkg_Catalog">
+      <packagedElement xmi:type="uml:Class" name="Category" xmi:id="Class_Category">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Category_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_Category_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="description" type="Type_String" visibility="private" xmi:id="Attr_Class_Category_description"/>
+        <ownedAttribute xmi:type="uml:Property" name="is_active" type="Type_Boolean" visibility="private" xmi:id="Attr_Class_Category_is_active"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Product" xmi:id="Class_Product">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Product_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_Product_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="description" type="Type_String" visibility="private" xmi:id="Attr_Class_Product_description"/>
+        <ownedAttribute xmi:type="uml:Property" name="brand" type="Type_String" visibility="private" xmi:id="Attr_Class_Product_brand"/>
+        <ownedAttribute xmi:type="uml:Property" name="category_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Product_category_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="is_active" type="Type_Boolean" visibility="private" xmi:id="Attr_Class_Product_is_active"/>
+        <ownedOperation xmi:type="uml:Operation" name="getVariants" visibility="public" xmi:id="Op_Class_Product_getVariants">
+          <ownedParameter name="return" type="Type_JSON" direction="return" xmi:id="Param_Class_Product_getVariants_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="ProductVariant" xmi:id="Class_ProductVariant">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ProductVariant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="product_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ProductVariant_product_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="sku" type="Type_String" visibility="private" xmi:id="Attr_Class_ProductVariant_sku"/>
+        <ownedAttribute xmi:type="uml:Property" name="color" type="Type_String" visibility="private" xmi:id="Attr_Class_ProductVariant_color"/>
+        <ownedAttribute xmi:type="uml:Property" name="size" type="Type_String" visibility="private" xmi:id="Attr_Class_ProductVariant_size"/>
+        <ownedAttribute xmi:type="uml:Property" name="price" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_ProductVariant_price"/>
+        <ownedAttribute xmi:type="uml:Property" name="cost" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_ProductVariant_cost"/>
+        <ownedAttribute xmi:type="uml:Property" name="barcode" type="Type_String" visibility="private" xmi:id="Attr_Class_ProductVariant_barcode"/>
+        <ownedAttribute xmi:type="uml:Property" name="is_active" type="Type_Boolean" visibility="private" xmi:id="Attr_Class_ProductVariant_is_active"/>
+        <ownedOperation xmi:type="uml:Operation" name="calculateFitScore" visibility="public" xmi:id="Op_Class_ProductVariant_calculateFitScore">
+          <ownedParameter name="return" type="Type_Decimal" direction="return" xmi:id="Param_Class_ProductVariant_calculateFitScore_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="FittingMeasurement" xmi:id="Class_FittingMeasurement">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_FittingMeasurement_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_FittingMeasurement_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="chest_cm" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_FittingMeasurement_chest_cm"/>
+        <ownedAttribute xmi:type="uml:Property" name="waist_cm" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_FittingMeasurement_waist_cm"/>
+        <ownedAttribute xmi:type="uml:Property" name="hips_cm" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_FittingMeasurement_hips_cm"/>
+        <ownedAttribute xmi:type="uml:Property" name="length_cm" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_FittingMeasurement_length_cm"/>
+        <ownedAttribute xmi:type="uml:Property" name="asset_3d_url" type="Type_String" visibility="private" xmi:id="Attr_Class_FittingMeasurement_asset_3d_url"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="ProductImage" xmi:id="Class_ProductImage">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ProductImage_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="product_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ProductImage_product_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="url" type="Type_String" visibility="private" xmi:id="Attr_Class_ProductImage_url"/>
+        <ownedAttribute xmi:type="uml:Property" name="is_cover" type="Type_Boolean" visibility="private" xmi:id="Attr_Class_ProductImage_is_cover"/>
+        <ownedAttribute xmi:type="uml:Property" name="sort_order" type="Type_Integer" visibility="private" xmi:id="Attr_Class_ProductImage_sort_order"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" name="Inventory_and_Branches" xmi:id="Pkg_Inventory">
+      <packagedElement xmi:type="uml:Class" name="City" xmi:id="Class_City">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_City_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_City_name"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Branch" xmi:id="Class_Branch">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Branch_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="city_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Branch_city_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_Branch_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="address" type="Type_String" visibility="private" xmi:id="Attr_Class_Branch_address"/>
+        <ownedAttribute xmi:type="uml:Property" name="phone" type="Type_String" visibility="private" xmi:id="Attr_Class_Branch_phone"/>
+        <ownedAttribute xmi:type="uml:Property" name="lat_long" type="Type_String" visibility="private" xmi:id="Attr_Class_Branch_lat_long"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="WarehouseLocation" xmi:id="Class_WarehouseLocation">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_WarehouseLocation_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="branch_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_WarehouseLocation_branch_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="name" type="Type_String" visibility="private" xmi:id="Attr_Class_WarehouseLocation_name"/>
+        <ownedAttribute xmi:type="uml:Property" name="type" type="Type_String" visibility="private" xmi:id="Attr_Class_WarehouseLocation_type"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="InventoryStock" xmi:id="Class_InventoryStock">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryStock_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryStock_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="location_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryStock_location_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="quantity" type="Type_Integer" visibility="private" xmi:id="Attr_Class_InventoryStock_quantity"/>
+        <ownedAttribute xmi:type="uml:Property" name="min_stock" type="Type_Integer" visibility="private" xmi:id="Attr_Class_InventoryStock_min_stock"/>
+        <ownedOperation xmi:type="uml:Operation" name="updateStock" visibility="public" xmi:id="Op_Class_InventoryStock_updateStock">
+          <ownedParameter name="return" type="Type_Boolean" direction="return" xmi:id="Param_Class_InventoryStock_updateStock_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="InventoryMovement" xmi:id="Class_InventoryMovement">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryMovement_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryMovement_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="location_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryMovement_location_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="type" type="Type_String" visibility="private" xmi:id="Attr_Class_InventoryMovement_type"/>
+        <ownedAttribute xmi:type="uml:Property" name="quantity" type="Type_Integer" visibility="private" xmi:id="Attr_Class_InventoryMovement_quantity"/>
+        <ownedAttribute xmi:type="uml:Property" name="reference_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InventoryMovement_reference_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="created_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_InventoryMovement_created_at"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" name="Reservations_and_Fitting" xmi:id="Pkg_Reservations">
+      <packagedElement xmi:type="uml:Class" name="Reservation" xmi:id="Class_Reservation">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Reservation_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="user_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Reservation_user_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="branch_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Reservation_branch_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="status" type="Type_String" visibility="private" xmi:id="Attr_Class_Reservation_status"/>
+        <ownedAttribute xmi:type="uml:Property" name="fitting_room_no" type="Type_Integer" visibility="private" xmi:id="Attr_Class_Reservation_fitting_room_no"/>
+        <ownedAttribute xmi:type="uml:Property" name="expires_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_Reservation_expires_at"/>
+        <ownedAttribute xmi:type="uml:Property" name="qr_code" type="Type_String" visibility="private" xmi:id="Attr_Class_Reservation_qr_code"/>
+        <ownedOperation xmi:type="uml:Operation" name="transitionTo" visibility="public" xmi:id="Op_Class_Reservation_transitionTo">
+          <ownedParameter name="return" type="Type_Boolean" direction="return" xmi:id="Param_Class_Reservation_transitionTo_ret"/>
+        </ownedOperation>
+        <ownedOperation xmi:type="uml:Operation" name="assignFittingRoom" visibility="public" xmi:id="Op_Class_Reservation_assignFittingRoom">
+          <ownedParameter name="return" type="Type_Boolean" direction="return" xmi:id="Param_Class_Reservation_assignFittingRoom_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="ReservationItem" xmi:id="Class_ReservationItem">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ReservationItem_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="reservation_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ReservationItem_reservation_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_ReservationItem_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="quantity" type="Type_Integer" visibility="private" xmi:id="Attr_Class_ReservationItem_quantity"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Package" name="Orders_and_Payments" xmi:id="Pkg_Orders">
+      <packagedElement xmi:type="uml:Class" name="Cart" xmi:id="Class_Cart">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Cart_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="user_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Cart_user_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="created_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_Cart_created_at"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="CartItem" xmi:id="Class_CartItem">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_CartItem_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="cart_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_CartItem_cart_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_CartItem_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="quantity" type="Type_Integer" visibility="private" xmi:id="Attr_Class_CartItem_quantity"/>
+        <ownedAttribute xmi:type="uml:Property" name="price" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_CartItem_price"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Order" xmi:id="Class_Order">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Order_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="user_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Order_user_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="branch_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Order_branch_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="type" type="Type_String" visibility="private" xmi:id="Attr_Class_Order_type"/>
+        <ownedAttribute xmi:type="uml:Property" name="status" type="Type_String" visibility="private" xmi:id="Attr_Class_Order_status"/>
+        <ownedAttribute xmi:type="uml:Property" name="total" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_Order_total"/>
+        <ownedAttribute xmi:type="uml:Property" name="payment_ref" type="Type_String" visibility="private" xmi:id="Attr_Class_Order_payment_ref"/>
+        <ownedAttribute xmi:type="uml:Property" name="created_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_Order_created_at"/>
+        <ownedOperation xmi:type="uml:Operation" name="calculateTotal" visibility="public" xmi:id="Op_Class_Order_calculateTotal">
+          <ownedParameter name="return" type="Type_Decimal" direction="return" xmi:id="Param_Class_Order_calculateTotal_ret"/>
+        </ownedOperation>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="OrderItem" xmi:id="Class_OrderItem">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_OrderItem_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="order_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_OrderItem_order_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="variant_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_OrderItem_variant_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="quantity" type="Type_Integer" visibility="private" xmi:id="Attr_Class_OrderItem_quantity"/>
+        <ownedAttribute xmi:type="uml:Property" name="unit_price" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_OrderItem_unit_price"/>
+        <ownedAttribute xmi:type="uml:Property" name="subtotal" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_OrderItem_subtotal"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="Payment" xmi:id="Class_Payment">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Payment_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="order_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_Payment_order_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="method" type="Type_String" visibility="private" xmi:id="Attr_Class_Payment_method"/>
+        <ownedAttribute xmi:type="uml:Property" name="status" type="Type_String" visibility="private" xmi:id="Attr_Class_Payment_status"/>
+        <ownedAttribute xmi:type="uml:Property" name="amount" type="Type_Decimal" visibility="private" xmi:id="Attr_Class_Payment_amount"/>
+        <ownedAttribute xmi:type="uml:Property" name="transaction_ref" type="Type_String" visibility="private" xmi:id="Attr_Class_Payment_transaction_ref"/>
+        <ownedAttribute xmi:type="uml:Property" name="paid_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_Payment_paid_at"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="InvoiceSIN" xmi:id="Class_InvoiceSIN">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InvoiceSIN_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="order_id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_InvoiceSIN_order_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="invoice_number" type="Type_String" visibility="private" xmi:id="Attr_Class_InvoiceSIN_invoice_number"/>
+        <ownedAttribute xmi:type="uml:Property" name="authorization_code" type="Type_String" visibility="private" xmi:id="Attr_Class_InvoiceSIN_authorization_code"/>
+        <ownedAttribute xmi:type="uml:Property" name="control_code" type="Type_String" visibility="private" xmi:id="Attr_Class_InvoiceSIN_control_code"/>
+        <ownedAttribute xmi:type="uml:Property" name="nit_customer" type="Type_String" visibility="private" xmi:id="Attr_Class_InvoiceSIN_nit_customer"/>
+        <ownedAttribute xmi:type="uml:Property" name="xml_signed" type="Type_String" visibility="private" xmi:id="Attr_Class_InvoiceSIN_xml_signed"/>
+      </packagedElement>
+      <packagedElement xmi:type="uml:Class" name="OutboxTransaction" xmi:id="Class_OutboxTransaction">
+        <ownedAttribute xmi:type="uml:Property" name="id" type="Type_UUID" visibility="private" xmi:id="Attr_Class_OutboxTransaction_id"/>
+        <ownedAttribute xmi:type="uml:Property" name="payload_json" type="Type_JSON" visibility="private" xmi:id="Attr_Class_OutboxTransaction_payload_json"/>
+        <ownedAttribute xmi:type="uml:Property" name="sync_status" type="Type_String" visibility="private" xmi:id="Attr_Class_OutboxTransaction_sync_status"/>
+        <ownedAttribute xmi:type="uml:Property" name="created_at" type="Type_DateTime" visibility="private" xmi:id="Attr_Class_OutboxTransaction_created_at"/>
+        <ownedAttribute xmi:type="uml:Property" name="retry_count" type="Type_Integer" visibility="private" xmi:id="Attr_Class_OutboxTransaction_retry_count"/>
+      </packagedElement>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="has_roles" xmi:id="Conn_User_UserRole">
+      <memberEnd xmi:idref="End_Conn_User_UserRole_src"/>
+      <memberEnd xmi:idref="End_Conn_User_UserRole_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_User" association="Conn_User_UserRole" xmi:id="End_Conn_User_UserRole_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_User_UserRole_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_User_UserRole_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_UserRole" association="Conn_User_UserRole" xmi:id="End_Conn_User_UserRole_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_User_UserRole_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_User_UserRole_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="role_assigned" xmi:id="Conn_Role_UserRole">
+      <memberEnd xmi:idref="End_Conn_Role_UserRole_src"/>
+      <memberEnd xmi:idref="End_Conn_Role_UserRole_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Role" association="Conn_Role_UserRole" xmi:id="End_Conn_Role_UserRole_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Role_UserRole_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Role_UserRole_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_UserRole" association="Conn_Role_UserRole" xmi:id="End_Conn_Role_UserRole_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Role_UserRole_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Role_UserRole_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="categorizes" xmi:id="Conn_Cat_Prod">
+      <memberEnd xmi:idref="End_Conn_Cat_Prod_src"/>
+      <memberEnd xmi:idref="End_Conn_Cat_Prod_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Category" association="Conn_Cat_Prod" xmi:id="End_Conn_Cat_Prod_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Cat_Prod_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Cat_Prod_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Product" association="Conn_Cat_Prod" xmi:id="End_Conn_Cat_Prod_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Cat_Prod_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Cat_Prod_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="variants" xmi:id="Conn_Prod_Var">
+      <memberEnd xmi:idref="End_Conn_Prod_Var_src"/>
+      <memberEnd xmi:idref="End_Conn_Prod_Var_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Product" association="Conn_Prod_Var" xmi:id="End_Conn_Prod_Var_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Prod_Var_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Prod_Var_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductVariant" association="Conn_Prod_Var" xmi:id="End_Conn_Prod_Var_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Prod_Var_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Prod_Var_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="has_measurement" xmi:id="Conn_Var_Fit">
+      <memberEnd xmi:idref="End_Conn_Var_Fit_src"/>
+      <memberEnd xmi:idref="End_Conn_Var_Fit_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductVariant" association="Conn_Var_Fit" xmi:id="End_Conn_Var_Fit_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Var_Fit_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Var_Fit_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_FittingMeasurement" association="Conn_Var_Fit" xmi:id="End_Conn_Var_Fit_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Var_Fit_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Var_Fit_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="images" xmi:id="Conn_Prod_Img">
+      <memberEnd xmi:idref="End_Conn_Prod_Img_src"/>
+      <memberEnd xmi:idref="End_Conn_Prod_Img_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Product" association="Conn_Prod_Img" xmi:id="End_Conn_Prod_Img_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Prod_Img_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Prod_Img_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductImage" association="Conn_Prod_Img" xmi:id="End_Conn_Prod_Img_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Prod_Img_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Prod_Img_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="has_branches" xmi:id="Conn_City_Branch">
+      <memberEnd xmi:idref="End_Conn_City_Branch_src"/>
+      <memberEnd xmi:idref="End_Conn_City_Branch_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_City" association="Conn_City_Branch" xmi:id="End_Conn_City_Branch_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_City_Branch_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_City_Branch_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Branch" association="Conn_City_Branch" xmi:id="End_Conn_City_Branch_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_City_Branch_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_City_Branch_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="has_locations" xmi:id="Conn_Branch_Loc">
+      <memberEnd xmi:idref="End_Conn_Branch_Loc_src"/>
+      <memberEnd xmi:idref="End_Conn_Branch_Loc_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Branch" association="Conn_Branch_Loc" xmi:id="End_Conn_Branch_Loc_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Branch_Loc_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Branch_Loc_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_WarehouseLocation" association="Conn_Branch_Loc" xmi:id="End_Conn_Branch_Loc_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Branch_Loc_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Branch_Loc_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="stock_items" xmi:id="Conn_Var_Stock">
+      <memberEnd xmi:idref="End_Conn_Var_Stock_src"/>
+      <memberEnd xmi:idref="End_Conn_Var_Stock_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductVariant" association="Conn_Var_Stock" xmi:id="End_Conn_Var_Stock_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Var_Stock_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Var_Stock_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_InventoryStock" association="Conn_Var_Stock" xmi:id="End_Conn_Var_Stock_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Var_Stock_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Var_Stock_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="location_stock" xmi:id="Conn_Loc_Stock">
+      <memberEnd xmi:idref="End_Conn_Loc_Stock_src"/>
+      <memberEnd xmi:idref="End_Conn_Loc_Stock_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_WarehouseLocation" association="Conn_Loc_Stock" xmi:id="End_Conn_Loc_Stock_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Loc_Stock_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Loc_Stock_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_InventoryStock" association="Conn_Loc_Stock" xmi:id="End_Conn_Loc_Stock_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Loc_Stock_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Loc_Stock_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="movements" xmi:id="Conn_Stock_Mov">
+      <memberEnd xmi:idref="End_Conn_Stock_Mov_src"/>
+      <memberEnd xmi:idref="End_Conn_Stock_Mov_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_InventoryStock" association="Conn_Stock_Mov" xmi:id="End_Conn_Stock_Mov_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Stock_Mov_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Stock_Mov_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_InventoryMovement" association="Conn_Stock_Mov" xmi:id="End_Conn_Stock_Mov_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Stock_Mov_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Stock_Mov_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="places_reservation" xmi:id="Conn_User_Res">
+      <memberEnd xmi:idref="End_Conn_User_Res_src"/>
+      <memberEnd xmi:idref="End_Conn_User_Res_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_User" association="Conn_User_Res" xmi:id="End_Conn_User_Res_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_User_Res_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_User_Res_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Reservation" association="Conn_User_Res" xmi:id="End_Conn_User_Res_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_User_Res_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_User_Res_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="receives_reservation" xmi:id="Conn_Branch_Res">
+      <memberEnd xmi:idref="End_Conn_Branch_Res_src"/>
+      <memberEnd xmi:idref="End_Conn_Branch_Res_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Branch" association="Conn_Branch_Res" xmi:id="End_Conn_Branch_Res_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Branch_Res_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Branch_Res_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Reservation" association="Conn_Branch_Res" xmi:id="End_Conn_Branch_Res_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Branch_Res_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Branch_Res_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="contains_items" xmi:id="Conn_Res_Item">
+      <memberEnd xmi:idref="End_Conn_Res_Item_src"/>
+      <memberEnd xmi:idref="End_Conn_Res_Item_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Reservation" association="Conn_Res_Item" xmi:id="End_Conn_Res_Item_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Res_Item_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Res_Item_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ReservationItem" association="Conn_Res_Item" xmi:id="End_Conn_Res_Item_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Res_Item_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Res_Item_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="reserved_variant" xmi:id="Conn_Var_RItem">
+      <memberEnd xmi:idref="End_Conn_Var_RItem_src"/>
+      <memberEnd xmi:idref="End_Conn_Var_RItem_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductVariant" association="Conn_Var_RItem" xmi:id="End_Conn_Var_RItem_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Var_RItem_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Var_RItem_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ReservationItem" association="Conn_Var_RItem" xmi:id="End_Conn_Var_RItem_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Var_RItem_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Var_RItem_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="owns_cart" xmi:id="Conn_User_Cart">
+      <memberEnd xmi:idref="End_Conn_User_Cart_src"/>
+      <memberEnd xmi:idref="End_Conn_User_Cart_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_User" association="Conn_User_Cart" xmi:id="End_Conn_User_Cart_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_User_Cart_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_User_Cart_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Cart" association="Conn_User_Cart" xmi:id="End_Conn_User_Cart_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_User_Cart_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_User_Cart_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="cart_items" xmi:id="Conn_Cart_Item">
+      <memberEnd xmi:idref="End_Conn_Cart_Item_src"/>
+      <memberEnd xmi:idref="End_Conn_Cart_Item_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Cart" association="Conn_Cart_Item" xmi:id="End_Conn_Cart_Item_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Cart_Item_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Cart_Item_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_CartItem" association="Conn_Cart_Item" xmi:id="End_Conn_Cart_Item_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Cart_Item_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Cart_Item_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="places_order" xmi:id="Conn_User_Order">
+      <memberEnd xmi:idref="End_Conn_User_Order_src"/>
+      <memberEnd xmi:idref="End_Conn_User_Order_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_User" association="Conn_User_Order" xmi:id="End_Conn_User_Order_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_User_Order_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_User_Order_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Order" association="Conn_User_Order" xmi:id="End_Conn_User_Order_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_User_Order_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_User_Order_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="order_branch" xmi:id="Conn_Branch_Order">
+      <memberEnd xmi:idref="End_Conn_Branch_Order_src"/>
+      <memberEnd xmi:idref="End_Conn_Branch_Order_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Branch" association="Conn_Branch_Order" xmi:id="End_Conn_Branch_Order_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Branch_Order_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Branch_Order_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Order" association="Conn_Branch_Order" xmi:id="End_Conn_Branch_Order_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Branch_Order_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Branch_Order_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="order_items" xmi:id="Conn_Order_Item">
+      <memberEnd xmi:idref="End_Conn_Order_Item_src"/>
+      <memberEnd xmi:idref="End_Conn_Order_Item_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Order" association="Conn_Order_Item" xmi:id="End_Conn_Order_Item_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Order_Item_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Order_Item_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_OrderItem" association="Conn_Order_Item" xmi:id="End_Conn_Order_Item_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Order_Item_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Order_Item_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="ordered_variant" xmi:id="Conn_Var_OItem">
+      <memberEnd xmi:idref="End_Conn_Var_OItem_src"/>
+      <memberEnd xmi:idref="End_Conn_Var_OItem_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_ProductVariant" association="Conn_Var_OItem" xmi:id="End_Conn_Var_OItem_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Var_OItem_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Var_OItem_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_OrderItem" association="Conn_Var_OItem" xmi:id="End_Conn_Var_OItem_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Var_OItem_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="*" xmi:id="UV_Conn_Var_OItem_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="order_payment" xmi:id="Conn_Order_Pay">
+      <memberEnd xmi:idref="End_Conn_Order_Pay_src"/>
+      <memberEnd xmi:idref="End_Conn_Order_Pay_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Order" association="Conn_Order_Pay" xmi:id="End_Conn_Order_Pay_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Order_Pay_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Order_Pay_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Payment" association="Conn_Order_Pay" xmi:id="End_Conn_Order_Pay_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Order_Pay_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Order_Pay_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" name="order_invoice" xmi:id="Conn_Order_Inv">
+      <memberEnd xmi:idref="End_Conn_Order_Inv_src"/>
+      <memberEnd xmi:idref="End_Conn_Order_Inv_tgt"/>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_Order" association="Conn_Order_Inv" xmi:id="End_Conn_Order_Inv_src">
+        <lowerValue xmi:type="uml:LiteralInteger" value="1" xmi:id="LV_Conn_Order_Inv_src"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Order_Inv_src"/>
+      </ownedEnd>
+      <ownedEnd xmi:type="uml:Property" name="" type="Class_InvoiceSIN" association="Conn_Order_Inv" xmi:id="End_Conn_Order_Inv_tgt">
+        <lowerValue xmi:type="uml:LiteralInteger" value="0" xmi:id="LV_Conn_Order_Inv_tgt"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" value="1" xmi:id="UV_Conn_Order_Inv_tgt"/>
+      </ownedEnd>
+    </packagedElement>
+  </uml:Model>
+  <xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+    <elements>
+      <element xmi:idref="Class_User" name="User" ea_type="Class">
+        <properties package="Pkg_Security" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Role" name="Role" ea_type="Class">
+        <properties package="Pkg_Security" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Permission" name="Permission" ea_type="Class">
+        <properties package="Pkg_Security" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_UserRole" name="UserRole" ea_type="Class">
+        <properties package="Pkg_Security" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Category" name="Category" ea_type="Class">
+        <properties package="Pkg_Catalog" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Product" name="Product" ea_type="Class">
+        <properties package="Pkg_Catalog" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_ProductVariant" name="ProductVariant" ea_type="Class">
+        <properties package="Pkg_Catalog" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_FittingMeasurement" name="FittingMeasurement" ea_type="Class">
+        <properties package="Pkg_Catalog" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_ProductImage" name="ProductImage" ea_type="Class">
+        <properties package="Pkg_Catalog" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_City" name="City" ea_type="Class">
+        <properties package="Pkg_Inventory" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Branch" name="Branch" ea_type="Class">
+        <properties package="Pkg_Inventory" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_WarehouseLocation" name="WarehouseLocation" ea_type="Class">
+        <properties package="Pkg_Inventory" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_InventoryStock" name="InventoryStock" ea_type="Class">
+        <properties package="Pkg_Inventory" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_InventoryMovement" name="InventoryMovement" ea_type="Class">
+        <properties package="Pkg_Inventory" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Reservation" name="Reservation" ea_type="Class">
+        <properties package="Pkg_Reservations" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_ReservationItem" name="ReservationItem" ea_type="Class">
+        <properties package="Pkg_Reservations" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Cart" name="Cart" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_CartItem" name="CartItem" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Order" name="Order" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_OrderItem" name="OrderItem" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_Payment" name="Payment" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_InvoiceSIN" name="InvoiceSIN" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+      <element xmi:idref="Class_OutboxTransaction" name="OutboxTransaction" ea_type="Class">
+        <properties package="Pkg_Orders" isSpecification="false" sType="Class" nType="0" scope="public"/>
+      </element>
+    </elements>
+    <connectors>
+      <connector xmi:idref="Conn_User_UserRole" name="has_roles">
+        <source xmi:idref="Class_User">
+          <model ea_localid="0" type="Class" name="Class_User"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_UserRole">
+          <model ea_localid="0" type="Class" name="Class_UserRole"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Role_UserRole" name="role_assigned">
+        <source xmi:idref="Class_Role">
+          <model ea_localid="0" type="Class" name="Class_Role"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_UserRole">
+          <model ea_localid="0" type="Class" name="Class_UserRole"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Cat_Prod" name="categorizes">
+        <source xmi:idref="Class_Category">
+          <model ea_localid="0" type="Class" name="Class_Category"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Product">
+          <model ea_localid="0" type="Class" name="Class_Product"/>
+          <type multiplicity="0..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Prod_Var" name="variants">
+        <source xmi:idref="Class_Product">
+          <model ea_localid="0" type="Class" name="Class_Product"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_ProductVariant">
+          <model ea_localid="0" type="Class" name="Class_ProductVariant"/>
+          <type multiplicity="1..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Var_Fit" name="has_measurement">
+        <source xmi:idref="Class_ProductVariant">
+          <model ea_localid="0" type="Class" name="Class_ProductVariant"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_FittingMeasurement">
+          <model ea_localid="0" type="Class" name="Class_FittingMeasurement"/>
+          <type multiplicity="0..1" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Prod_Img" name="images">
+        <source xmi:idref="Class_Product">
+          <model ea_localid="0" type="Class" name="Class_Product"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_ProductImage">
+          <model ea_localid="0" type="Class" name="Class_ProductImage"/>
+          <type multiplicity="0..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_City_Branch" name="has_branches">
+        <source xmi:idref="Class_City">
+          <model ea_localid="0" type="Class" name="Class_City"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Branch">
+          <model ea_localid="0" type="Class" name="Class_Branch"/>
+          <type multiplicity="1..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Branch_Loc" name="has_locations">
+        <source xmi:idref="Class_Branch">
+          <model ea_localid="0" type="Class" name="Class_Branch"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_WarehouseLocation">
+          <model ea_localid="0" type="Class" name="Class_WarehouseLocation"/>
+          <type multiplicity="1..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Var_Stock" name="stock_items">
+        <source xmi:idref="Class_ProductVariant">
+          <model ea_localid="0" type="Class" name="Class_ProductVariant"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_InventoryStock">
+          <model ea_localid="0" type="Class" name="Class_InventoryStock"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Loc_Stock" name="location_stock">
+        <source xmi:idref="Class_WarehouseLocation">
+          <model ea_localid="0" type="Class" name="Class_WarehouseLocation"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_InventoryStock">
+          <model ea_localid="0" type="Class" name="Class_InventoryStock"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Stock_Mov" name="movements">
+        <source xmi:idref="Class_InventoryStock">
+          <model ea_localid="0" type="Class" name="Class_InventoryStock"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_InventoryMovement">
+          <model ea_localid="0" type="Class" name="Class_InventoryMovement"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_User_Res" name="places_reservation">
+        <source xmi:idref="Class_User">
+          <model ea_localid="0" type="Class" name="Class_User"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Reservation">
+          <model ea_localid="0" type="Class" name="Class_Reservation"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Branch_Res" name="receives_reservation">
+        <source xmi:idref="Class_Branch">
+          <model ea_localid="0" type="Class" name="Class_Branch"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Reservation">
+          <model ea_localid="0" type="Class" name="Class_Reservation"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Res_Item" name="contains_items">
+        <source xmi:idref="Class_Reservation">
+          <model ea_localid="0" type="Class" name="Class_Reservation"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_ReservationItem">
+          <model ea_localid="0" type="Class" name="Class_ReservationItem"/>
+          <type multiplicity="1..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Var_RItem" name="reserved_variant">
+        <source xmi:idref="Class_ProductVariant">
+          <model ea_localid="0" type="Class" name="Class_ProductVariant"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_ReservationItem">
+          <model ea_localid="0" type="Class" name="Class_ReservationItem"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_User_Cart" name="owns_cart">
+        <source xmi:idref="Class_User">
+          <model ea_localid="0" type="Class" name="Class_User"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Cart">
+          <model ea_localid="0" type="Class" name="Class_Cart"/>
+          <type multiplicity="0..1" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Cart_Item" name="cart_items">
+        <source xmi:idref="Class_Cart">
+          <model ea_localid="0" type="Class" name="Class_Cart"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_CartItem">
+          <model ea_localid="0" type="Class" name="Class_CartItem"/>
+          <type multiplicity="0..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_User_Order" name="places_order">
+        <source xmi:idref="Class_User">
+          <model ea_localid="0" type="Class" name="Class_User"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Order">
+          <model ea_localid="0" type="Class" name="Class_Order"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Branch_Order" name="order_branch">
+        <source xmi:idref="Class_Branch">
+          <model ea_localid="0" type="Class" name="Class_Branch"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Order">
+          <model ea_localid="0" type="Class" name="Class_Order"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Order_Item" name="order_items">
+        <source xmi:idref="Class_Order">
+          <model ea_localid="0" type="Class" name="Class_Order"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_OrderItem">
+          <model ea_localid="0" type="Class" name="Class_OrderItem"/>
+          <type multiplicity="1..*" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Var_OItem" name="ordered_variant">
+        <source xmi:idref="Class_ProductVariant">
+          <model ea_localid="0" type="Class" name="Class_ProductVariant"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_OrderItem">
+          <model ea_localid="0" type="Class" name="Class_OrderItem"/>
+          <type multiplicity="0..*" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Order_Pay" name="order_payment">
+        <source xmi:idref="Class_Order">
+          <model ea_localid="0" type="Class" name="Class_Order"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_Payment">
+          <model ea_localid="0" type="Class" name="Class_Payment"/>
+          <type multiplicity="1" aggregation="2"/>
+        </target>
+        <properties ea_type="Aggregation" subtype="Composite" direction="Source -> Destination"/>
+      </connector>
+      <connector xmi:idref="Conn_Order_Inv" name="order_invoice">
+        <source xmi:idref="Class_Order">
+          <model ea_localid="0" type="Class" name="Class_Order"/>
+          <type multiplicity="1" aggregation="0"/>
+        </source>
+        <target xmi:idref="Class_InvoiceSIN">
+          <model ea_localid="0" type="Class" name="Class_InvoiceSIN"/>
+          <type multiplicity="0..1" aggregation="0"/>
+        </target>
+        <properties ea_type="Association" subtype="Source -> Destination" direction="Source -> Destination"/>
+      </connector>
+    </connectors>
+  </xmi:Extension>
+</xmi:XMI>

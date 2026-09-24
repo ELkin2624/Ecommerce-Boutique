@@ -19,6 +19,7 @@ model User {
   lastName     String         @map("last_name")
   phone        String?
   isActive     Boolean        @default(true) @map("is_active")
+  isWholesaler Boolean        @default(false) @map("is_wholesaler")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
 
@@ -144,8 +145,9 @@ model Product {
   season     Season?          @relation(fields: [seasonId], references: [id])
   collection Collection?      @relation(fields: [collectionId], references: [id])
   supplier   Supplier?        @relation(fields: [supplierId], references: [id])
-  variants   ProductVariant[]
-  images     ProductImage[]
+  arImageUrl   String?          @map("ar_image_url")
+  variants     ProductVariant[]
+  images       ProductImage[]
 
   @@index([categoryId, isActive])
   @@index([seasonId])
@@ -160,6 +162,8 @@ model ProductVariant {
   size             String            // XS, S, M, L, XL, 38, 40
   color            String            // Rojo, Negro, Azul Marino
   price            Decimal           @db.Decimal(10, 2)
+  wholesalePrice   Decimal?          @map("wholesale_price") @db.Decimal(10, 2)
+  wholesaleMinUnits Int              @default(6) @map("wholesale_min_units")
   cost             Decimal           @db.Decimal(10, 2)
   measurementsJson Json?             @map("measurements_json") // hombros, cintura, etc. para IA
   isActive         Boolean           @default(true) @map("is_active")

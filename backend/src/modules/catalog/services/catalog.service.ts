@@ -12,11 +12,19 @@ import {
   UpdateProductVariantDto,
   QueryProductsDto,
   CreateProductImageDto,
+  ProcessArImageDto,
+  HybridFittingDto,
 } from '../dto/catalog.dto.js';
+import { ImageProcessingService } from './image-processing.service.js';
+import { HybridFittingService } from './hybrid-fitting.service.js';
 
 @Injectable()
 export class CatalogService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imageProcessing: ImageProcessingService,
+    private readonly hybridFitting: HybridFittingService,
+  ) {}
 
   async findAll(query: QueryProductsDto) {
     const {
@@ -130,6 +138,8 @@ export class CatalogService {
               size: true,
               color: true,
               price: true,
+              wholesalePrice: true,
+              wholesaleMinUnits: true,
               cost: true,
               measurementsJson: true,
               stocks: branchId
@@ -175,6 +185,7 @@ export class CatalogService {
         supplierId: product.supplierId,
         supplier: product.supplier,
         coverImage,
+        arImageUrl: (product as any).arImageUrl ?? null,
         images: product.images,
         priceRange: { min: minP, max: maxP },
         availableStock: totalStock,
@@ -185,6 +196,8 @@ export class CatalogService {
           size: v.size,
           color: v.color,
           price: Number(v.price),
+          wholesalePrice: v.wholesalePrice ? Number(v.wholesalePrice) : null,
+          wholesaleMinUnits: v.wholesaleMinUnits ?? 6,
           cost: Number(v.cost),
           measurementsJson: v.measurementsJson,
           stock: v.stocks.reduce((sAcc, s) => sAcc + s.quantity, 0),
@@ -414,6 +427,8 @@ export class CatalogService {
         size: dto.size,
         color: dto.color,
         price: new Prisma.Decimal(dto.price),
+        wholesalePrice: dto.wholesalePrice !== undefined ? new Prisma.Decimal(dto.wholesalePrice) : null,
+        wholesaleMinUnits: dto.wholesaleMinUnits !== undefined ? dto.wholesaleMinUnits : 6,
         cost: new Prisma.Decimal(dto.cost),
         measurementsJson: dto.measurementsJson ?? Prisma.JsonNull,
       },
@@ -434,6 +449,13 @@ export class CatalogService {
         size: dto.size,
         color: dto.color,
         price: dto.price !== undefined ? new Prisma.Decimal(dto.price) : undefined,
+        wholesalePrice:
+          dto.wholesalePrice !== undefined
+            ? dto.wholesalePrice !== null
+              ? new Prisma.Decimal(dto.wholesalePrice)
+              : null
+            : undefined,
+        wholesaleMinUnits: dto.wholesaleMinUnits !== undefined ? dto.wholesaleMinUnits : undefined,
         cost: dto.cost !== undefined ? new Prisma.Decimal(dto.cost) : undefined,
         measurementsJson: dto.measurementsJson,
         isActive: dto.isActive,
@@ -518,6 +540,110 @@ export class CatalogService {
     return this.prisma.productImage.findMany({
       where: { productId },
       orderBy: [{ isCover: 'desc' }, { sortOrder: 'asc' }],
+    });
+  }
+
+  // --- Probador Virtual AR & Aislamiento de Fondo WebP ---
+
+  async processAndSetArImage(productId: string, dto?: ProcessArImageDto) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true },
+    });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
+    }
+
+    const sourceImage =
+      dto?.imageUrl ||
+      product.images.find((img) => img.isCover)?.imageUrl ||
+      product.images[0]?.imageUrl;
+
+    if (!sourceImage) {
+      throw new BadRequestException('El producto no tiene ninguna fotografía oficial para procesar el recorte');
+    }
+
+    const result = await this.imageProcessing.processAndRemoveBackground(productId, sourceImage);
+
+    // Persistir textura AR transparente (WebP con canal alfa) en la prenda
+    const updated = await this.prisma.product.update({
+      where: { id: productId },
+      data: { arImageUrl: result.arImageUrl },
+      include: {
+        images: true,
+        variants: true,
+      },
+    });
+
+    return {
+      message: 'Fondo de prenda procesado y aislado exitosamente en WebP transparente para AR',
+      arImageUrl: updated.arImageUrl,
+      format: result.format,
+      modelUsed: result.modelUsed,
+      sizeReductionPercent: result.sizeReductionPercent,
+      productId: updated.id,
+      productName: updated.name,
+    };
+  }
+
+  async setArImage(productId: string, arImageUrl: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
+    }
+
+    return this.prisma.product.update({
+      where: { id: productId },
+      data: { arImageUrl },
+      include: { images: true, variants: true },
+    });
+  }
+
+  async removeArImage(productId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+    });
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
+    }
+
+    return this.prisma.product.update({
+      where: { id: productId },
+      data: { arImageUrl: null },
+      include: { images: true, variants: true },
+    });
+  }
+
+  // --- Estrategia Híbrida Inteligente de Tallas en 3 Pasos (Nike Fit / ASOS / Zalando) ---
+
+  async estimateHybridSize(productId: string, dto: HybridFittingDto) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        variants: {
+          where: { isActive: true },
+          select: { id: true, size: true, measurementsJson: true },
+        },
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
+    }
+
+    return this.hybridFitting.calculateHybridFit({
+      productId,
+      heightCm: dto.heightCm,
+      weightKg: dto.weightKg,
+      fitPreference: dto.fitPreference,
+      deviceTiltDeg: dto.deviceTiltDeg,
+      shoulderSpanPixels: dto.shoulderSpanPixels,
+      fullBodyHeightPixels: dto.fullBodyHeightPixels,
+      landmarks: dto.landmarks,
+      fabricStretch: dto.fabricStretch,
+      productVariants: product.variants,
     });
   }
 

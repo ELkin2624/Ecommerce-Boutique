@@ -51,4 +51,16 @@ export class ReportsController {
   async getDashboardKpis() {
     return this.reportsService.getDashboardKpis();
   }
+
+  @Get('embed-config')
+  @Permissions('REPORT:VIEW')
+  @ApiOperation({
+    summary: 'Obtener configuración y token firmado para embeber el módulo ReportIQ',
+    description: 'Genera un JWT de sesión con ReportIQ mediante la API Key del tenant para incrustar el módulo visual/voz/QBE sin reconstruir la UI.',
+  })
+  @ApiResponse({ status: 200, description: 'Token de incrustación e URL embebible generados' })
+  async getEmbedConfig(@CurrentUser('id') userId: string) {
+    return this.reportsService.getEmbedConfig(userId, 'STORE_MANAGER');
+  }
 }
+

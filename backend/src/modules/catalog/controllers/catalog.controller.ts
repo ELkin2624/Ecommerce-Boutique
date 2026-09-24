@@ -9,6 +9,7 @@ import {
   CreateCategoryDto, UpdateCategoryDto, CreateSeasonDto,
   UpdateSeasonDto, CreateCollectionDto, UpdateCollectionDto,
   CreateSupplierDto, UpdateSupplierDto,
+  ProcessArImageDto, SetArImageDto, HybridFittingDto,
 } from '../dto/catalog.dto.js';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard.js';
 import { PermissionsGuard } from '../../../common/guards/permissions.guard.js';
@@ -219,5 +220,48 @@ export class CatalogController {
     @Param('imageId') imageId: string,
   ) {
     return this.catalogService.setCoverImage(productId, imageId);
+  }
+
+  // ==========================================
+  // PROBADOR VIRTUAL AR & RECORTE DE FONDO (WebP)
+  // ==========================================
+
+  @Post('products/:id/ar-image/remove-background')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('PRODUCT:UPDATE')
+  async removeBackgroundAndSetArImage(
+    @Param('id') id: string,
+    @Body() dto?: ProcessArImageDto,
+  ) {
+    return this.catalogService.processAndSetArImage(id, dto);
+  }
+
+  @Post('products/:id/ar-image')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('PRODUCT:UPDATE')
+  async setArImage(
+    @Param('id') id: string,
+    @Body() dto: SetArImageDto,
+  ) {
+    return this.catalogService.setArImage(id, dto.arImageUrl);
+  }
+
+  @Delete('products/:id/ar-image')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @Permissions('PRODUCT:UPDATE')
+  async removeArImage(@Param('id') id: string) {
+    return this.catalogService.removeArImage(id);
+  }
+
+  // ========================================================
+  // RECOMENDADOR HÍBRIDO EN 3 PASOS (Nike Fit / ASOS / Zalando)
+  // ========================================================
+
+  @Post('products/:id/hybrid-fitting')
+  async estimateHybridFitting(
+    @Param('id') id: string,
+    @Body() dto: HybridFittingDto,
+  ) {
+    return this.catalogService.estimateHybridSize(id, dto);
   }
 }

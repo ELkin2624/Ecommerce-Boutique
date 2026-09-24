@@ -1,83 +1,246 @@
-# ========================
-# OS & Editor
-# ========================
+# ==============================================================================
+# SISTEMA / SISTEMA OPERATIVO Y EDITORES
+# ==============================================================================
+# OS Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+[Dd]esktop.ini
+
+# IDEs y Editores
 .vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
 .idea/
 *.swp
 *.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+.c9/
 
-# ========================
-# Node.js (NestJS / React / React Native)
-# ========================
+# Carpetas de Asistentes IA y Notas
+.claude/
+.cursor/
+.windsurf/
+.obsidian/
+
+# ==============================================================================
+# SECRETOS, LLAVES Y VARIABLES DE ENTORNO (CRÍTICO DE SEGURIDAD)
+# ==============================================================================
+# Archivos de entorno
+.env
+.env.*
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.local
+
+# Exceptuar ejemplos/plantillas para que el equipo sepa qué variables configurar
+!.env.example
+!.env.template
+!.env.sample
+!**/.env.example
+!**/.env.template
+!**/.env.sample
+
+# Certificados, llaves SSH y credenciales
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+*.pkcs12
+*.csr
+id_rsa*
+id_ecdsa*
+id_ed25519*
+
+# Credenciales Cloud, Firebase y Cuentas de Servicio
+*credentials*.json
+*secret*.json
+service-account*.json
+serviceAccountKey*.json
+google-services.json
+GoogleService-Info.plist
+
+# Tokens de gestores de paquetes
+.npmrc
+.pypirc
+.netrc
+
+# ==============================================================================
+# BASES DE DATOS, BACKUPS Y ARCHIVOS DE USUARIO / SUBIDAS
+# ==============================================================================
+# Archivos de base de datos local SQLite / Prisma
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+/backend/prisma/*.db
+/backend/prisma/*.db-journal
+
+# Dumps y backups
+*.sql
+*.dump
+*.tar.gz
+*.bak
+
+# Subidas de archivos de usuarios, imágenes temporales del probador virtual
+uploads/
+**/uploads/
+!**/uploads/.gitkeep
+temp/
+tmp/
+.temp/
+.tmp/
+**/.temp/
+**/.tmp/
+
+# ==============================================================================
+# NODE.JS / MONOREPO (NestJS, Vite, React, Next.js)
+# ==============================================================================
 node_modules/
+**/node_modules/
+.pnpm-store/
+
+# Builds y compilados
+dist/
+**/dist/
+build/
+**/build/
+out/
+.out/
+.next/
+.nuxt/
+.vite/
+.turbo/
+dist-ssr/
+web-build/
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-dist/
-build/
-coverage/
-.next/
-.nuxt/
-.out/
+lerna-debug.log*
 
-# ========================
-# Python (FastAPI / AI)
-# ========================
+# Cobertura y reportes
+coverage/
+.nyc_output/
+htmlcov/
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# ==============================================================================
+# PYTHON (FastAPI / IA / Alembic)
+# ==============================================================================
+# Bytecode y cache
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
-env/
+
+# Entornos virtuales
 venv/
+**/venv/
+env/
+**/env/
 ENV/
 .venv/
+**/.venv/
+env.bak/
+venv.bak/
+.Python
+
+# Empaquetado y distribución
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Pruebas y linters Python
 .pytest_cache/
 .coverage
 htmlcov/
-*.sqlite3
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
 
-# ========================
-# React Native / Expo
-# ========================
+# Modelos y pesos de IA (evitar subir gigabytes de binarios a Git)
+*.pth
+*.pt
+*.onnx
+*.safetensors
+*.bin
+*.h5
+*.pkl
+*.joblib
+*.weights
+
+# ==============================================================================
+# REACT NATIVE / EXPO / ANDROID / IOS
+# ==============================================================================
+# Expo
 .expo/
+.expo-shared/
+.metro-health-check*
+
+# Keystores y firmas nativas
 *.jks
 *.p8
-*.p12
-*.key
 *.mobileprovision
+*.keystore
 *.orig.*
+
+# Android
 android/app/build/
 android/.gradle/
+android/build/
+android/.idea/
+android/local.properties
 android/app/src/main/assets/
+
+# iOS
 ios/build/
 ios/Pods/
 ios/*.xcworkspace/xcuserdata/
 ios/*.xcodeproj/xcuserdata/
 
-# ========================
-# Environment variables
-# ========================
-.env
-.env.local
-.env.*.local
-.env.development
-.env.production
-.env.test
-!.env.example
-
-# ========================
-# Database / Prisma
-# ========================
-*.db
-*.db-journal
-*.sqlite
-/backend/prisma/*.db
-
-# ========================
-# Vault / Brain (Obsidian)
-# ========================
-.obsidian/
+# Binarios de aplicaciones generadas
+*.apk
+*.aab
+*.ipa
+.kotlin/

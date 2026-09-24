@@ -74,6 +74,49 @@ export class ReportsService {
     };
   }
 
+  async getEmbedConfig(userId?: string, userRole?: string) {
+    const reportiqApiUrl = process.env.REPORTIQ_API_URL;
+    const reportiqFrontendUrl = process.env.REPORTIQ_FRONTEND_URL;
+    const apiKey = process.env.REPORTIQ_API_KEY;
+    const dataSourceId = process.env.REPORTIQ_DATA_SOURCE_ID;
+
+    this.logger.log(`Solicitando Embed Token a ReportIQ (${reportiqApiUrl}) para tenant: fashion-store`);
+
+    try {
+      const res = await fetch(`${reportiqApiUrl}/v1/embed-tokens`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data_source_id: dataSourceId,
+          end_user_id: userId || 'admin-fashionstore',
+          tenant_value: 'fashion-store',
+          role: userRole || 'admin',
+          expires_in_minutes: 1440,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        this.logger.error(`ReportIQ respondió con estado ${res.status}: ${errorText}`);
+        throw new Error(`ReportIQ error: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      return {
+        token: data.token,
+        embedUrl: `${reportiqFrontendUrl}/embed?token=${data.token}`,
+        expiresAt: data.expires_at,
+        dataSourceId,
+      };
+    } catch (err: any) {
+      this.logger.error(`Error generando embed token en ReportIQ: ${err.message}`);
+      throw new Error(`No se pudo generar el token de integración de ReportIQ: ${err.message}`);
+    }
+  }
+
   private async queryTopSellingProducts(branchFilter?: string, limit: number = 5) {
     // Consultar productos del catálogo con stock y variantes
     const products = await this.prisma.product.findMany({

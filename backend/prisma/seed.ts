@@ -355,6 +355,12 @@ async function main() {
     create: { name: 'Camisas', slug: 'camisas' },
   });
 
+  const catSports = await prisma.category.upsert({
+    where: { slug: 'deportivo' },
+    update: {},
+    create: { name: 'Deportivo & Training', slug: 'deportivo' },
+  });
+
   // Producto 1: Vestido Elegance
   const prodDress = await prisma.product.upsert({
     where: { id: '00000000-0000-0000-0000-000000000201' },
@@ -447,6 +453,174 @@ async function main() {
     },
   });
 
+  // Producto 3: Polera Dri-FIT Nike Style
+  const prodTee = await prisma.product.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000203' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000203',
+      name: 'Polera Dry-FIT Training Pro',
+      description: 'Polera deportiva transpirable de alto rendimiento con tecnología anti-sudor',
+      brand: 'Nike Pro Training',
+      categoryId: catSports.id,
+      seasonId: season.id,
+      supplierId: supplier.id,
+      images: {
+        create: [
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800',
+            isCover: true,
+            sortOrder: 0,
+          },
+        ],
+      },
+    },
+  });
+
+  const varTeeBlackM = await prisma.productVariant.upsert({
+    where: { sku: 'TEE-DF-NEGRO-M' },
+    update: {},
+    create: {
+      productId: prodTee.id,
+      sku: 'TEE-DF-NEGRO-M',
+      size: 'M',
+      color: 'Negro Mate',
+      price: 179.99,
+      wholesalePrice: 129.99,
+      wholesaleMinUnits: 6,
+      cost: 70.0,
+      measurementsJson: { chest_cm: 98, waist_cm: 84, length_cm: 72 },
+    },
+  });
+
+  const varTeeBlackL = await prisma.productVariant.upsert({
+    where: { sku: 'TEE-DF-NEGRO-L' },
+    update: {},
+    create: {
+      productId: prodTee.id,
+      sku: 'TEE-DF-NEGRO-L',
+      size: 'L',
+      color: 'Negro Mate',
+      price: 179.99,
+      wholesalePrice: 129.99,
+      wholesaleMinUnits: 6,
+      cost: 70.0,
+      measurementsJson: { chest_cm: 104, waist_cm: 90, length_cm: 75 },
+    },
+  });
+
+  // Producto 4: Sudadera Hoodie Adidas Style
+  const prodHoodie = await prisma.product.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000204' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000204',
+      name: 'Sudadera Hoodie Streetwear Oversize',
+      description: 'Hoodie con capucha y bolsillo canguro afelpado en algodón peinado premium',
+      brand: 'Adidas Originals',
+      categoryId: catSports.id,
+      seasonId: season.id,
+      supplierId: supplier.id,
+      images: {
+        create: [
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800',
+            isCover: true,
+            sortOrder: 0,
+          },
+        ],
+      },
+    },
+  });
+
+  const varHoodieGrayM = await prisma.productVariant.upsert({
+    where: { sku: 'HOD-OVER-GRIS-M' },
+    update: {},
+    create: {
+      productId: prodHoodie.id,
+      sku: 'HOD-OVER-GRIS-M',
+      size: 'M',
+      color: 'Gris Melange',
+      price: 299.5,
+      wholesalePrice: 220.0,
+      wholesaleMinUnits: 6,
+      cost: 130.0,
+      measurementsJson: { chest_cm: 108, waist_cm: 96, length_cm: 70 },
+    },
+  });
+
+  // Producto 5: Calza Running Under Armour Style
+  const prodLeggings = await prisma.product.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000205' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000205',
+      name: 'Calza Running Performance High-Waist',
+      description: 'Calza de compresión con cintura alta moldeadora y bolsillo invisible para móvil',
+      brand: 'Under Armour Sport',
+      categoryId: catSports.id,
+      seasonId: season.id,
+      supplierId: supplier.id,
+      images: {
+        create: [
+          {
+            imageUrl: 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800',
+            isCover: true,
+            sortOrder: 0,
+          },
+        ],
+      },
+    },
+  });
+
+  const varLeggingsBlackS = await prisma.productVariant.upsert({
+    where: { sku: 'CAL-RUN-NEGRO-S' },
+    update: {},
+    create: {
+      productId: prodLeggings.id,
+      sku: 'CAL-RUN-NEGRO-S',
+      size: 'S',
+      color: 'Negro Carbón',
+      price: 219.0,
+      wholesalePrice: 165.0,
+      wholesaleMinUnits: 6,
+      cost: 95.0,
+      measurementsJson: { waist_cm: 64, hips_cm: 90, length_cm: 92 },
+    },
+  });
+
+  // Producto 6: Prenda SIN IMAGEN en la base de datos (para verificar placeholder elegante)
+  const prodShortNoImage = await prisma.product.upsert({
+    where: { id: '00000000-0000-0000-0000-000000000206' },
+    update: {},
+    create: {
+      id: '00000000-0000-0000-0000-000000000206',
+      name: 'Short Training Básico Respirable',
+      description: 'Short ligero de secado rápido sin sesión de fotografía oficial cargada aún',
+      brand: 'Boutique Sport',
+      categoryId: catSports.id,
+      seasonId: season.id,
+      supplierId: supplier.id,
+      // Sin imágenes intencionalmente para validar el badge "IMAGEN NO DISPONIBLE"
+    },
+  });
+
+  const varShortBlueM = await prisma.productVariant.upsert({
+    where: { sku: 'SHO-BAS-AZUL-M' },
+    update: {},
+    create: {
+      productId: prodShortNoImage.id,
+      sku: 'SHO-BAS-AZUL-M',
+      size: 'M',
+      color: 'Azul Marino',
+      price: 95.0,
+      wholesalePrice: 70.0,
+      wholesaleMinUnits: 6,
+      cost: 40.0,
+      measurementsJson: { waist_cm: 80, hips_cm: 96, length_cm: 45 },
+    },
+  });
+
   // 6. STOCK INICIAL POR UBICACIÓN
   // Vestido Rojo M en Piso de Ventas La Paz (10 unidades)
   await prisma.inventoryStock.upsert({
@@ -495,6 +669,91 @@ async function main() {
       variantId: varShirtBlueM.id,
       locationId: locSCFloor.id,
       quantity: 8,
+      minStock: 2,
+    },
+  });
+
+  // Polera Dry-FIT M en Piso de Ventas La Paz (12 unidades)
+  await prisma.inventoryStock.upsert({
+    where: {
+      variantId_locationId: {
+        variantId: varTeeBlackM.id,
+        locationId: locLPFloor.id,
+      },
+    },
+    update: { quantity: 12 },
+    create: {
+      variantId: varTeeBlackM.id,
+      locationId: locLPFloor.id,
+      quantity: 12,
+      minStock: 3,
+    },
+  });
+
+  // Polera Dry-FIT L en Almacén La Paz (20 unidades)
+  await prisma.inventoryStock.upsert({
+    where: {
+      variantId_locationId: {
+        variantId: varTeeBlackL.id,
+        locationId: locLPWarehouse.id,
+      },
+    },
+    update: { quantity: 20 },
+    create: {
+      variantId: varTeeBlackL.id,
+      locationId: locLPWarehouse.id,
+      quantity: 20,
+      minStock: 4,
+    },
+  });
+
+  // Sudadera Hoodie M en Piso Santa Cruz (10 unidades)
+  await prisma.inventoryStock.upsert({
+    where: {
+      variantId_locationId: {
+        variantId: varHoodieGrayM.id,
+        locationId: locSCFloor.id,
+      },
+    },
+    update: { quantity: 10 },
+    create: {
+      variantId: varHoodieGrayM.id,
+      locationId: locSCFloor.id,
+      quantity: 10,
+      minStock: 2,
+    },
+  });
+
+  // Calza Running S en Piso de Ventas La Paz (15 unidades)
+  await prisma.inventoryStock.upsert({
+    where: {
+      variantId_locationId: {
+        variantId: varLeggingsBlackS.id,
+        locationId: locLPFloor.id,
+      },
+    },
+    update: { quantity: 15 },
+    create: {
+      variantId: varLeggingsBlackS.id,
+      locationId: locLPFloor.id,
+      quantity: 15,
+      minStock: 3,
+    },
+  });
+
+  // Short Training Básico (sin foto) en Piso Santa Cruz (14 unidades)
+  await prisma.inventoryStock.upsert({
+    where: {
+      variantId_locationId: {
+        variantId: varShortBlueM.id,
+        locationId: locSCFloor.id,
+      },
+    },
+    update: { quantity: 14 },
+    create: {
+      variantId: varShortBlueM.id,
+      locationId: locSCFloor.id,
+      quantity: 14,
       minStock: 2,
     },
   });

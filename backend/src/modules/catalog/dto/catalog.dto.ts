@@ -40,6 +40,16 @@ export class CreateProductVariantDto {
   @Min(0)
   price!: number;
 
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  wholesalePrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  wholesaleMinUnits?: number;
+
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   cost!: number;
@@ -144,6 +154,16 @@ export class UpdateProductVariantDto {
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
   price?: number;
+
+  @IsOptional()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  wholesalePrice?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  wholesaleMinUnits?: number;
 
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -317,4 +337,51 @@ export class UpdateSupplierDto {
   @IsString()
   address?: string;
 }
+
+export class ProcessArImageDto {
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+}
+
+export class SetArImageDto {
+  @IsString()
+  arImageUrl!: string;
+}
+
+export class HybridFittingDto {
+  @IsNumber()
+  @Min(100)
+  @Max(250)
+  heightCm!: number;
+
+  @IsOptional()
+  @IsNumber()
+  weightKg?: number;
+
+  @IsOptional()
+  @IsIn(['slim', 'regular', 'oversized'])
+  fitPreference?: 'slim' | 'regular' | 'oversized';
+
+  @IsOptional()
+  @IsNumber()
+  deviceTiltDeg?: number;
+
+  @IsOptional()
+  @IsNumber()
+  shoulderSpanPixels?: number;
+
+  @IsOptional()
+  @IsNumber()
+  fullBodyHeightPixels?: number;
+
+  @IsOptional()
+  @IsArray()
+  landmarks?: any[];
+
+  @IsOptional()
+  @IsIn(['low', 'medium', 'high'])
+  fabricStretch?: 'low' | 'medium' | 'high';
+}
+
 

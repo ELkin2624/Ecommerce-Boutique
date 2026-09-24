@@ -234,17 +234,21 @@ export class AuthService {
       '7d',
     );
 
-    const payload = { sub: userId, email };
-
     const [accessToken, refreshToken] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: accessSecret,
-        expiresIn: accessTokenExpiresIn as any,
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: refreshSecret,
-        expiresIn: refreshTokenExpiresIn as any,
-      }),
+      this.jwtService.signAsync(
+        { sub: userId, email, jti: crypto.randomUUID() },
+        {
+          secret: accessSecret,
+          expiresIn: accessTokenExpiresIn as any,
+        },
+      ),
+      this.jwtService.signAsync(
+        { sub: userId, email, jti: crypto.randomUUID() },
+        {
+          secret: refreshSecret,
+          expiresIn: refreshTokenExpiresIn as any,
+        },
+      ),
     ]);
 
     // Guardar hash del refresh token en BD

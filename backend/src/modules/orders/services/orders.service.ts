@@ -205,7 +205,10 @@ export class OrdersService {
         }
       }
 
-      // 7. Calcular total usando los precios unitarios registrados en la base de datos
+      // 7. Calcular total evaluando venta al por mayor vs menor
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      const isUserWholesaler = user?.isWholesaler ?? false;
+
       let total = new Prisma.Decimal(0);
       const orderItemsData = itemsToProcess.map((item) => {
         const variant = variantMap.get(item.variantId);
@@ -215,13 +218,19 @@ export class OrdersService {
           );
         }
 
-        const itemTotal = variant.price.mul(item.quantity);
+        // Aplica precio mayorista si el usuario tiene rol mayorista o compra la cantidad mínima requerida
+        const appliesWholesale =
+          variant.wholesalePrice !== null &&
+          (isUserWholesaler || item.quantity >= (variant.wholesaleMinUnits ?? 6));
+
+        const unitPrice = appliesWholesale && variant.wholesalePrice ? variant.wholesalePrice : variant.price;
+        const itemTotal = unitPrice.mul(item.quantity);
         total = total.add(itemTotal);
 
         return {
           variantId: item.variantId,
           quantity: item.quantity,
-          unitPrice: variant.price,
+          unitPrice,
         };
       });
 
@@ -483,6 +492,28 @@ export class OrdersService {
         amount: Number(p.amount),
         transactionRef: p.transactionRef,
       })),
+    };
+  }
+
+  async syncBatch(userId: string, orders: CheckoutDto[]) {
+    const results: any[] = [];
+    const errors: any[] = [];
+    for (const dto of orders) {
+      try {
+        const order = await this.checkout(userId, dto);
+        results.push(order);
+      } catch (err: any) {
+        errors.push({
+          idempotencyKey: dto.idempotencyKey,
+          error: err.message || 'Error al sincronizar orden',
+        });
+      }
+    }
+    return {
+      syncedCount: results.length,
+      failedCount: errors.length,
+      results,
+      errors,
     };
   }
 }

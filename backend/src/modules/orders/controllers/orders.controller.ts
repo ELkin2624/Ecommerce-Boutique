@@ -25,6 +25,12 @@ export class OrdersController {
     return this.ordersService.checkout(req.user.id, dto);
   }
 
+  @Post('sync-batch')
+  @Permissions('ORDER:CREATE')
+  async syncBatch(@Body() dtos: CheckoutDto[], @Request() req: any) {
+    return this.ordersService.syncBatch(req.user.id, dtos);
+  }
+
   @Get('my')
   async getMyOrders(@Request() req: any) {
     return this.ordersService.getUserOrders(req.user.id);

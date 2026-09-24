@@ -1,18 +1,40 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DefaultTheme, ThemeProvider, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { useEffect } from 'react';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { useAuth } from '@/features/auth/hooks/use-auth';
+import { BoutiquePalette } from '@/constants/theme';
 
 SplashScreen.preventAutoHideAsync();
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+const BoutiqueTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: BoutiquePalette.men.primary,
+    background: BoutiquePalette.men.surface,
+    card: '#ffffff',
+    text: BoutiquePalette.men.navy,
+    border: '#e2e8f0',
+  },
+};
+
+export default function RootLayout() {
+  const { hydrate } = useAuth();
+
+  useEffect(() => {
+    hydrate();
+  }, []);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={BoutiqueTheme}>
       <AnimatedSplashOverlay />
-      <AppTabs />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ presentation: 'modal', headerShown: false }} />
+        <Stack.Screen name="product/[id]" options={{ headerShown: false }} />
+      </Stack>
     </ThemeProvider>
   );
 }
