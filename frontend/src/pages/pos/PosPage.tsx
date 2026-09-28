@@ -22,6 +22,8 @@ import { Badge } from '@/shared/ui/Badge';
 import { ReceiptModal } from '@/features/pos/ui/ReceiptModal';
 import { toast } from '@/shared/ui/Toast';
 import { formatCurrency } from '@/shared/lib/utils';
+import { offlineApi, offlineDb, OfflineBadge } from '@/shared/offline';
+
 
 interface PosCartItem {
   variantId: string;
@@ -43,14 +45,22 @@ export function PosPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
 
-  // Obtener stock disponible en el piso de venta de la sucursal activa
+  // Obtener stock disponible en el piso de venta (con soporte offline mediante IndexedDB)
   const { data: rawStockData, refetch: refetchStock } = useQuery<any>({
     queryKey: queryKeys.inventory.stocks(activeBranchId || undefined),
     queryFn: async () => {
-      const res = await apiClient.get('/inventory/stock', {
-        params: activeBranchId ? { branchId: activeBranchId } : {},
-      });
-      return res.data;
+      const cacheKey = `pos_stock_${activeBranchId || 'all'}`;
+      const { data } = await offlineApi.get(
+        cacheKey,
+        async () => {
+          const res = await apiClient.get('/inventory/stock', {
+            params: activeBranchId ? { branchId: activeBranchId } : {},
+          });
+          return res.data;
+        },
+        { ttl: 10 * 60 * 1000 },
+      );
+      return data;
     },
   });
 
@@ -165,27 +175,76 @@ export function PosPage() {
     }
 
     setIsProcessing(true);
-    // Generar idempotencyKey única para prevenir doble cobro accidental
     const idempotencyKey = `POS-${activeBranchId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
+    const checkoutPayload = {
+      branchId: activeBranchId,
+      type: 'IN_STORE',
+      paymentMethod,
+      idempotencyKey,
+      items: cart.map((i) => ({
+        variantId: i.variantId,
+        quantity: i.quantity,
+      })),
+    };
+
+    // Estructura de recibo local optimista para operar offline sin pausas
+    const localOrderReceipt: any = {
+      id: `local_${Date.now()}`,
+      orderNumber: `OFF-${Date.now().toString().slice(-6)}`,
+      branchId: activeBranchId,
+      status: 'PAID',
+      paymentMethod,
+      total,
+      subtotal: total,
+      tax: 0,
+      createdAt: new Date().toISOString(),
+      items: cart.map((i) => ({
+        id: `item_${i.variantId}`,
+        variantId: i.variantId,
+        quantity: i.quantity,
+        unitPrice: i.price,
+        subtotal: i.price * i.quantity,
+        variant: {
+          id: i.variantId,
+          sku: i.sku,
+          size: i.size,
+          color: i.color,
+          product: { name: i.name },
+        },
+      })),
+    };
+
     try {
-      const response = await apiClient.post('/orders/checkout', {
-        branchId: activeBranchId,
-        type: 'IN_STORE',
-        paymentMethod,
-        idempotencyKey,
-        items: cart.map((i) => ({
-          variantId: i.variantId,
-          quantity: i.quantity,
-        })),
+      const result = await offlineApi.mutate({
+        entity: 'order',
+        action: 'CREATE',
+        endpoint: '/orders/checkout',
+        payload: checkoutPayload,
+        optimisticSave: async () => {
+          await offlineDb.orders.put({
+            ...localOrderReceipt,
+            isLocalOnly: true,
+            offlinePendingSync: true,
+          });
+        },
       });
 
-      toast.success('Venta Exitosa', `Cobro de ${formatCurrency(total)} registrado en caja`);
-      setCompletedOrder(response.data);
+      if (result.isOffline) {
+        toast.info(
+          'Venta Guardada Localmente (Offline)',
+          `Cobro de ${formatCurrency(total)} guardado en IndexedDB. Se sincronizará automáticamente al conectar.`,
+        );
+        setCompletedOrder(localOrderReceipt);
+      } else {
+        toast.success('Venta Exitosa', `Cobro de ${formatCurrency(total)} registrado en caja`);
+        setCompletedOrder(result.data);
+      }
+
       setCart([]);
       refetchStock();
     } catch (err: any) {
-      toast.error('Error en checkout', err.message);
+      toast.error('Error en checkout', err.message || 'No se pudo procesar la venta');
     } finally {
       setIsProcessing(false);
     }
@@ -193,13 +252,16 @@ export function PosPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+      {/* Header con Indicador Offline */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Punto de Venta (Caja Mostrador)</h1>
           <p className="text-xs text-muted-foreground">
             Cobro rápido y decremento atómico de inventario en <span className="font-semibold text-foreground">{activeBranchName || 'General'}</span>
           </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <OfflineBadge />
         </div>
       </div>
 

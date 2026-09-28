@@ -6,6 +6,7 @@ import { STALE_TIMES } from '@/app/providers/QueryProvider';
 import type { Branch, City } from '@/shared/types/api';
 import type { EnrichedLocation } from './types';
 import { toast } from '@/shared/ui/Toast';
+import { offlineApi } from '@/shared/offline';
 
 export function useBranchesData({
   searchTerm,
@@ -21,8 +22,11 @@ export function useBranchesData({
   const { data: branches = [], isLoading: isLoadingBranches } = useQuery<Branch[]>({
     queryKey: queryKeys.branches.all,
     queryFn: async () => {
-      const res = await apiClient.get('/branches');
-      return res.data;
+      const { data } = await offlineApi.get<Branch[]>('branches_all', async () => {
+        const res = await apiClient.get('/branches');
+        return res.data;
+      });
+      return data;
     },
     staleTime: STALE_TIMES.SEMI,
   });
@@ -30,8 +34,11 @@ export function useBranchesData({
   const { data: cities = [] } = useQuery<City[]>({
     queryKey: queryKeys.branches.cities,
     queryFn: async () => {
-      const res = await apiClient.get('/branches/cities');
-      return res.data;
+      const { data } = await offlineApi.get<City[]>('branches_cities', async () => {
+        const res = await apiClient.get('/branches/cities');
+        return res.data;
+      });
+      return data;
     },
     staleTime: STALE_TIMES.STATIC,
   });

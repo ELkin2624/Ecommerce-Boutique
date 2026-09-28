@@ -11,6 +11,8 @@ import { apiClient } from '@/shared/api/axios-client';
 import { Badge } from '@/shared/ui/Badge';
 import { SettingsModal } from '@/features/settings/ui/SettingsModal';
 import { cn } from '@/shared/lib/utils';
+import { OfflineBadge, PwaInstallButton } from '@/shared/offline';
+
 
 // Diccionario de títulos por ruta
 const ROUTE_TITLES: Record<string, { title: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -91,6 +93,12 @@ export function Topbar() {
             LADO DERECHO: Tienda Online, Tema y Perfil de Usuario (Estilo AWS)
            ======================================================================= */}
         <div className="flex items-center gap-3">
+          {/* Indicador de Conectividad & Sincronización */}
+          <OfflineBadge className="hidden md:inline-flex" />
+
+          {/* Botón de Instalación PWA */}
+          <PwaInstallButton className="hidden lg:inline-flex" />
+
           {/* Acceso a la Tienda de Clientes */}
           <Link
             to="/"

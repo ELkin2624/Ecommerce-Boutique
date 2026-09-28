@@ -5,6 +5,8 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/app/store/auth.store';
 import { useCartStore } from '@/features/cart';
+import { OfflineBadge, PwaInstallButton } from '@/shared/offline';
+
 
 export function StoreHeaderAuth() {
   const navigate = useNavigate();
@@ -25,6 +27,12 @@ export function StoreHeaderAuth() {
 
   return (
     <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+      {/* Botón de Instalación PWA */}
+      <PwaInstallButton className="hidden md:inline-flex" />
+
+      {/* Indicador de Conectividad */}
+      <OfflineBadge className="hidden lg:inline-flex" />
+
       {/* Botón Carrito: SOLO EL ICONO con badge numérico */}
       <button
         onClick={toggleDrawer}
