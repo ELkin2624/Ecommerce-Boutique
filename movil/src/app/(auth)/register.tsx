@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth';
 import { Ionicons } from '@expo/vector-icons';
 import { AUTH_COLORS } from '@/features/auth/ui/auth.tokens';
 import { registerStyles as s } from '@/features/auth/ui/register.styles';
+import { AppLogo } from '@/shared/ui/AppLogo';
 
 // ─── Indicador de fortaleza de contraseña ────────────────────────────────────
 function getPasswordStrength(pw: string): { level: number; label: string; color: string } {
@@ -177,10 +178,16 @@ export default function RegisterScreen() {
               >
                 <Ionicons name="arrow-back" size={18} color={AUTH_COLORS.textWhite} />
               </TouchableOpacity>
-              <View style={s.brandTextArea}>
-                <Text style={s.brandTitle}>BOUTIQUE</Text>
-                <Text style={s.brandSubtitle}>NUEVA CUENTA</Text>
-              </View>
+              <AppLogo
+                size="sm"
+                showText={true}
+                layout="horizontal"
+                withContainer={true}
+                title="BOUTIQUE"
+                subtitle="NUEVA CUENTA"
+                titleColor={AUTH_COLORS.textWhite}
+                subtitleColor={AUTH_COLORS.surfaceSky}
+              />
               <Ionicons name="sparkles" size={22} color={AUTH_COLORS.surfaceSky} />
             </View>
 

@@ -56,7 +56,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');
   console.log(
-    `🚀 Servidor NestJS corriendo en: http://0.0.0.0:${port}/api/v1 (Red Local: http://192.168.8.94:${port}/api/v1)`,
+    `🚀 Servidor NestJS corriendo en: http://0.0.0.0:${port}/api/v1 (Red Local: http://192.168.0.32:${port}/api/v1)`,
   );
   console.log(
     `📚 Documentación Swagger disponible en: http://localhost:${port}/api/docs`,

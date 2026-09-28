@@ -45,6 +45,7 @@ export interface Product {
   season?: { id: string; name: string } | null;
   collection?: { id: string; name: string } | null;
   coverImage?: string;
+  arImageUrl?: string | null;
   images: ProductImage[];
   variants: ProductVariant[];
   priceRange?: { min: number; max: number };

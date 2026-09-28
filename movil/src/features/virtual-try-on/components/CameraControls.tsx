@@ -34,6 +34,7 @@ import {
 import { useCartStore } from '@/features/cart/model/useCartStore';
 import type { Product } from '@/entities/product/types';
 import type { PoseStatus } from '../pose/types/pose.types';
+import type { RealTimeSizeAdvisorResult } from '../pose/hooks/useRealTimeSizeAdvisor';
 
 export type DockTab = 'CART' | 'CATALOG' | 'TOP' | 'OUTERWEAR' | 'ALL';
 
@@ -46,7 +47,7 @@ interface CameraControlsProps {
   showGarment: boolean;
   showCoordinateDebug?: boolean;
   selectedGarment: VirtualGarment;
-  onSelectGarment: (id: string) => void;
+  onSelectGarment: (garmentOrId: VirtualGarment | string) => void;
   onTogglePosition: () => void;
   onToggleActive: () => void;
   onToggleSkeleton: () => void;
@@ -54,6 +55,7 @@ interface CameraControlsProps {
   onToggleCoordinateDebug?: () => void;
   onClose: () => void;
   catalogProducts?: readonly Product[];
+  sizeAdvisor?: RealTimeSizeAdvisorResult;
 }
 
 export const CameraControls: React.FC<CameraControlsProps> = ({
@@ -72,16 +74,27 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
   onToggleCoordinateDebug,
   onClose,
   catalogProducts = [],
+  sizeAdvisor,
 }) => {
   const { items: cartItems, addItem: addToCart } = useCartStore();
+
+  // Talla seleccionada por el usuario (sincronizada inicialmente con la recomendada por IA)
+  const [chosenSize, setChosenSize] = useState<string>(sizeAdvisor?.estimatedSize || 'M');
+
+  // Auto-actualizar talla elegida cuando la IA detecte una talla óptima
+  useEffect(() => {
+    if (sizeAdvisor?.estimatedSize) {
+      setChosenSize(sizeAdvisor.estimatedSize);
+    }
+  }, [sizeAdvisor?.estimatedSize]);
 
   // Initial active tab inferred from selected garment
   const initialTab = useMemo<DockTab>(() => {
     if (selectedGarment.isFromCart) return 'CART';
     if (selectedGarment.isFromCatalog) return 'CATALOG';
-    if (cartItems.length > 0) return 'CART';
     if (catalogProducts.length > 0) return 'CATALOG';
-    return 'TOP';
+    if (cartItems.length > 0) return 'CART';
+    return 'CATALOG';
   }, [selectedGarment, cartItems.length, catalogProducts.length]);
 
   const [activeTab, setActiveTab] = useState<DockTab>(initialTab);
@@ -100,15 +113,28 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
     if (selectedGarment.isFromCart) return true;
     return cartItems.some(
       (it) =>
-        it.productId === selectedGarment.productId ||
-        it.variantId === selectedGarment.variantId ||
-        it.productId === selectedGarment.id
+        (it.productId === selectedGarment.productId ||
+          it.variantId === selectedGarment.variantId ||
+          it.productId === selectedGarment.id) &&
+        it.size.toUpperCase() === chosenSize.toUpperCase()
     );
-  }, [selectedGarment, cartItems]);
+  }, [selectedGarment, cartItems, chosenSize]);
+
+  // Obtener variantes disponibles de la prenda actual
+  const currentCatalogProduct = catalogProducts.find(
+    (p) => p.id === selectedGarment.productId || p.id === selectedGarment.id
+  );
+
+  const availableSizes = useMemo(() => {
+    if (currentCatalogProduct?.variants && currentCatalogProduct.variants.length > 0) {
+      return Array.from(new Set(currentCatalogProduct.variants.map((v) => v.size)));
+    }
+    return sizeAdvisor?.availableSizes || ['S', 'M', 'L', 'XL'];
+  }, [currentCatalogProduct, sizeAdvisor?.availableSizes]);
 
   const handleAddToCart = async () => {
     if (isInCart) {
-      const msg = `¡${selectedGarment.name} ya está en tu carrito!`;
+      const msg = `¡${selectedGarment.name} (Talla ${chosenSize}) ya está en tu carrito!`;
       if (Platform.OS === 'android') {
         ToastAndroid.show(msg, ToastAndroid.SHORT);
       } else {
@@ -121,21 +147,27 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
       const priceClean =
         parseFloat(selectedGarment.price.replace(/[^0-9.]/g, '')) || 49.99;
 
+      const matchingVariant = currentCatalogProduct?.variants?.find(
+        (v) => v.size.toUpperCase() === chosenSize.toUpperCase()
+      );
+
       await addToCart({
-        variantId: selectedGarment.variantId || `var-${selectedGarment.id}`,
+        variantId: matchingVariant?.id || selectedGarment.variantId || `var-${selectedGarment.id}-${chosenSize}`,
         productId: selectedGarment.productId || selectedGarment.id,
         productName: selectedGarment.name,
-        size: 'M',
-        color: 'Único',
+        size: chosenSize,
+        color: matchingVariant?.color || 'Único',
         image:
           selectedGarment.previewUri ||
           'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500',
-        price: priceClean,
+        price: matchingVariant?.price || priceClean,
+        wholesalePrice: matchingVariant?.wholesalePrice,
+        wholesaleMinUnits: matchingVariant?.wholesaleMinUnits,
         quantity: 1,
       });
 
       setAddedToCart(true);
-      const msg = `¡${selectedGarment.name} agregado a tu carrito!`;
+      const msg = `¡${selectedGarment.name} (Talla ${chosenSize}) agregado a tu carrito!`;
       if (Platform.OS === 'android') {
         ToastAndroid.show(msg, ToastAndroid.SHORT);
       } else {
@@ -165,10 +197,47 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
           return catalogProducts.map((p) => resolveProductToGarment(p));
         }
         return AVAILABLE_GARMENTS;
-      case 'TOP':
+      case 'TOP': {
+        if (catalogProducts && catalogProducts.length > 0) {
+          const tops = catalogProducts.filter((p) => {
+            const cat = typeof p.category === 'string' ? p.category : p.category?.name || '';
+            const txt = `${p.name} ${cat} ${p.description || ''}`.toLowerCase();
+            return (
+              txt.includes('camiseta') ||
+              txt.includes('polera') ||
+              txt.includes('camisa') ||
+              txt.includes('top') ||
+              txt.includes('polo') ||
+              txt.includes('blusa') ||
+              txt.includes('remera') ||
+              txt.includes('deportiv')
+            );
+          });
+          if (tops.length > 0) return tops.map((p) => resolveProductToGarment(p));
+        }
         return AVAILABLE_GARMENTS.filter((g) => g.category === 'TOP');
-      case 'OUTERWEAR':
+      }
+      case 'OUTERWEAR': {
+        if (catalogProducts && catalogProducts.length > 0) {
+          const out = catalogProducts.filter((p) => {
+            const cat = typeof p.category === 'string' ? p.category : p.category?.name || '';
+            const txt = `${p.name} ${cat} ${p.description || ''}`.toLowerCase();
+            return (
+              txt.includes('chaqueta') ||
+              txt.includes('jacket') ||
+              txt.includes('abrigo') ||
+              txt.includes('hoodie') ||
+              txt.includes('sudadera') ||
+              txt.includes('vestido') ||
+              txt.includes('gala') ||
+              txt.includes('saco') ||
+              txt.includes('blazer')
+            );
+          });
+          if (out.length > 0) return out.map((p) => resolveProductToGarment(p));
+        }
         return AVAILABLE_GARMENTS.filter((g) => g.category === 'OUTERWEAR');
+      }
       case 'ALL':
       default:
         return AVAILABLE_GARMENTS;
@@ -180,19 +249,37 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
     // If switching tabs and current garment is not in that list, auto-select first item
     if (tab === 'CART' && cartItems.length > 0) {
       const first = resolveCartItemToGarment(cartItems[0]);
-      onSelectGarment(first.id);
+      onSelectGarment(first);
     } else if (tab === 'CATALOG' && catalogProducts.length > 0) {
       const first = resolveProductToGarment(catalogProducts[0]);
-      onSelectGarment(first.id);
+      onSelectGarment(first);
     } else if (tab === 'TOP') {
-      const tops = AVAILABLE_GARMENTS.filter((g) => g.category === 'TOP');
-      if (tops.length > 0 && selectedGarment.category !== 'TOP') {
-        onSelectGarment(tops[0].id);
+      const tops = catalogProducts && catalogProducts.length > 0
+        ? catalogProducts.filter((p) => {
+            const cat = typeof p.category === 'string' ? p.category : p.category?.name || '';
+            const txt = `${p.name} ${cat}`.toLowerCase();
+            return txt.includes('camis') || txt.includes('pol') || txt.includes('top') || txt.includes('blus');
+          })
+        : [];
+      if (tops.length > 0) {
+        onSelectGarment(resolveProductToGarment(tops[0]));
+      } else {
+        const topPresets = AVAILABLE_GARMENTS.filter((g) => g.category === 'TOP');
+        if (topPresets.length > 0) onSelectGarment(topPresets[0]);
       }
     } else if (tab === 'OUTERWEAR') {
-      const out = AVAILABLE_GARMENTS.filter((g) => g.category === 'OUTERWEAR');
-      if (out.length > 0 && selectedGarment.category !== 'OUTERWEAR') {
-        onSelectGarment(out[0].id);
+      const out = catalogProducts && catalogProducts.length > 0
+        ? catalogProducts.filter((p) => {
+            const cat = typeof p.category === 'string' ? p.category : p.category?.name || '';
+            const txt = `${p.name} ${cat}`.toLowerCase();
+            return txt.includes('chaquet') || txt.includes('abrig') || txt.includes('hood') || txt.includes('vestid');
+          })
+        : [];
+      if (out.length > 0) {
+        onSelectGarment(resolveProductToGarment(out[0]));
+      } else {
+        const outPresets = AVAILABLE_GARMENTS.filter((g) => g.category === 'OUTERWEAR');
+        if (outPresets.length > 0) onSelectGarment(outPresets[0]);
       }
     }
   };
@@ -250,6 +337,44 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
         </TouchableOpacity>
       </View>
 
+      {/* ── 1.5. Floating Live Real-Time Size Advisor HUD Banner ───────────── */}
+      {sizeAdvisor && (
+        <View style={styles.liveSizeHud} pointerEvents="box-none">
+          <View style={styles.liveSizeHeaderRow}>
+            <View style={styles.liveSizeSparkle}>
+              <Ionicons name="sparkles" size={11} color="#38bdf8" />
+              <Text style={styles.liveSizeTitle}>IA SIZE ADVISOR (EN VIVO)</Text>
+            </View>
+            {sizeAdvisor.isTrackingBody ? (
+              <View style={styles.liveConfidenceBadge}>
+                <Ionicons name="checkmark-circle" size={10} color="#34d399" />
+                <Text style={styles.liveConfidenceText}>
+                  {Math.round((sizeAdvisor.confidenceScore || 0.95) * 100)}% coincidencia
+                </Text>
+              </View>
+            ) : (
+              <View style={[styles.liveConfidenceBadge, { backgroundColor: 'rgba(234, 179, 8, 0.2)' }]}>
+                <Ionicons name="scan-outline" size={10} color="#facc15" />
+                <Text style={[styles.liveConfidenceText, { color: '#facc15' }]}>
+                  Detectando silueta...
+                </Text>
+              </View>
+            )}
+          </View>
+          <View style={styles.liveSizeBodyRow}>
+            <Text style={styles.liveRecommendedLabel}>Talla Recomendada:</Text>
+            <View style={styles.liveSizeHighlightPill}>
+              <Text style={styles.liveSizeHighlightText}>Talla {sizeAdvisor.estimatedSize}</Text>
+            </View>
+          </View>
+          <Text style={styles.liveMetricsText}>
+            {sizeAdvisor.isTrackingBody
+              ? `Hombros: ${sizeAdvisor.shoulderWidthCm} cm • Pecho: ${sizeAdvisor.chestCircumferenceCm} cm`
+              : 'Colócate de frente a la cámara para calibrar tus medidas'}
+          </Text>
+        </View>
+      )}
+
       {/* ── 2. Top-Right Garment Card ─────────────────────────────────────── */}
       <View style={styles.topRightCardWrap} pointerEvents="box-none">
         <View style={styles.productCard}>
@@ -274,6 +399,39 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
           </Text>
           <Text style={styles.productPrice}>{selectedGarment.price}</Text>
 
+          {/* Selector de Tallas en la Tarjeta */}
+          <View style={styles.cardSizeRow}>
+            {availableSizes.map((sz) => {
+              const isRecommended =
+                sz.toUpperCase() === sizeAdvisor?.estimatedSize?.toUpperCase();
+              const isChosen = sz.toUpperCase() === chosenSize.toUpperCase();
+
+              return (
+                <TouchableOpacity
+                  key={sz}
+                  onPress={() => setChosenSize(sz)}
+                  style={[
+                    styles.cardSizeChip,
+                    isChosen && styles.cardSizeChipActive,
+                    isRecommended && !isChosen && styles.cardSizeChipRecommended,
+                  ]}
+                  activeOpacity={0.8}
+                >
+                  <Text
+                    style={[
+                      styles.cardSizeText,
+                      isChosen && styles.cardSizeTextActive,
+                      isRecommended && !isChosen && styles.cardSizeTextRecommended,
+                    ]}
+                  >
+                    {sz}
+                  </Text>
+                  {isRecommended && <View style={styles.cardIaDot} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
           <TouchableOpacity
             style={[
               styles.cartButton,
@@ -284,7 +442,7 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
           >
             <Ionicons
               name={isInCart ? 'checkmark-circle' : addedToCart ? 'checkmark' : 'bag-add-outline'}
-              size={14}
+              size={13}
               color={isInCart || addedToCart ? '#ffffff' : '#0f172a'}
             />
             <Text
@@ -292,8 +450,13 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
                 styles.cartButtonText,
                 (isInCart || addedToCart) && styles.cartButtonTextSuccess,
               ]}
+              numberOfLines={1}
             >
-              {isInCart ? 'En Carrito ✓' : addedToCart ? '¡Agregado!' : 'Añadir al carrito'}
+              {isInCart
+                ? `En Carrito (${chosenSize}) ✓`
+                : addedToCart
+                ? '¡Agregado!'
+                : `Añadir Talla ${chosenSize}`}
             </Text>
           </TouchableOpacity>
         </View>
@@ -323,7 +486,7 @@ export const CameraControls: React.FC<CameraControlsProps> = ({
               return (
                 <TouchableOpacity
                   key={item.id}
-                  onPress={() => onSelectGarment(item.id)}
+                  onPress={() => onSelectGarment(item)}
                   style={[
                     styles.railItem,
                     isSelected && styles.railItemSelected,
@@ -855,5 +1018,136 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '800',
     color: '#ffffff',
+  },
+
+  // ── Live Real-Time Size HUD Banner ──────────────────────────────
+  liveSizeHud: {
+    position: 'absolute',
+    top: 72,
+    left: 16,
+    backgroundColor: 'rgba(15, 23, 42, 0.92)',
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1.5,
+    borderColor: 'rgba(56, 189, 248, 0.45)',
+    shadowColor: '#38bdf8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.35,
+    shadowRadius: 6,
+    elevation: 6,
+    zIndex: 9,
+    maxWidth: 195,
+  },
+  liveSizeHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
+  liveSizeSparkle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+  },
+  liveSizeTitle: {
+    fontSize: 8,
+    fontWeight: '900',
+    color: '#38bdf8',
+    letterSpacing: 0.5,
+  },
+  liveConfidenceBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: 'rgba(52, 211, 153, 0.2)',
+    paddingHorizontal: 4,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+  },
+  liveConfidenceText: {
+    fontSize: 8,
+    fontWeight: '900',
+    color: '#34d399',
+  },
+  liveSizeBodyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginVertical: 1,
+  },
+  liveRecommendedLabel: {
+    fontSize: 10,
+    color: '#94a3b8',
+    fontWeight: '600',
+  },
+  liveSizeHighlightPill: {
+    backgroundColor: '#0284c7',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: 6,
+  },
+  liveSizeHighlightText: {
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#ffffff',
+  },
+  liveMetricsText: {
+    fontSize: 8.5,
+    color: '#cbd5e1',
+    fontWeight: '600',
+    marginTop: 2,
+  },
+
+  // ── Card Size Chips ─────────────────────────────────────────────
+  cardSizeRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 4,
+    marginBottom: 6,
+    width: '100%',
+  },
+  cardSizeChip: {
+    paddingHorizontal: 6,
+    paddingVertical: 2.5,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    minWidth: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  cardSizeChipActive: {
+    backgroundColor: '#38bdf8',
+    borderColor: '#38bdf8',
+  },
+  cardSizeChipRecommended: {
+    borderColor: '#38bdf8',
+    backgroundColor: 'rgba(56, 189, 248, 0.2)',
+  },
+  cardSizeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#cbd5e1',
+  },
+  cardSizeTextActive: {
+    color: '#0f172a',
+    fontWeight: '900',
+  },
+  cardSizeTextRecommended: {
+    color: '#38bdf8',
+    fontWeight: '900',
+  },
+  cardIaDot: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: '#38bdf8',
   },
 });

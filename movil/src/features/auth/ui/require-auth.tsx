@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { AUTH_COLORS } from './auth.tokens';
 import { requireAuthStyles as s } from './require-auth.styles';
+import { AppLogo } from '@/shared/ui/AppLogo';
 
 interface RequireAuthProps {
   children: React.ReactNode;
@@ -18,8 +19,6 @@ const BENEFITS = [
   { icon: 'bag-check-outline', text: 'Historial de compras y seguimiento de pedidos' },
   { icon: 'pricetag-outline', text: 'Precios mayoristas y cupones exclusivos' },
 ];
-
-const LOGO_SOURCE = require('@/assets/expo.icon/kitty.svg');
 
 export const RequireAuth: React.FC<RequireAuthProps> = ({
   children,
@@ -52,7 +51,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
         >
           {/* Logo */}
           <View style={s.logoWrap}>
-            <Image source={LOGO_SOURCE} style={s.logo} resizeMode="contain" />
+            <AppLogo size={80} withContainer={true} />
           </View>
 
           <View style={s.card}>

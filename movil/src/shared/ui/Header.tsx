@@ -2,26 +2,30 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { AppLogo } from '@/shared/ui/AppLogo';
+import { BRAND_CONFIG } from '@/shared/config/brand.config';
 
 interface HeaderProps {
   title?: string;
   subtitle?: string;
   showBack?: boolean;
+  showLogo?: boolean;
   cartCount?: number;
   rightAction?: React.ReactNode;
 }
 
 export function Header({
-  title = 'BOUTIQUE MODA',
-  subtitle = 'Colección 2026',
+  title = BRAND_CONFIG.name.toUpperCase(),
+  subtitle = BRAND_CONFIG.tagline,
   showBack = false,
+  showLogo = true,
   cartCount = 0,
   rightAction,
 }: HeaderProps) {
   return (
     <View style={styles.container}>
       <View style={styles.leftContainer}>
-        {showBack && (
+        {showBack ? (
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.back()}
@@ -29,7 +33,9 @@ export function Header({
           >
             <Ionicons name="arrow-back" size={22} color="#0f172a" />
           </TouchableOpacity>
-        )}
+        ) : showLogo ? (
+          <AppLogo size={28} withContainer={true} />
+        ) : null}
         <View>
           <Text style={styles.brandTitle}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}

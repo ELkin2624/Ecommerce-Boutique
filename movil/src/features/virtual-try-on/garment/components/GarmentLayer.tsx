@@ -12,8 +12,8 @@
  * - Zero JS per-frame re-renders (100% GPU / Worklet driven)
  */
 
-import React, { memo, useEffect } from 'react';
-import { Group, Image, useImage } from '@shopify/react-native-skia';
+import React, { memo, useEffect, useMemo } from 'react';
+import { Group, Image, Skia, useImage, type SkImage } from '@shopify/react-native-skia';
 import {
   useSharedValue,
   useDerivedValue,
@@ -22,6 +22,7 @@ import {
 import type { ScreenLandmark } from '../../pose/types/coordinate.types';
 import type { VirtualGarment } from '../types/garment.types';
 import { calculateGarmentGeometry } from '../utils/garmentAnchor';
+import { DEFAULT_GARMENT } from '../data/garmentAssets';
 
 export interface GarmentLayerProps {
   readonly garment: VirtualGarment;
@@ -34,19 +35,64 @@ export const GarmentLayer = memo(function GarmentLayer({
   landmarksShared,
   isVisible = true,
 }: GarmentLayerProps) {
-  // Load local PNG asset using Skia's native texture loader
-  const skiaImage = useImage(garment.imageSource, (err) => {
+  // Check if garment has a base64 data URL (output from backend-python /remove-background)
+  const isBase64 =
+    typeof garment.imageSource === 'string' &&
+    (garment.imageSource.startsWith('data:') || garment.imageSource.includes(';base64,'));
+
+  // 1. Decode base64 synchronously using Skia native C++ factory
+  const base64SkiaImage = useMemo<SkImage | null>(() => {
+    if (!isBase64 || typeof garment.imageSource !== 'string') return null;
+    try {
+      const raw = garment.imageSource.includes(';base64,')
+        ? garment.imageSource.split(';base64,')[1]
+        : garment.imageSource;
+      let clean = raw.trim();
+      if (clean.includes('%')) {
+        try {
+          clean = decodeURIComponent(clean);
+        } catch {}
+      }
+      clean = clean.replace(/[\r\n\s]/g, '');
+      if (!clean) return null;
+      const data = Skia.Data.fromBase64(clean);
+      if (!data) return null;
+      const img = Skia.Image.MakeImageFromEncoded(data);
+      if (__DEV__ && img) {
+        console.log(`[GarmentLayer] Successfully loaded AI transparent texture: ${img.width()}x${img.height()}px`);
+      }
+      return img;
+    } catch (err) {
+      if (__DEV__) {
+        console.warn('[GarmentLayer] Error decoding base64 garment texture:', err);
+      }
+      return null;
+    }
+  }, [isBase64, garment.imageSource]);
+
+  // 2. Load standard network URL (http/https) or local asset number via Skia useImage hook
+  // When isBase64 is true, pass null to avoid unsupported fetch() calls in Skia on Android
+  const standardSkiaImage = useImage(isBase64 ? null : garment.imageSource, (err) => {
     if (__DEV__) {
-      console.warn('[GarmentLayer] Error loading garment texture:', err);
+      console.warn('[GarmentLayer] Error loading garment texture via useImage:', err);
     }
   });
+
+  // 3. Always keep fallback texture loaded to prevent invisible garment while remote image is loading
+  const fallbackSource = garment.fallbackImageSource ?? DEFAULT_GARMENT.imageSource;
+  const fallbackSkiaImage = useImage(fallbackSource);
+
+  // Multi-tier texture resolution:
+  // 1. AI cutout base64 texture (WebP with alpha channel from FastAPI)
+  // 2. Standard Skia image (HTTP URL or local require asset)
+  // 3. Fallback preset texture (ensures AR garment is always visible)
+  const effectiveImage = base64SkiaImage ?? standardSkiaImage ?? fallbackSkiaImage;
 
   // Reanimated SharedValues for temporal EMA smoothing (Fase 8 - Seguimiento Suave)
   const smoothAnchorX = useSharedValue(0);
   const smoothAnchorY = useSharedValue(0);
   const smoothWidth = useSharedValue(garment.baseWidth);
   const smoothRotation = useSharedValue(0);
-  const smoothOpacity = useSharedValue(0);
   const isInitialized = useSharedValue(false);
 
   // Reset smoothing state when active garment changes
@@ -60,26 +106,14 @@ export const GarmentLayer = memo(function GarmentLayer({
   const transform = useDerivedValue(() => {
     'worklet';
     if (!isVisible) {
-      smoothOpacity.value = 0;
-      return [{ translateX: -4000 }, { translateY: -4000 }];
+      return [{ translateX: -9999 }, { translateY: -9999 }];
     }
 
     const raw = calculateGarmentGeometry(landmarksShared.value, garment);
 
     if (!raw.isAnchored) {
-      // Smooth fade-out when shoulders lose tracking
-      smoothOpacity.value = smoothOpacity.value * 0.85;
-      if (smoothOpacity.value < 0.02) {
-        smoothOpacity.value = 0;
-        isInitialized.value = false;
-        return [{ translateX: -4000 }, { translateY: -4000 }];
-      }
-    } else {
-      // Smooth fade-in when tracked
-      smoothOpacity.value = smoothOpacity.value + (1.0 - smoothOpacity.value) * 0.35;
-      if (smoothOpacity.value > 0.98) {
-        smoothOpacity.value = 1.0;
-      }
+      isInitialized.value = false;
+      return [{ translateX: -9999 }, { translateY: -9999 }];
     }
 
     // Exponential Moving Average (EMA) filter:
@@ -109,8 +143,6 @@ export const GarmentLayer = memo(function GarmentLayer({
     const localAnchorY = garment.baseHeight * shoulderRatio;
 
     // Skia Transform Order:
-    // When multiplying transform matrices in Skia (acc * next), point P is transformed
-    // by the LAST array item first:
     // 1. Shift local anchor (baseWidth/2, shoulderLineBaseY) to origin (0, 0)
     // 2. Scale uniformly by scale factor
     // 3. Rotate around origin by shoulder tilt angle
@@ -125,14 +157,14 @@ export const GarmentLayer = memo(function GarmentLayer({
     ];
   });
 
-  if (!skiaImage) {
+  if (!effectiveImage) {
     return null;
   }
 
   return (
-    <Group opacity={smoothOpacity} transform={transform}>
+    <Group transform={transform}>
       <Image
-        image={skiaImage}
+        image={effectiveImage}
         x={0}
         y={0}
         width={garment.baseWidth}

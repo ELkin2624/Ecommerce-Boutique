@@ -20,6 +20,7 @@ model User {
   phone        String?
   isActive     Boolean        @default(true) @map("is_active")
   isWholesaler Boolean        @default(false) @map("is_wholesaler")
+  preferences  Json?          @default("{}")
   createdAt    DateTime       @default(now()) @map("created_at")
   updatedAt    DateTime       @updatedAt @map("updated_at")
 

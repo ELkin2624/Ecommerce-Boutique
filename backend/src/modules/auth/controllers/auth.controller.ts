@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Patch,
   Body,
   UseGuards,
   HttpCode,
@@ -81,6 +82,20 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Perfil del usuario' })
   async getMe(@CurrentUser('id') userId: string) {
     return this.authService.getMe(userId);
+  }
+
+  @Patch('preferences')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Actualizar preferencias de interfaz del usuario (Tema, fuente, escala, etc.)',
+  })
+  @ApiResponse({ status: 200, description: 'Preferencias guardadas exitosamente en la base de datos' })
+  async updatePreferences(
+    @CurrentUser('id') userId: string,
+    @Body() preferences: Record<string, any>,
+  ) {
+    return this.authService.updatePreferences(userId, preferences);
   }
 
   @Get('test-protected-rbac')

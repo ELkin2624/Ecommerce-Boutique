@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { User } from '@/shared/types/api';
 
+const STAFF_ROLES = ['ADMIN', 'STORE_MANAGER', 'CASHIER'];
+
 interface AuthState {
   user: User | null;
   accessToken: string | null;
@@ -17,6 +19,8 @@ interface AuthState {
   clearSession: () => void;
   hasPermission: (permission: string) => boolean;
   hasRole: (role: string) => boolean;
+  isStaff: () => boolean;
+  isClient: () => boolean;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -70,10 +74,21 @@ export const useAuthStore = create<AuthState>()(
         if (!user) return false;
         return user.roles?.includes(role) || false;
       },
+
+      isStaff: () => {
+        const { user } = get();
+        if (!user || !user.roles) return false;
+        return user.roles.some((r) => STAFF_ROLES.includes(r.toUpperCase()));
+      },
+
+      isClient: () => {
+        const { user } = get();
+        if (!user) return false;
+        return user.roles?.includes('CLIENT') || !user.roles?.some((r) => STAFF_ROLES.includes(r.toUpperCase()));
+      },
     }),
     {
       name: 'fashionstore-auth',
-      // Persistir de forma segura datos de sesión y refresh token para recuperación
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,

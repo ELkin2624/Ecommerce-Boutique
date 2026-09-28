@@ -107,7 +107,7 @@ export function calculateGarmentGeometry(
   }
 
   // Verify both shoulders exist and satisfy confidence threshold
-  const minScore = garment.minShoulderScore ?? 0.15;
+  const minScore = garment.minShoulderScore ?? 0.10;
   if (
     !leftShoulder ||
     !rightShoulder ||
@@ -126,14 +126,16 @@ export function calculateGarmentGeometry(
   const dy = screenRightShoulder.y - screenLeftShoulder.y;
   const shoulderWidth = Math.sqrt(dx * dx + dy * dy);
 
-  if (shoulderWidth <= 15) {
+  if (shoulderWidth <= 10) {
     return notAnchored;
   }
 
   // ── 2. Dynamic Scale from Anatomical Shoulder Distance ─────────────────────
   const factor = garment.shoulderWidthFactor > 0 ? garment.shoulderWidthFactor : 1.85;
   const rawWidth = garment.shoulderWidthFactor === 0 ? garment.baseWidth : shoulderWidth * factor;
-  const garmentWidth = clamp(rawWidth, garment.minRenderWidth, garment.maxRenderWidth);
+  const maxAllowedWidth = Math.max(garment.maxRenderWidth || 600, 1200);
+  const minAllowedWidth = Math.min(garment.minRenderWidth || 140, 100);
+  const garmentWidth = clamp(rawWidth, minAllowedWidth, maxAllowedWidth);
   const garmentHeight = calculateGarmentHeight(garmentWidth, garment.originalWidth, garment.originalHeight);
 
   // ── 3. Rotation from Shoulder Tilt ─────────────────────────────────────────

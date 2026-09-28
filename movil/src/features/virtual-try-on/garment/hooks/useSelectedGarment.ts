@@ -8,7 +8,7 @@
  * - User's shopping cart items
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { GarmentStatus, VirtualGarment } from '../types/garment.types';
 import { DEFAULT_GARMENT, getGarmentById } from '../data/garmentAssets';
 import {
@@ -45,13 +45,19 @@ export function useSelectedGarment(
   const [selectedGarment, setSelectedGarment] = useState<VirtualGarment>(resolveInitial);
   const [garmentStatus, setGarmentStatus] = useState<GarmentStatus>('GARMENT_READY');
 
+  // Track if user manually selected a garment so background effects don't override their choice
+  const userHasManuallySelectedRef = useRef(false);
+  const initialResolvedRef = useRef(false);
+
   const selectGarment = useCallback((garment: VirtualGarment) => {
+    userHasManuallySelectedRef.current = true;
     setSelectedGarment(garment);
     setGarmentStatus('GARMENT_READY');
   }, []);
 
   const selectGarmentById = useCallback(
     (id: string): boolean => {
+      userHasManuallySelectedRef.current = true;
       const cartItems = useCartStore.getState().items;
       const found = resolveGarmentIdentifier(id, catalogProducts, cartItems);
 
@@ -74,15 +80,19 @@ export function useSelectedGarment(
     [catalogProducts]
   );
 
-  // If initial ID couldn't be resolved immediately (e.g. catalog was loading),
-  // re-attempt resolution once catalog products are loaded.
+  // If initial ID couldn't be resolved immediately on mount (catalog was loading),
+  // re-attempt resolution ONCE when catalog products arrive, ONLY if user hasn't chosen manually.
   useEffect(() => {
+    if (userHasManuallySelectedRef.current) return;
+    if (initialResolvedRef.current) return;
+
     if (typeof initialGarmentOrId === 'string' && catalogProducts.length > 0) {
       const cartItems = useCartStore.getState().items;
       const found = resolveGarmentIdentifier(initialGarmentOrId, catalogProducts, cartItems);
-      if (found && found.id !== selectedGarment.id) {
+      if (found) {
         setSelectedGarment(found);
         setGarmentStatus('GARMENT_READY');
+        initialResolvedRef.current = true;
       }
     }
   }, [initialGarmentOrId, catalogProducts]);

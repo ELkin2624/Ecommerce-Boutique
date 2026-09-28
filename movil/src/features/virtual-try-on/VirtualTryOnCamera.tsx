@@ -12,6 +12,7 @@ import { useCoordinateSampling } from './pose/hooks/useCoordinateSampling';
 import { PoseCanvas } from './rendering/components/PoseCanvas';
 import { usePoseRenderData } from './rendering/hooks/usePoseRenderData';
 import { useSelectedGarment } from './garment/hooks/useSelectedGarment';
+import { useRealTimeSizeAdvisor } from './pose/hooks/useRealTimeSizeAdvisor';
 import { useCatalog } from '@/features/catalog/hooks/useCatalog';
 import { GarmentDebugInfo } from './garment/components/GarmentDebugInfo';
 import type { CameraPosition } from './types/camera.types';
@@ -38,16 +39,19 @@ export const VirtualTryOnCamera: React.FC = () => {
   const [showGarment, setShowGarment] = useState<boolean>(true);
 
   // Prenda seleccionada (soporta presets locales, productos del catálogo y prendas del carrito)
-  const { selectedGarment, garmentStatus, selectGarmentById } = useSelectedGarment(
+  const { selectedGarment, garmentStatus, selectGarmentById, selectGarment } = useSelectedGarment(
     params.garmentId,
     catalogProducts
   );
 
-  useEffect(() => {
-    if (params.garmentId) {
-      selectGarmentById(params.garmentId);
+  // Manejador dinámico que acepta tanto id como objeto VirtualGarment directo
+  const handleSelectGarment = (garmentOrId: any) => {
+    if (typeof garmentOrId === 'string') {
+      selectGarmentById(garmentOrId);
+    } else if (garmentOrId && typeof garmentOrId === 'object') {
+      selectGarment(garmentOrId);
     }
-  }, [params.garmentId, selectGarmentById, catalogProducts]);
+  };
 
   // Dimensiones del contenedor del preview en píxeles de pantalla (Fase 4)
   const [previewSize, setPreviewSize] = useState<PreviewSize>({ width: 0, height: 0 });
@@ -77,6 +81,14 @@ export const VirtualTryOnCamera: React.FC = () => {
     previewSize,
     isMirrored,
     throttleMs: 400,
+  });
+
+  // Estimador de Talla en Tiempo Real a partir de landmarks MoveNet y dimensiones corporales
+  const sizeAdvisor = useRealTimeSizeAdvisor({
+    landmarksShared,
+    previewSize,
+    selectedGarment,
+    catalogProducts,
   });
 
   // Pipeline de renderizado Skia en tiempo real con suavizado temporal EMA (Fase 5)
@@ -189,7 +201,7 @@ export const VirtualTryOnCamera: React.FC = () => {
         showGarment={showGarment}
         showCoordinateDebug={showCoordinateDebug}
         selectedGarment={selectedGarment}
-        onSelectGarment={selectGarmentById}
+        onSelectGarment={handleSelectGarment}
         onTogglePosition={handleTogglePosition}
         onToggleActive={handleToggleActive}
         onToggleSkeleton={handleToggleSkeleton}
@@ -197,6 +209,7 @@ export const VirtualTryOnCamera: React.FC = () => {
         onToggleCoordinateDebug={handleToggleCoordinateDebug}
         onClose={handleClose}
         catalogProducts={catalogProducts}
+        sizeAdvisor={sizeAdvisor}
       />
     </View>
   );

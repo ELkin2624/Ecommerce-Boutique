@@ -48,7 +48,7 @@ export const PoseCanvas = memo(function PoseCanvas({
       {/* 1. Capa de Prenda 2D (Fase 6) */}
       {garment && (
         <GarmentLayer
-          key={garment.id}
+          key={`${garment.id}_${garment.name}`}
           garment={garment}
           landmarksShared={landmarksShared}
           isVisible={showGarment}

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { Upload, TrendingUp, Sparkles, Image as ImageIcon, Trash2, Check } from 'lucide-react';
 import { apiClient } from '@/shared/api/axios-client';
 import { Dialog } from '@/shared/ui/Dialog';
@@ -38,7 +38,7 @@ export function VariantFormDialog({
 
   const isEditing = Boolean(variantToEdit);
 
-  const { register, handleSubmit, reset, watch, setValue } = useForm({
+  const { register, handleSubmit, reset, setValue, control } = useForm({
     defaultValues: {
       sku: '',
       size: 'M',
@@ -48,10 +48,13 @@ export function VariantFormDialog({
     },
   });
 
-  const currentPrice = Number(watch('price') || 0);
-  const currentCost = Number(watch('cost') || 0);
-  const currentSize = watch('size');
-  const currentColor = watch('color');
+  const priceValue = useWatch({ control, name: 'price' });
+  const costValue = useWatch({ control, name: 'cost' });
+  const currentSize = useWatch({ control, name: 'size' });
+  const currentColor = useWatch({ control, name: 'color' });
+
+  const currentPrice = Number(priceValue || 0);
+  const currentCost = Number(costValue || 0);
 
   const marginAmount = currentPrice - currentCost;
   const marginPercent = currentPrice > 0 ? ((marginAmount / currentPrice) * 100).toFixed(0) : '0';

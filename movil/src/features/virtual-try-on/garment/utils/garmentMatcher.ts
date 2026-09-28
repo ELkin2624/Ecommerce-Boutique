@@ -106,6 +106,8 @@ export function matchGarmentForProduct(product?: MatchableProduct | null): Virtu
     textToSearch.includes('vestido') ||
     textToSearch.includes('cuello') ||
     textToSearch.includes('camisa') ||
+    textToSearch.includes('oxford') ||
+    textToSearch.includes('gala') ||
     textToSearch.includes('elegante') ||
     textToSearch.includes('blouse') ||
     textToSearch.includes('dress') ||
@@ -130,10 +132,17 @@ export function matchGarmentForProduct(product?: MatchableProduct | null): Virtu
     return getGarmentById('tshirt-grey-sport') ?? DEFAULT_GARMENT;
   }
 
-  // Camisetas / Remeras / Polos / Tech / Negras
+  // Camisetas / Remeras / Poleras / Manga Larga / Tech / Deportivas
   if (
     textToSearch.includes('camiseta') ||
     textToSearch.includes('remera') ||
+    textToSearch.includes('polera') ||
+    textToSearch.includes('manga') ||
+    textToSearch.includes('larga') ||
+    textToSearch.includes('dry') ||
+    textToSearch.includes('fit') ||
+    textToSearch.includes('sport') ||
+    textToSearch.includes('training') ||
     textToSearch.includes('polo') ||
     textToSearch.includes('tech') ||
     textToSearch.includes('negra') ||
@@ -169,12 +178,17 @@ export function resolveProductToGarment(product: MatchableProduct): VirtualGarme
     firstVariant?.image ||
     undefined;
 
+  const rawArUrl = product.arImageUrl?.trim();
+  const hasValidArImage = Boolean(rawArUrl && rawArUrl.length > 10 && rawArUrl !== 'null');
+  const activeImageSource = hasValidArImage ? rawArUrl! : baseGarment.imageSource;
+
   return {
     ...baseGarment,
     id: product.id,
     name: product.name,
     price: priceStr || baseGarment.price,
-    imageSource: product.arImageUrl ? product.arImageUrl : baseGarment.imageSource,
+    imageSource: activeImageSource,
+    fallbackImageSource: baseGarment.imageSource,
     previewUri: preview,
     productId: product.id,
     isFromCatalog: true,
@@ -196,6 +210,7 @@ export function resolveCartItemToGarment(item: CartItemLike): VirtualGarment {
     id: item.variantId || item.productId,
     name: item.productName,
     price: formatCurrency(item.price),
+    fallbackImageSource: baseGarment.imageSource,
     previewUri: item.image,
     productId: item.productId,
     variantId: item.variantId,

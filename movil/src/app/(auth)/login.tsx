@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/hooks/use-auth';
 import { Ionicons } from '@expo/vector-icons';
 import { AUTH_COLORS } from '@/features/auth/ui/auth.tokens';
 import { loginStyles as s } from '@/features/auth/ui/login.styles';
+import { AppLogo } from '@/shared/ui/AppLogo';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -72,6 +73,18 @@ export default function LoginScreen() {
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
           >
+            {/* ── Header con logo/branding ── */}
+            <View style={s.brandArea}>
+              <AppLogo
+                size="lg"
+                showText={true}
+                layout="vertical"
+                withContainer={true}
+                titleColor={AUTH_COLORS.textWhite}
+                subtitleColor={AUTH_COLORS.surfaceSky}
+              />
+            </View>
+
             {/* ── Tarjeta ── */}
             <Animated.View style={[s.card, { transform: [{ translateX: shakeAnim }] }]}>
               <Text style={s.cardTitle}>Bienvenido de nuevo</Text>

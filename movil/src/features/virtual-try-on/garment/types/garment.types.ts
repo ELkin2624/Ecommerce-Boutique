@@ -20,6 +20,8 @@ export interface VirtualGarment {
   readonly price: string;
   readonly description?: string;
   readonly imageSource: DataSourceParam;
+  /** Fallback local asset used if dynamic / remote arImageUrl fails or is loading */
+  readonly fallbackImageSource?: DataSourceParam;
   readonly originalWidth: number;
   readonly originalHeight: number;
   /** Rigid base width (fallback when shoulders not detected). */

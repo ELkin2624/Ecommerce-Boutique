@@ -272,6 +272,32 @@ export class AuthService {
     };
   }
 
+  async updatePreferences(userId: string, preferences: Record<string, any>) {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        preferences: preferences as any,
+      },
+      include: {
+        roles: {
+          include: {
+            role: {
+              include: {
+                permissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return this.sanitizeUser(updatedUser);
+  }
+
   private hashToken(token: string): string {
     return crypto.createHash('sha256').update(token).digest('hex');
   }
@@ -302,6 +328,7 @@ export class AuthService {
       lastName: user.lastName,
       phone: user.phone,
       isActive: user.isActive,
+      preferences: user.preferences || {},
       roles,
       permissions: Array.from(permissions),
       createdAt: user.createdAt,

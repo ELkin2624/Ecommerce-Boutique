@@ -49,6 +49,15 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
   const [reservationNotes, setReservationNotes] = useState<string>('');
   const [isSubmittingReservation, setIsSubmittingReservation] = useState(false);
 
+  // Fit Advisor IA (Recomendador de Talla Inteligente en tiempo real)
+  const [isFitAdvisorOpen, setIsFitAdvisorOpen] = useState(false);
+  const [advisorHeight, setAdvisorHeight] = useState('175');
+  const [advisorWeight, setAdvisorWeight] = useState('70');
+  const [advisorPreference, setAdvisorPreference] = useState<'slim' | 'regular' | 'oversized'>('regular');
+  const [advisorStretch, setAdvisorStretch] = useState<'low' | 'medium' | 'high'>('medium');
+  const [isCalculatingAdvisor, setIsCalculatingAdvisor] = useState(false);
+  const [advisorResult, setAdvisorResult] = useState<any>(null);
+
   const { totalCount, addItem } = useCartStore();
   const { isAuthenticated } = useAuth();
 
@@ -218,6 +227,35 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
       Alert.alert('Error al reservar', err.message || 'No se pudo registrar la reserva.');
     } finally {
       setIsSubmittingReservation(false);
+    }
+  };
+
+  // Calcular Talla Recomendada con IA para este producto
+  const handleCalculateAdvisorSize = async () => {
+    if (!product) return;
+    try {
+      setIsCalculatingAdvisor(true);
+      const res = await apiClient.post<any>(`/catalog/products/${product.id}/hybrid-fitting`, {
+        heightCm: parseFloat(advisorHeight) || 175,
+        weightKg: parseFloat(advisorWeight) || 70,
+        fitPreference: advisorPreference,
+        fabricStretch: advisorStretch,
+      });
+
+      if (res && res.recommendedSize) {
+        setAdvisorResult(res);
+        // Auto-seleccionar variante que coincida con la talla sugerida
+        const match = product.variants?.find(
+          (v) => v.size.toUpperCase() === res.recommendedSize.toUpperCase()
+        );
+        if (match) {
+          handleSelectVariant(match);
+        }
+      }
+    } catch (err: any) {
+      console.warn('Error calculando talla híbrida:', err);
+    } finally {
+      setIsCalculatingAdvisor(false);
     }
   };
 
@@ -435,33 +473,160 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
             </View>
           </View>
 
-          {/* Selector de Tallas Estilo Nike / Adidas */}
+          {/* Selector de Tallas Estilo Nike / Adidas + IA Fit Advisor */}
           <View style={styles.section} className="mt-5">
             <View style={styles.sizeHeaderRow} className="flex-row justify-between items-center">
               <Text style={styles.sectionTitle} className="text-slate-900 font-black text-xs tracking-wider">
                 SELECCIONA TU TALLA:{' '}
                 <Text style={styles.selectedValue} className="text-slate-500 font-semibold">{selectedVariant?.size}</Text>
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  router.push({
-                    pathname: '/virtual-try-on',
-                    params: { garmentId: product.id },
-                  } as any);
-                }}
-                style={styles.fittingLink}
-                className="flex-row items-center gap-1 bg-slate-900 px-2.5 py-1.5 rounded-md"
-              >
-                <Ionicons name="sparkles" size={13} color="#38bdf8" />
-                <Text style={styles.fittingLinkText} className="text-white font-extrabold text-[11px]">
-                  Probar en Probador AR
-                </Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', gap: 6 }}>
+                <TouchableOpacity
+                  onPress={() => setIsFitAdvisorOpen((prev) => !prev)}
+                  style={styles.fitAdvisorTriggerBtn}
+                  activeOpacity={0.8}
+                >
+                  <Ionicons name="body-outline" size={13} color="#4f46e5" />
+                  <Text style={styles.fitAdvisorTriggerText}>¿Cuál es mi talla?</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    router.push({
+                      pathname: '/virtual-try-on',
+                      params: { garmentId: product.id },
+                    } as any);
+                  }}
+                  style={styles.fittingLink}
+                  className="flex-row items-center gap-1 bg-slate-900 px-2.5 py-1.5 rounded-md"
+                >
+                  <Ionicons name="sparkles" size={13} color="#38bdf8" />
+                  <Text style={styles.fittingLinkText} className="text-white font-extrabold text-[11px]">
+                    Probar en AR
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
+
+            {/* Expandible de IA Fit Advisor */}
+            {isFitAdvisorOpen && (
+              <View style={styles.fitAdvisorCard}>
+                <View style={styles.fitAdvisorHeader}>
+                  <View style={styles.fitAdvisorBadge}>
+                    <Ionicons name="sparkles" size={12} color="#4338ca" />
+                    <Text style={styles.fitAdvisorBadgeText}>IA SIZE ADVISOR</Text>
+                  </View>
+                  <TouchableOpacity onPress={() => setIsFitAdvisorOpen(false)}>
+                    <Ionicons name="close-circle-outline" size={18} color="#94a3b8" />
+                  </TouchableOpacity>
+                </View>
+
+                <Text style={styles.fitAdvisorTitle}>Recomendador Anatómico de Talla</Text>
+                <Text style={styles.fitAdvisorSubtitle}>
+                  Comparamos tu contextura con el patronaje oficial de {product.name}.
+                </Text>
+
+                <View style={styles.fitAdvisorInputsRow}>
+                  <View style={styles.fitAdvisorInputBox}>
+                    <Text style={styles.fitAdvisorInputLabel}>Estatura (cm)</Text>
+                    <TextInput
+                      style={styles.fitAdvisorInput}
+                      keyboardType="numeric"
+                      value={advisorHeight}
+                      onChangeText={setAdvisorHeight}
+                      placeholder="175"
+                    />
+                  </View>
+
+                  <View style={styles.fitAdvisorInputBox}>
+                    <Text style={styles.fitAdvisorInputLabel}>Peso (kg)</Text>
+                    <TextInput
+                      style={styles.fitAdvisorInput}
+                      keyboardType="numeric"
+                      value={advisorWeight}
+                      onChangeText={setAdvisorWeight}
+                      placeholder="70"
+                    />
+                  </View>
+                </View>
+
+                {/* Preferencia de Calce */}
+                <View style={styles.fitAdvisorPrefRow}>
+                  {(['slim', 'regular', 'oversized'] as const).map((pref) => (
+                    <TouchableOpacity
+                      key={pref}
+                      style={[
+                        styles.fitAdvisorPrefBtn,
+                        advisorPreference === pref && styles.fitAdvisorPrefBtnActive,
+                      ]}
+                      onPress={() => setAdvisorPreference(pref)}
+                    >
+                      <Text
+                        style={[
+                          styles.fitAdvisorPrefText,
+                          advisorPreference === pref && styles.fitAdvisorPrefTextActive,
+                        ]}
+                      >
+                        {pref === 'slim' ? 'Ajustado' : pref === 'regular' ? 'Regular' : 'Oversize'}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+
+                {/* Botón de Cálculo */}
+                <TouchableOpacity
+                  style={styles.fitAdvisorCalcBtn}
+                  onPress={handleCalculateAdvisorSize}
+                  activeOpacity={0.85}
+                  disabled={isCalculatingAdvisor}
+                >
+                  {isCalculatingAdvisor ? (
+                    <ActivityIndicator size="small" color="#ffffff" />
+                  ) : (
+                    <>
+                      <Ionicons name="sparkles" size={14} color="#ffffff" />
+                      <Text style={styles.fitAdvisorCalcBtnText}>Calcular Mi Talla Ideal</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
+
+                {/* Resultado de la IA */}
+                {advisorResult && (
+                  <View style={styles.fitAdvisorResultBox}>
+                    <View style={styles.fitAdvisorResultTop}>
+                      <View>
+                        <Text style={styles.fitAdvisorResultPre}>TALLA IDEAL RECOMENDADA</Text>
+                        <Text style={styles.fitAdvisorResultSize}>Talla {advisorResult.recommendedSize}</Text>
+                      </View>
+                      <View style={styles.fitAdvisorConfidenceBadge}>
+                        <Ionicons name="checkmark-circle" size={14} color="#059669" />
+                        <Text style={styles.fitAdvisorConfidenceText}>
+                          {Math.round((advisorResult.confidenceScore || 0.95) * 100)}% ajuste
+                        </Text>
+                      </View>
+                    </View>
+
+                    <Text style={styles.fitAdvisorResultVerdict}>{advisorResult.fitVerdict}</Text>
+
+                    {advisorResult.details && (
+                      <View style={styles.fitAdvisorDetailsList}>
+                        {advisorResult.details.map((d: any, idx: number) => (
+                          <View key={idx} style={styles.fitAdvisorDetailRow}>
+                            <Text style={styles.fitAdvisorDetailPart}>{d.part}:</Text>
+                            <Text style={styles.fitAdvisorDetailStatus}>{d.fitStatus}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                )}
+              </View>
+            )}
 
             <View style={styles.sizesRow} className="flex-row flex-wrap gap-2.5 mt-2.5">
               {product.variants?.map((v) => {
                 const isSelected = selectedVariant?.id === v.id;
+                const isRecommended = advisorResult?.recommendedSize?.toUpperCase() === v.size.toUpperCase();
                 const variantStock =
                   v.stocks?.reduce((acc, s) => acc + (s.quantity || 0), 0) ?? 0;
                 const isOutOfStock = variantStock === 0;
@@ -473,6 +638,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
                     style={[
                       styles.sizeBox,
                       isSelected && styles.sizeBoxActive,
+                      isRecommended && styles.sizeBoxRecommended,
                       isOutOfStock && styles.sizeBoxOutOfStock,
                     ]}
                   >
@@ -485,6 +651,11 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
                     >
                       {v.size}
                     </Text>
+                    {isRecommended && (
+                      <View style={styles.recommendedMiniBadge}>
+                        <Text style={styles.recommendedMiniBadgeText}>IA</Text>
+                      </View>
+                    )}
                     {isOutOfStock && <View style={styles.sizeSlash} />}
                   </TouchableOpacity>
                 );
@@ -1368,5 +1539,211 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '900',
     letterSpacing: 0.5,
+  },
+  fitAdvisorTriggerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#eef2ff',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#c7d2fe',
+  },
+  fitAdvisorTriggerText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#4338ca',
+  },
+  fitAdvisorCard: {
+    backgroundColor: '#f8fafc',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#c7d2fe',
+    marginTop: 10,
+    marginBottom: 6,
+  },
+  fitAdvisorHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  fitAdvisorBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#e0e7ff',
+    paddingHorizontal: 6,
+    paddingVertical: 2.5,
+    borderRadius: 6,
+  },
+  fitAdvisorBadgeText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#4338ca',
+  },
+  fitAdvisorTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0f172a',
+    marginBottom: 2,
+  },
+  fitAdvisorSubtitle: {
+    fontSize: 11,
+    color: '#64748b',
+    marginBottom: 10,
+    lineHeight: 14,
+  },
+  fitAdvisorInputsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 10,
+  },
+  fitAdvisorInputBox: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  fitAdvisorInputLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#64748b',
+    marginBottom: 2,
+  },
+  fitAdvisorInput: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#0f172a',
+    padding: 0,
+  },
+  fitAdvisorPrefRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 10,
+  },
+  fitAdvisorPrefBtn: {
+    flex: 1,
+    paddingVertical: 6,
+    borderRadius: 8,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    alignItems: 'center',
+  },
+  fitAdvisorPrefBtnActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  fitAdvisorPrefText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#64748b',
+  },
+  fitAdvisorPrefTextActive: {
+    color: '#ffffff',
+  },
+  fitAdvisorCalcBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: '#4338ca',
+    borderRadius: 10,
+    paddingVertical: 9,
+  },
+  fitAdvisorCalcBtnText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  fitAdvisorResultBox: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#a5b4fc',
+    marginTop: 10,
+  },
+  fitAdvisorResultTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  fitAdvisorResultPre: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#6366f1',
+    letterSpacing: 0.5,
+  },
+  fitAdvisorResultSize: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#0f172a',
+  },
+  fitAdvisorConfidenceBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: '#ecfdf5',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  fitAdvisorConfidenceText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#059669',
+  },
+  fitAdvisorResultVerdict: {
+    fontSize: 11,
+    color: '#334155',
+    lineHeight: 14,
+    marginBottom: 6,
+  },
+  fitAdvisorDetailsList: {
+    gap: 3,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+    paddingTop: 6,
+  },
+  fitAdvisorDetailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  fitAdvisorDetailPart: {
+    fontSize: 10,
+    color: '#64748b',
+    fontWeight: '600',
+  },
+  fitAdvisorDetailStatus: {
+    fontSize: 10,
+    color: '#0f172a',
+    fontWeight: '700',
+  },
+  sizeBoxRecommended: {
+    borderColor: '#6366f1',
+    borderWidth: 2,
+  },
+  recommendedMiniBadge: {
+    position: 'absolute',
+    top: -6,
+    right: -4,
+    backgroundColor: '#4f46e5',
+    borderRadius: 4,
+    paddingHorizontal: 3,
+    paddingVertical: 1,
+  },
+  recommendedMiniBadgeText: {
+    color: '#ffffff',
+    fontSize: 7,
+    fontWeight: '900',
   },
 });

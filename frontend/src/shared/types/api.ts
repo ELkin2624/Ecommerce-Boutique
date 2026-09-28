@@ -12,6 +12,7 @@ export interface User {
   lastName: string;
   phone?: string | null;
   isActive: boolean;
+  preferences?: Record<string, any>;
   roles: string[];
   permissions: string[];
 }
@@ -403,13 +404,6 @@ export interface CreateSeasonPayload {
 export interface CreateCollectionPayload {
   name: string;
   description?: string;
-}
-
-export interface CreateSupplierPayload {
-  name: string;
-  contactEmail?: string;
-  phone?: string;
-  address?: string;
 }
 
 export interface CreateBranchPayload {
