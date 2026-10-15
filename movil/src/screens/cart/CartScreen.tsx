@@ -105,7 +105,7 @@ export const CartScreen: React.FC = () => {
   };
 
   // Procesar orden / reserva
-  const handleProcessOrder = async () => {
+  const handleProcessOrder = async (paymentRef?: { type: 'STRIPE' | 'QR'; ref: string }) => {
     if (!selectedBranchId) {
       Alert.alert('Selecciona una sucursal', 'Por favor selecciona la sucursal de entrega o retiro.');
       return;
@@ -146,11 +146,12 @@ export const CartScreen: React.FC = () => {
         return;
       }
 
-      // Si es compra digital (QR o Tarjeta)
+      // Si es compra digital (QR o Tarjeta con referencia de pago previa)
+      const paymentMethod = paymentRef?.type === 'STRIPE' ? 'GATEWAY' : 'QR';
       const payload = {
         branchId: selectedBranchId,
         type: 'ONLINE',
-        paymentMethod: selectedMethod === 'QR' ? 'QR' : 'CARD',
+        paymentMethod,
         idempotencyKey: `mobile-${Date.now()}-${Math.random().toString(36).substring(7)}`,
         items: items.map((it) => ({
           variantId: it.variantId,
@@ -160,13 +161,32 @@ export const CartScreen: React.FC = () => {
 
       const order = await apiClient.post<any>('/orders/checkout', payload);
 
+      // Confirmar el pago en el backend para actualizar el estado de la orden
+      if (paymentRef && order?.id) {
+        try {
+          if (paymentRef.type === 'STRIPE') {
+            await apiClient.post('/payments/confirm-stripe', {
+              paymentIntentId: paymentRef.ref,
+              orderId: order.id,
+            });
+          } else {
+            await apiClient.post('/payments/confirm-qr', {
+              transactionRef: paymentRef.ref,
+              orderId: order.id,
+            });
+          }
+        } catch {
+          console.warn('Advertencia: no se pudo confirmar el estado de pago');
+        }
+      }
+
       await clearCart(isAuthenticated);
       setPaymentModalVisible(false);
 
       Alert.alert(
         '¡Pago Confirmado con Éxito!',
         `Tu pedido por un total de ${formatCurrency(finalTotal)} fue registrado exitosamente.\n\nCódigo de orden: ${order?.id?.substring(0, 8) || 'Generado'}.\nMétodo: ${
-          selectedMethod === 'QR' ? 'Pago Móvil QR Simple' : 'Tarjeta de Crédito / Débito'
+          paymentRef?.type === 'STRIPE' ? 'Tarjeta (Stripe)' : 'Pago QR'
         }. Recibirás un correo con el comprobante digital.`,
         [
           {

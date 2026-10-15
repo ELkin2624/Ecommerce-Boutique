@@ -7,6 +7,12 @@ import { RequireClient } from './guards/RequireClient';
 import { RequirePermission } from './guards/RequirePermission';
 import { AppLogo } from '@/shared/ui/AppLogo';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
+import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
+
+// Lazy loading SaaS Landing Page (Portal Multi-Tenant & Planes)
+const SaasLandingPage = lazy(() =>
+  import('@/pages/saas/SaasLandingPage').then((m) => ({ default: m.SaasLandingPage })),
+);
 
 // Lazy loading Store (Clientes / E-commerce)
 const StoreHomePage = lazy(() =>
@@ -69,38 +75,62 @@ const SuppliersPage = lazy(() =>
 export function AppRouter() {
   return (
     <BrowserRouter>
-      <Suspense
-        fallback={
-          <div className="h-screen w-screen flex items-center justify-center bg-background">
-            <div className="flex flex-col items-center gap-3">
-              <AppLogo size="md" withContainer={true} className="animate-pulse" />
-              <span className="text-xs font-semibold text-muted-foreground">
-                Cargando {BRAND_CONFIG.name}...
-              </span>
+      <ErrorBoundary>
+        <Suspense
+          fallback={
+            <div className="h-screen w-screen flex items-center justify-center bg-background">
+              <div className="flex flex-col items-center gap-3">
+                <AppLogo size="md" withContainer={true} className="animate-pulse" />
+                <span className="text-xs font-semibold text-muted-foreground">
+                  Cargando {BRAND_CONFIG.name}...
+                </span>
+              </div>
             </div>
-          </div>
-        }
-      >
-        <Routes>
-          {/* ========================================================================= */}
-          {/* 1. SECTOR CLIENTES (E-Commerce Storefront)                                */}
-          {/* ========================================================================= */}
-          <Route element={<StoreLayout />}>
-            <Route index element={<StoreHomePage />} />
-            <Route path="products/:id" element={<ProductDetailPage />} />
-            <Route path="cart" element={<CartPage />} />
-            <Route path="checkout" element={<CheckoutPage />} />
-            <Route path="login" element={<ClientAuthPage />} />
-            <Route path="register" element={<ClientAuthPage />} />
-            <Route
-              path="orders"
-              element={
-                <RequireClient>
-                  <ClientOrdersPage />
-                </RequireClient>
-              }
-            />
-          </Route>
+          }
+        >
+          <Routes>
+            {/* ========================================================================= */}
+            {/* 0. HOME SAAS LANDING & PRICING PLANS (Estilo Google Workspace / SaaS)     */}
+            {/* ========================================================================= */}
+            <Route path="/" element={<SaasLandingPage />} />
+            <Route path="/saas" element={<SaasLandingPage />} />
+
+            {/* ========================================================================= */}
+            {/* 1. SECTOR CLIENTES (E-Commerce Storefront por Tienda /store)              */}
+            {/* ========================================================================= */}
+            <Route path="/store" element={<StoreLayout />}>
+              <Route index element={<StoreHomePage />} />
+              <Route path="products/:id" element={<ProductDetailPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="checkout" element={<CheckoutPage />} />
+              <Route path="login" element={<ClientAuthPage />} />
+              <Route path="register" element={<ClientAuthPage />} />
+              <Route
+                path="orders"
+                element={
+                  <RequireClient>
+                    <ClientOrdersPage />
+                  </RequireClient>
+                }
+              />
+            </Route>
+
+            {/* Compatibilidad de rutas de tienda */}
+            <Route element={<StoreLayout />}>
+              <Route path="products/:id" element={<ProductDetailPage />} />
+              <Route path="cart" element={<CartPage />} />
+              <Route path="checkout" element={<CheckoutPage />} />
+              <Route path="login" element={<ClientAuthPage />} />
+              <Route path="register" element={<ClientAuthPage />} />
+              <Route
+                path="orders"
+                element={
+                  <RequireClient>
+                    <ClientOrdersPage />
+                  </RequireClient>
+                }
+              />
+            </Route>
 
           {/* ========================================================================= */}
           {/* 2. ACCESO ADMINISTRATIVO Y POS                                           */}
@@ -227,6 +257,7 @@ export function AppRouter() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
-    </BrowserRouter>
+    </ErrorBoundary>
+  </BrowserRouter>
   );
 }

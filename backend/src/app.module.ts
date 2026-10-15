@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { PrismaModule } from './prisma/prisma.module.js';
@@ -13,6 +13,9 @@ import { ReservationsModule } from './modules/reservations/reservations.module.j
 import { OrdersModule } from './modules/orders/orders.module.js';
 import { PromotionsModule } from './modules/promotions/promotions.module.js';
 import { SuppliersModule } from './modules/suppliers/suppliers.module.js';
+import { PaymentsModule } from './modules/payments/payments.module.js';
+import { SaasModule } from './modules/saas/saas.module.js';
+import { TenantMiddleware } from './common/multitenancy/tenant.middleware.js';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
@@ -24,6 +27,7 @@ import { AppService } from './app.service.js';
     }),
     ScheduleModule.forRoot(),
     PrismaModule,
+    SaasModule,
     AuthModule,
     UsersModule,
     BranchesModule,
@@ -35,8 +39,14 @@ import { AppService } from './app.service.js';
     OrdersModule,
     PromotionsModule,
     SuppliersModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TenantMiddleware).forRoutes('*');
+  }
+}
+

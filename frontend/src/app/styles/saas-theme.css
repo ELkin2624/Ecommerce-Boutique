@@ -1,0 +1,102 @@
+/* ==========================================================================
+   PALETA DE COLORES HOLST - BOUTIQUE SAAS MULTITENANT
+   Referencia centralizada de color para toda la plataforma SaaS.
+   Si en el futuro deseas cambiar la paleta o personalizarla, solo modifica
+   los valores hexadecimales aquí o en tailwind.config.js.
+   ========================================================================== */
+
+:root {
+  /* Escala Holst Exacta (Imagen Oficial) */
+  --holst-950: #04222B; /* Dark Obsidian Marine */
+  --holst-900: #0A3D4A; /* Deep Petrol Teal */
+  --holst-800: #10606F; /* Ocean Teal */
+  --holst-600: #1D8B94; /* Cyan Teal Principal / Brand */
+  --holst-400: #4FB8B4; /* Medium Mint Cyan / Accent */
+  --holst-200: #98D8D0; /* Pastel Mint */
+  --holst-50:  #E2F4F0; /* Soft Ice White Mint */
+
+  /* Variables Semánticas SaaS - MODO CLARO */
+  --saas-bg: #FFFFFF;
+  --saas-bg-subtle: #F4FAF8;
+  --saas-bg-canvas: #E2F4F0;
+  --saas-surface: #FFFFFF;
+  --saas-surface-hover: #F0F9F7;
+  --saas-surface-active: #E2F4F0;
+  --saas-border: #D1EBE5;
+  --saas-border-strong: #98D8D0;
+  --saas-border-glow: rgba(29, 139, 148, 0.25);
+  
+  --saas-text-primary: #04222B;
+  --saas-text-secondary: #0A3D4A;
+  --saas-text-muted: #10606F;
+  --saas-text-dim: #456E74;
+
+  --saas-primary: #1D8B94;
+  --saas-primary-hover: #10606F;
+  --saas-primary-contrast: #FFFFFF;
+  --saas-accent: #4FB8B4;
+  --saas-accent-badge: #E2F4F0;
+  --saas-accent-badge-text: #0A3D4A;
+
+  --saas-card-shadow: 0 10px 30px -10px rgba(4, 34, 43, 0.08), 0 4px 6px -2px rgba(4, 34, 43, 0.03);
+  --saas-card-shadow-hover: 0 20px 40px -12px rgba(29, 139, 148, 0.22);
+  --saas-glass-bg: rgba(255, 255, 255, 0.88);
+  --saas-glass-border: rgba(152, 216, 208, 0.45);
+}
+
+.dark {
+  /* Variables Semánticas SaaS - MODO OSCURO */
+  --saas-bg: #04222B;
+  --saas-bg-subtle: #072B36;
+  --saas-bg-canvas: #0A3D4A;
+  --saas-surface: #0A3D4A;
+  --saas-surface-hover: #0E4856;
+  --saas-surface-active: #10606F;
+  --saas-border: #10606F;
+  --saas-border-strong: #1D8B94;
+  --saas-border-glow: rgba(79, 184, 180, 0.35);
+
+  --saas-text-primary: #FFFFFF;
+  --saas-text-secondary: #E2F4F0;
+  --saas-text-muted: #98D8D0;
+  --saas-text-dim: #79ACA6;
+
+  --saas-primary: #1D8B94;
+  --saas-primary-hover: #4FB8B4;
+  --saas-primary-contrast: #FFFFFF;
+  --saas-accent: #4FB8B4;
+  --saas-accent-badge: rgba(79, 184, 180, 0.16);
+  --saas-accent-badge-text: #98D8D0;
+
+  --saas-card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(16, 96, 111, 0.6);
+  --saas-card-shadow-hover: 0 20px 40px -10px rgba(29, 139, 148, 0.3), 0 0 0 1px rgba(79, 184, 180, 0.6);
+  --saas-glass-bg: rgba(10, 61, 74, 0.85);
+  --saas-glass-border: rgba(16, 96, 111, 0.65);
+}
+
+/* Efectos de gradiente y brillo distintivos de Holst */
+.holst-gradient-hero {
+  background: radial-gradient(circle at 50% 0%, rgba(79, 184, 180, 0.18), transparent 70%),
+              linear-gradient(180deg, var(--saas-bg-subtle) 0%, var(--saas-bg) 100%);
+}
+
+.dark .holst-gradient-hero {
+  background: radial-gradient(circle at 50% 0%, rgba(29, 139, 148, 0.32), transparent 70%),
+              linear-gradient(180deg, var(--holst-950) 0%, var(--holst-900) 100%);
+}
+
+.holst-glow-border {
+  position: relative;
+}
+.holst-glow-border::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--holst-400), var(--holst-600), transparent 60%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}

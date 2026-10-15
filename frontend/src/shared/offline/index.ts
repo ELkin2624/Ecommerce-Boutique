@@ -37,3 +37,7 @@ export * from './hooks/useOfflineTable';
 export * from './ui/OfflineBanner';
 export * from './ui/OfflineBadge';
 export * from './ui/PwaInstallButton';
+
+// 10. Interceptor transparente de Axios
+export * from './interceptors/offline-interceptor';
+

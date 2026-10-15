@@ -13,11 +13,41 @@ interface UiState {
   setTableDensity: (density: 'compact' | 'comfortable') => void;
 }
 
+function getInitialTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'light';
+  try {
+    const saved = localStorage.getItem('fashionstore-ui');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed?.state?.theme === 'dark' || parsed?.state?.theme === 'light') {
+        if (parsed.state.theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+        return parsed.state.theme;
+      }
+    }
+    // Detección automática del sistema operativo del usuario
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+      document.documentElement.classList.add('dark');
+      return 'dark';
+    }
+  } catch {
+    // Fallback silencioso
+  }
+  document.documentElement.classList.remove('dark');
+  return 'light';
+}
+
+const initialTheme = getInitialTheme();
+
 export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
       sidebarOpen: true,
-      theme: 'light',
+      theme: initialTheme,
       tableDensity: 'comfortable',
 
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),

@@ -5,6 +5,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 // ==========================================
@@ -472,3 +473,28 @@ model Promotion {
   @@index([code, isActive])
   @@map("promotions")
 }
+
+// ==========================================
+// 7. MULTITENANT SAAS (CENTRAL / PUBLIC)
+// ==========================================
+
+model Tenant {
+  id           String   @id @default(uuid())
+  name         String
+  slug         String   @unique
+  schemaName   String   @unique @map("schema_name")
+  plan         String   @default("STARTER") // STARTER, PRO, ENTERPRISE
+  status       String   @default("ACTIVE") // ACTIVE, SUSPENDED, TRIAL
+  ownerName    String   @map("owner_name")
+  ownerEmail   String   @map("owner_email")
+  phone        String?
+  customDomain String?  @map("custom_domain")
+  logoUrl      String?  @map("logo_url")
+  primaryColor String?  @default("#ec4899") @map("primary_color")
+  settings     Json?    @default("{}")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("tenants")
+}
+

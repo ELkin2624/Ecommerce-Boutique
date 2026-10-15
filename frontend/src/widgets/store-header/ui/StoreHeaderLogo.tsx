@@ -1,21 +1,33 @@
 import { Link } from 'react-router-dom';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
+import { Store } from 'lucide-react';
 
 export function StoreHeaderLogo() {
+  const { currentTenant } = useTenantStore();
+  const name = currentTenant?.name || BRAND_CONFIG.name;
+
   return (
     <Link
-      to="/"
-      className="h-11 w-11 rounded-full bg-card/85 hover:bg-card border border-border/80 backdrop-blur-xl flex items-center justify-center shadow-sm transition-all hover:scale-105 active:scale-95 group shrink-0 overflow-hidden p-1.5"
-      title={`${BRAND_CONFIG.name} — Inicio`}
+      to="/store"
+      className="flex items-center gap-2.5 group shrink-0"
+      title={`${name} — Tienda Oficial`}
     >
-      <img
-        src={BRAND_CONFIG.logo.default}
-        alt={BRAND_CONFIG.name}
-        className="h-full w-full object-contain drop-shadow-xs group-hover:rotate-6 transition-transform duration-300"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = BRAND_CONFIG.logo.png;
-        }}
-      />
+      <div
+        className="h-10 w-10 rounded-2xl text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform p-1.5 font-bold"
+        style={{ backgroundColor: currentTenant?.primaryColor || '#ec4899' }}
+      >
+        <Store className="w-5 h-5 text-white" />
+      </div>
+      <div className="hidden sm:flex flex-col">
+        <span className="font-extrabold text-sm tracking-tight text-foreground group-hover:text-primary transition-colors">
+          {name}
+        </span>
+        <span className="text-[10px] text-muted-foreground font-semibold flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Tienda Oficial • Plan {currentTenant?.plan || 'PRO'}
+        </span>
+      </div>
     </Link>
   );
 }

@@ -5,3 +5,5 @@ export { CheckoutCustomerInfo } from './ui/CheckoutCustomerInfo';
 export { CheckoutDeliverySection } from './ui/CheckoutDeliverySection';
 export { CheckoutPaymentSection } from './ui/CheckoutPaymentSection';
 export { CheckoutOrderSummary } from './ui/CheckoutOrderSummary';
+export { StripeCardForm } from './ui/StripeCardForm';
+export { QrPaymentDisplay } from './ui/QrPaymentDisplay';

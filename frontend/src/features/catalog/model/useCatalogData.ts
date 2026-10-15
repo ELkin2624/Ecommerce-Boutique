@@ -2,7 +2,10 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/shared/api/axios-client';
 import { queryKeys } from '@/shared/api/query-keys';
+import { STALE_TIMES } from '@/app/providers/QueryProvider';
 import type { Product, Category, Season, Collection, Supplier } from '@/shared/types/api';
+
+
 
 interface UseCatalogDataProps {
   productSearch?: string;
@@ -26,6 +29,7 @@ export function useCatalogData({
       const res = await apiClient.get('/catalog/products', { params: { limit: 100 } });
       return res.data;
     },
+    staleTime: STALE_TIMES.SEMI,
   });
 
   // 2. Consultar categorías
@@ -39,7 +43,7 @@ export function useCatalogData({
       const res = await apiClient.get('/catalog/categories');
       return res.data;
     },
-    staleTime: 0,
+    staleTime: STALE_TIMES.SEMI,
   });
 
   // 3. Consultar temporadas
@@ -53,7 +57,7 @@ export function useCatalogData({
       const res = await apiClient.get('/catalog/seasons');
       return res.data;
     },
-    staleTime: 0,
+    staleTime: STALE_TIMES.SEMI,
   });
 
   // 4. Consultar colecciones
@@ -67,7 +71,7 @@ export function useCatalogData({
       const res = await apiClient.get('/catalog/collections');
       return res.data;
     },
-    staleTime: 0,
+    staleTime: STALE_TIMES.SEMI,
   });
 
   // 5. Consultar proveedores
@@ -81,7 +85,7 @@ export function useCatalogData({
       const res = await apiClient.get('/catalog/suppliers');
       return res.data;
     },
-    staleTime: 0,
+    staleTime: STALE_TIMES.SEMI,
   });
 
   const allProducts: Product[] = useMemo(() => {

@@ -209,7 +209,15 @@ export class OfflineApiClient {
         );
       }
 
-      console.log('[OfflineClient] Precarga de catálogos en IndexedDB completada con éxito.');
+      // 4. Precargar temporadas, colecciones, proveedores y ciudades
+      await Promise.allSettled([
+        apiClient.get('/catalog/seasons'),
+        apiClient.get('/catalog/collections'),
+        apiClient.get('/catalog/suppliers'),
+        apiClient.get('/branches/cities'),
+      ]);
+
+      console.log('[OfflineClient] Precarga integral de catálogos en IndexedDB completada con éxito.');
     } catch (err) {
       console.warn('[OfflineClient] No se pudo completar la precarga inicial:', err);
     }

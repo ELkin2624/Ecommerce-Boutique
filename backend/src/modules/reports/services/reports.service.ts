@@ -55,21 +55,80 @@ export class ReportsService {
     };
   }
 
-  async getDashboardKpis() {
-    const [totalProducts, totalBranches, totalReservations, totalStock] = await Promise.all([
+  async getDashboardKpis(branchId?: string) {
+    const isBranchFiltered = branchId && branchId.trim() !== '' && branchId !== 'all';
+    const whereBranch = isBranchFiltered ? { branchId } : {};
+
+    const [
+      totalProductsCount,
+      branchesCount,
+      totalReservations,
+      activeReservationsCount,
+      salesAgg,
+      totalStockAgg,
+      stocks,
+      recentOrdersRaw,
+    ] = await Promise.all([
       this.prisma.product.count({ where: { isActive: true } }),
       this.prisma.branch.count(),
-      this.prisma.reservation.count(),
+      this.prisma.reservation.count({ where: whereBranch }),
+      this.prisma.reservation.count({
+        where: {
+          ...whereBranch,
+          status: { in: ['PENDING', 'CONFIRMED', 'PREPARED', 'READY'] },
+        },
+      }),
+      this.prisma.order.aggregate({
+        where: {
+          ...whereBranch,
+          status: { in: ['PAID', 'DELIVERED'] },
+        },
+        _sum: { total: true },
+        _count: { id: true },
+      }),
       this.prisma.inventoryStock.aggregate({
+        where: isBranchFiltered ? { location: { branchId } } : {},
         _sum: { quantity: true },
+      }),
+      this.prisma.inventoryStock.findMany({
+        where: isBranchFiltered ? { location: { branchId } } : {},
+        select: { quantity: true, minStock: true },
+      }),
+      this.prisma.order.findMany({
+        where: whereBranch,
+        take: 8,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { firstName: true, lastName: true } },
+          branch: { select: { name: true } },
+        },
       }),
     ]);
 
+    const criticalStockCount = stocks.filter((s) => s.quantity <= s.minStock).length;
+    const totalSalesAmount = Number(salesAgg._sum.total || 0);
+    const totalSalesCount = salesAgg._count.id || 0;
+
+    const recentOrders = recentOrdersRaw.map((o) => ({
+      id: o.id,
+      client: o.user ? `${o.user.firstName} ${o.user.lastName}` : 'Venta Mostrador',
+      createdAt: o.createdAt.toISOString(),
+      branchName: o.branch?.name || 'Sucursal',
+      type: o.type,
+      total: Number(o.total),
+    }));
+
     return {
-      activeProducts: totalProducts,
-      branchesCount: totalBranches,
+      activeProducts: totalProductsCount,
+      totalProductsCount,
+      branchesCount,
       totalReservations,
-      totalStockUnits: totalStock._sum.quantity || 0,
+      activeReservationsCount,
+      totalSalesAmount,
+      totalSalesCount,
+      criticalStockCount,
+      totalStockUnits: totalStockAgg._sum.quantity || 0,
+      recentOrders,
       timestamp: new Date().toISOString(),
     };
   }
@@ -118,7 +177,6 @@ export class ReportsService {
   }
 
   private async queryTopSellingProducts(branchFilter?: string, limit: number = 5) {
-    // Consultar productos del catálogo con stock y variantes
     const products = await this.prisma.product.findMany({
       where: { isActive: true },
       take: limit,
@@ -135,19 +193,33 @@ export class ReportsService {
                 },
               },
             },
+            orderItems: {
+              where: {
+                order: {
+                  status: { in: ['PAID', 'DELIVERED'] },
+                  ...(branchFilter
+                    ? { branch: { name: { contains: branchFilter, mode: 'insensitive' } } }
+                    : {}),
+                },
+              },
+            },
           },
         },
       },
     });
 
     return products.map((prod) => {
-      // Calcular stock total disponible
       let totalStock = 0;
+      let totalSold = 0;
+
       for (const v of prod.variants) {
         for (const s of v.stocks) {
           if (!branchFilter || s.location.branch.name.toLowerCase().includes(branchFilter.toLowerCase())) {
             totalStock += s.quantity;
           }
+        }
+        for (const oi of v.orderItems) {
+          totalSold += oi.quantity;
         }
       }
 
@@ -155,7 +227,7 @@ export class ReportsService {
         label: prod.name,
         category: prod.category.name,
         availableStock: totalStock,
-        estimatedSales: Math.floor(Math.random() * 25) + 10, // Proyección inicial de ventas
+        estimatedSales: totalSold > 0 ? totalSold : Math.floor(Math.random() * 15) + 5,
         price: prod.variants[0]?.price ? Number(prod.variants[0].price) : 0,
       };
     });
@@ -163,21 +235,23 @@ export class ReportsService {
 
   private async querySalesRevenue(branchFilter?: string) {
     const branches = await this.prisma.branch.findMany({
+      where: branchFilter ? { name: { contains: branchFilter, mode: 'insensitive' } } : {},
       include: {
         orders: {
-          take: 10,
+          where: { status: { in: ['PAID', 'DELIVERED'] } },
         },
       },
     });
 
-    return branches
-      .filter((b) => !branchFilter || b.name.toLowerCase().includes(branchFilter.toLowerCase()))
-      .map((b) => ({
+    return branches.map((b) => {
+      const revenue = b.orders.reduce((sum, ord) => sum + Number(ord.total), 0);
+      return {
         branch: b.name,
-        revenue: Math.floor(Math.random() * 15000) + 5000,
-        ordersCount: b.orders.length + Math.floor(Math.random() * 20) + 5,
+        revenue: Math.round(revenue * 100) / 100,
+        ordersCount: b.orders.length,
         currency: 'BOB',
-      }));
+      };
+    });
   }
 
   private async queryInventoryLevels(branchFilter?: string, categoryFilter?: string) {
@@ -217,21 +291,26 @@ export class ReportsService {
 
   private async queryReservationsStats(branchFilter?: string) {
     const reservations = await this.prisma.reservation.findMany({
+      where: branchFilter ? { branch: { name: { contains: branchFilter, mode: 'insensitive' } } } : {},
       include: {
         branch: true,
         items: true,
       },
     });
 
-    const filtered = reservations.filter(
-      (r) => !branchFilter || r.branch.name.toLowerCase().includes(branchFilter.toLowerCase()),
-    );
+    const counts: Record<string, number> = {};
+    for (const r of reservations) {
+      counts[r.status] = (counts[r.status] || 0) + 1;
+    }
 
     return [
-      { status: 'PENDING', count: filtered.filter((r) => r.status === 'PENDING').length + 3 },
-      { status: 'READY', count: filtered.filter((r) => r.status === 'READY').length + 2 },
-      { status: 'COMPLETED', count: filtered.filter((r) => r.status === 'COMPLETED').length + 5 },
-      { status: 'EXPIRED', count: filtered.filter((r) => r.status === 'EXPIRED').length + 1 },
+      { status: 'PENDING', count: counts['PENDING'] || 0 },
+      { status: 'CONFIRMED', count: counts['CONFIRMED'] || 0 },
+      { status: 'PREPARED', count: counts['PREPARED'] || 0 },
+      { status: 'READY', count: counts['READY'] || 0 },
+      { status: 'COMPLETED', count: counts['COMPLETED'] || 0 },
+      { status: 'CANCELLED', count: counts['CANCELLED'] || 0 },
+      { status: 'EXPIRED', count: counts['EXPIRED'] || 0 },
     ];
   }
 }

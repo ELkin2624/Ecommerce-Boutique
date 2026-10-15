@@ -171,7 +171,7 @@ export function usePoseModelLoader(
 
             const candidateHosts = [
               metroHost,
-              '192.168.0.32:8081',
+              '192.168.218.94:8081',
               'localhost:8081',
             ].filter((h): h is string => Boolean(h));
 

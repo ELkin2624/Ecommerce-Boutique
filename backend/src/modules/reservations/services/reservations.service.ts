@@ -22,21 +22,34 @@ export class ReservationsService {
       );
     }
 
-    // 1. Obtener la ubicación SALES_FLOOR de la sucursal elegida
-    const salesFloor = await this.prisma.inventoryLocation.findFirst({
-      where: {
-        branchId: dto.branchId,
-        type: 'SALES_FLOOR',
-      },
+    // Validación previa rápida: la sucursal existe (fuera de TX, sólo lectura segura)
+    const branchExists = await this.prisma.branch.findUnique({
+      where: { id: dto.branchId },
+      select: { id: true },
     });
-
-    if (!salesFloor) {
+    if (!branchExists) {
       throw new NotFoundException(
-        `No se encontró piso de venta (SALES_FLOOR) para la sucursal seleccionada`,
+        `La sucursal con ID ${dto.branchId} no existe`,
       );
     }
 
     return this.prisma.$transaction(async (tx) => {
+      // 1. Leer SALES_FLOOR DENTRO de la transacción para garantizar consistencia
+      //    (evita usar un locationId de una ubicación que pudo haber sido eliminada
+      //    entre la lectura y el inicio de la TX)
+      const salesFloor = await tx.inventoryLocation.findFirst({
+        where: {
+          branchId: dto.branchId,
+          type: 'SALES_FLOOR',
+        },
+      });
+
+      if (!salesFloor) {
+        throw new NotFoundException(
+          `No se encontró piso de venta (SALES_FLOOR) para la sucursal seleccionada`,
+        );
+      }
+
       // 2. Consulta agrupada de stock (Cero consultas de lectura individuales en iteraciones)
       const variantIds = dto.items.map((i) => i.variantId);
       const stocks = await tx.inventoryStock.findMany({
@@ -243,18 +256,45 @@ export class ReservationsService {
       return this.cancelReservation(reservationId, staffUserId, true);
     }
 
-    return this.prisma.$transaction(async (tx) => {
-      const activeStatuses: ReservationStatus[] = [
-        'PENDING',
-        'CONFIRMED',
-        'PREPARED',
-        'READY',
-      ];
+    // Mapa de transiciones válidas (máquina de estados)
+    const VALID_TRANSITIONS: Record<ReservationStatus, ReservationStatus[]> = {
+      PENDING:   ['CONFIRMED'],
+      CONFIRMED: ['PREPARED'],
+      PREPARED:  ['READY'],
+      READY:     [],           // Estado terminal positivo (cliente recogió)
+      COMPLETED: [],           // Estado terminal — reserva completada
+      CANCELLED: [],           // Estado terminal — gestionado por cancelReservation
+      EXPIRED:   [],           // Estado terminal — gestionado por el cron
+    };
 
+    return this.prisma.$transaction(async (tx) => {
+      // 1. Leer estado actual de la reserva
+      const current = await tx.reservation.findUnique({
+        where: { id: reservationId },
+        select: { id: true, status: true },
+      });
+
+      if (!current) {
+        throw new NotFoundException(
+          `La reserva con ID ${reservationId} no existe`,
+        );
+      }
+
+      // 2. Validar que la transición sea permitida
+      const allowedNext = VALID_TRANSITIONS[current.status] ?? [];
+      if (!allowedNext.includes(dto.status)) {
+        throw new BadRequestException(
+          `Transición de estado inválida: ${current.status} → ${dto.status}. ` +
+          `Transiciones permitidas desde "${current.status}": [${allowedNext.join(', ') || 'ninguna'}]`,
+        );
+      }
+
+      // 3. Claim atómico: actualiza solo si el estado sigue siendo el leído
+      //    (protege contra race conditions entre dos peticiones concurrentes)
       const claim = await tx.reservation.updateMany({
         where: {
           id: reservationId,
-          status: { in: activeStatuses },
+          status: current.status,   // condición exacta, no solo "activeStatuses"
         },
         data: {
           status: dto.status,
@@ -264,7 +304,7 @@ export class ReservationsService {
 
       if (claim.count !== 1) {
         throw new BadRequestException(
-          `No se pudo actualizar el estado a ${dto.status}. La reserva no está activa o ya fue finalizada`,
+          `Conflicto: el estado de la reserva cambió durante la operación. Por favor reintenta.`,
         );
       }
 
@@ -288,6 +328,7 @@ export class ReservationsService {
       });
     });
   }
+
 
   async getUserReservations(userId: string) {
     const reservations = await this.prisma.reservation.findMany({

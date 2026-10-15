@@ -27,6 +27,11 @@ export function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState<'QR' | 'CARD' | 'GATEWAY'>('QR');
   const [isProcessing, setIsProcessing] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
+  // Estado para guardar el pago completado (Stripe o QR) antes de hacer checkout
+  const [pendingPaymentRef, setPendingPaymentRef] = useState<{
+    type: 'STRIPE' | 'QR';
+    ref: string;
+  } | null>(null);
 
   const subtotal = getSubtotal();
 
@@ -68,9 +73,29 @@ export function CheckoutPage() {
     );
   }
 
-  const handleConfirmOrder = async () => {
+  // Llamado cuando Stripe confirma el pago exitosamente (in-app)
+  const handleStripePaymentSuccess = async (paymentIntentId: string) => {
+    setPendingPaymentRef({ type: 'STRIPE', ref: paymentIntentId });
+    toast.success('¡Tarjeta autorizada!', 'Confirmando tu orden...');
+    await finalizeOrder('GATEWAY', paymentIntentId);
+  };
+
+  // Llamado cuando el usuario confirma que escaneó el QR
+  const handleQrPaymentConfirmed = async (transactionRef: string) => {
+    setPendingPaymentRef({ type: 'QR', ref: transactionRef });
+    toast.success('¡QR Confirmado!', 'Finalizando tu orden...');
+    await finalizeOrder('QR', transactionRef);
+  };
+
+  // Error de pago (Stripe o QR)
+  const handlePaymentError = (message: string) => {
+    toast.error('Error de pago', message);
+  };
+
+  // Crea la orden en el backend y (si aplica) confirma el pago
+  const finalizeOrder = async (method: 'GATEWAY' | 'QR', paymentRef?: string) => {
     if (!selectedBranchId) {
-      toast.error('Sucursal requerida', 'Por favor selecciona la sucursal de retiro o despacho.');
+      toast.error('Sucursal requerida', 'Selecciona la sucursal de retiro.');
       return;
     }
 
@@ -81,7 +106,7 @@ export function CheckoutPage() {
       const payload = {
         branchId: selectedBranchId,
         type: 'ONLINE' as const,
-        paymentMethod: paymentMethod === 'CARD' ? 'GATEWAY' : paymentMethod,
+        paymentMethod: method,
         idempotencyKey,
         items: items.map((item) => ({
           variantId: item.variantId,
@@ -90,7 +115,29 @@ export function CheckoutPage() {
       };
 
       const response = await apiClient.post('/orders/checkout', payload);
-      setCompletedOrder(response.data);
+      const order = response.data;
+
+      // Si hay referencia de pago, confirmarla en el backend
+      if (paymentRef && order?.id) {
+        try {
+          if (method === 'GATEWAY') {
+            await apiClient.post('/payments/confirm-stripe', {
+              paymentIntentId: paymentRef,
+              orderId: order.id,
+            });
+          } else if (method === 'QR') {
+            await apiClient.post('/payments/confirm-qr', {
+              transactionRef: paymentRef,
+              orderId: order.id,
+            });
+          }
+        } catch {
+          // La orden ya fue creada; la confirmación de pago puede fallar sin bloquear
+          console.warn('Advertencia: no se pudo actualizar estado de pago en BD');
+        }
+      }
+
+      setCompletedOrder(order);
       clearCart();
       toast.success('¡Compra confirmada!', 'Tu orden ha sido registrada exitosamente.');
     } catch (err: any) {
@@ -103,6 +150,13 @@ export function CheckoutPage() {
       setIsProcessing(false);
     }
   };
+
+  // Items para Stripe metadata
+  const stripeItems = items.map((i) => ({
+    productName: i.productName,
+    quantity: i.quantity,
+    unitPrice: i.price,
+  }));
 
   return (
     <div className="max-w-7xl mx-auto px-6 sm:px-12 py-10 space-y-10 selection:bg-foreground selection:text-background">
@@ -122,7 +176,7 @@ export function CheckoutPage() {
           Finalizar Compra
         </h1>
         <p className="text-xs font-mono text-muted-foreground">
-          Completa tus datos de entrega y método de pago para confirmar tu orden
+          Completa tus datos de entrega y realiza el pago directamente en esta página
         </p>
       </div>
 
@@ -141,9 +195,15 @@ export function CheckoutPage() {
             onChangeShippingAddress={setShippingAddress}
           />
 
+          {/* Sección de pago: Stripe y QR embebidos en la página */}
           <CheckoutPaymentSection
             paymentMethod={paymentMethod}
             onSelectPaymentMethod={setPaymentMethod}
+            amount={subtotal}
+            items={stripeItems}
+            onStripePaymentSuccess={handleStripePaymentSuccess}
+            onQrPaymentConfirmed={handleQrPaymentConfirmed}
+            onPaymentError={handlePaymentError}
           />
         </div>
 
@@ -153,7 +213,16 @@ export function CheckoutPage() {
             items={items}
             subtotal={subtotal}
             isProcessing={isProcessing}
-            onConfirmOrder={handleConfirmOrder}
+            onConfirmOrder={() => {
+              // El botón "Confirmar" solo se usa si aún no se inició el pago
+              // (flujo manual de respaldo para edge-cases)
+              if (!pendingPaymentRef) {
+                toast.warning(
+                  'Selecciona un método de pago',
+                  'Completa el pago con QR o Tarjeta en el panel de la izquierda.',
+                );
+              }
+            }}
           />
         </div>
       </div>

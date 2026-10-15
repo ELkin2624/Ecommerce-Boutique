@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ReportsService } from '../services/reports.service.js';
 import { QueryReportDto } from '../dto/query-report.dto.js';
@@ -48,8 +48,8 @@ export class ReportsController {
   @Permissions('REPORT:VIEW')
   @ApiOperation({ summary: 'Obtener KPIs directos del Dashboard gerencial' })
   @ApiResponse({ status: 200, description: 'KPIs agregados de productos, sucursales y reservas' })
-  async getDashboardKpis() {
-    return this.reportsService.getDashboardKpis();
+  async getDashboardKpis(@Query('branchId') branchId?: string) {
+    return this.reportsService.getDashboardKpis(branchId);
   }
 
   @Get('embed-config')
