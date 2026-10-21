@@ -3,9 +3,12 @@ import {
   ClientOrderCard,
   ClientOrdersEmpty,
 } from '@/features/client-orders';
+import { useTenantStore } from '@/app/store/tenant.store';
 
 export function ClientOrdersPage() {
   const { orders, isLoading } = useClientOrders();
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || 'nuestra boutique';
 
   return (
     <div className="max-w-5xl mx-auto px-6 sm:px-12 py-10 space-y-10 selection:bg-foreground selection:text-background">
@@ -18,7 +21,7 @@ export function ClientOrdersPage() {
           Mis Pedidos & Compras
         </h1>
         <p className="text-xs font-mono text-muted-foreground">
-          Historial y estado de tus compras en Boutique Kitty
+          Historial y estado de tus compras en {storeName}
         </p>
       </div>
 

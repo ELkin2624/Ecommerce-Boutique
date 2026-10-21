@@ -1,21 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Sun, Moon, LogOut, Store, ExternalLink, ChevronDown, Sliders,
-  LayoutDashboard, Shirt, Boxes, ShoppingCart, ReceiptText,
-  CalendarCheck, Users, Building2, Truck, Tag, Sparkles,
+  Sun,
+  Moon,
+  LogOut,
+  Store,
+  ExternalLink,
+  ChevronDown,
+  Sliders,
+  LayoutDashboard,
+  Shirt,
+  Boxes,
+  ShoppingCart,
+  ReceiptText,
+  CalendarCheck,
+  Users,
+  Building2,
+  Truck,
+  Tag,
+  Sparkles,
+  Plus,
+  Check,
+  Loader2,
 } from 'lucide-react';
 import { useAuthStore } from '@/app/store/auth.store';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { useSettingsStore } from '@/features/settings';
+import { CreateStoreModal } from '@/features/saas';
 import { apiClient } from '@/shared/api/axios-client';
+import { queryClient } from '@/app/providers/QueryProvider';
+import { offlineApi } from '@/shared/offline/client/offline-api-client';
 import { Badge } from '@/shared/ui/Badge';
+import { toast } from '@/shared/ui/Toast';
 import { SettingsModal } from '@/features/settings/ui/SettingsModal';
 import { cn } from '@/shared/lib/utils';
 import { OfflineBadge, PwaInstallButton } from '@/shared/offline';
 
-
 // Diccionario de títulos por ruta
-const ROUTE_TITLES: Record<string, { title: string; icon: React.ComponentType<{ className?: string }> }> = {
+const ROUTE_TITLES: Record<
+  string,
+  { title: string; icon: React.ComponentType<{ className?: string }> }
+> = {
   '/dashboard': { title: 'Dashboard', icon: LayoutDashboard },
   '/catalog': { title: 'Catálogo & Prendas', icon: Shirt },
   '/inventory': { title: 'Inventario & Stock', icon: Boxes },
@@ -31,18 +56,45 @@ const ROUTE_TITLES: Record<string, { title: string; icon: React.ComponentType<{ 
 
 export function Topbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, clearSession } = useAuthStore();
+  const {
+    currentTenant,
+    myTenants,
+    planQuota,
+    isSwitchingTenant,
+    fetchMyTenants,
+    switchActiveTenant,
+    clearTenantContext,
+  } = useTenantStore();
   const { settings, updateSetting } = useSettingsStore();
 
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isStoreSwitcherOpen, setIsStoreSwitcherOpen] = useState(false);
+  const [isCreateStoreOpen, setIsCreateStoreOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar menú al hacer clic afuera
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const storeSwitcherRef = useRef<HTMLDivElement>(null);
+
+  // Cargar tiendas autorizadas y cupo del plan del usuario autenticado
+  useEffect(() => {
+    if (user?.id) {
+      fetchMyTenants();
+    }
+  }, [user?.id, fetchMyTenants]);
+
+  // Cerrar menús al hacer clic afuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+      }
+      if (
+        storeSwitcherRef.current &&
+        !storeSwitcherRef.current.contains(event.target as Node)
+      ) {
+        setIsStoreSwitcherOpen(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -55,8 +107,33 @@ export function Topbar() {
     } catch {
       // Ignorar errores en logout
     } finally {
+      await offlineApi.clearTenantCache();
+      queryClient.clear();
+      clearTenantContext();
       clearSession();
       window.location.href = '/admin/login';
+    }
+  };
+
+  const handleSelectTenant = async (slug: string) => {
+    if (slug === currentTenant?.slug) {
+      setIsStoreSwitcherOpen(false);
+      return;
+    }
+
+    try {
+      const target = await switchActiveTenant(slug);
+      setIsStoreSwitcherOpen(false);
+      toast.success(
+        `Tienda activa: ${target.name}`,
+        `Contexto cambiado a ${target.slug}.fashionstore.com`,
+      );
+      navigate('/dashboard');
+    } catch (err: any) {
+      toast.error(
+        'No se pudo cambiar de tienda',
+        err?.response?.data?.message || err?.message || 'Verifica tus permisos.',
+      );
     }
   };
 
@@ -71,8 +148,12 @@ export function Topbar() {
   };
   const Icon = currentRoute.icon;
 
-  const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase() || 'AD';
+  const initials =
+    `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase() || 'AD';
   const roleName = user?.roles?.[0] || 'STAFF';
+
+  const storesList =
+    myTenants.length > 0 ? myTenants : currentTenant ? [currentTenant] : [];
 
   return (
     <>
@@ -90,9 +171,128 @@ export function Topbar() {
         </div>
 
         {/* =======================================================================
-            LADO DERECHO: Tienda Online, Tema y Perfil de Usuario (Estilo AWS)
+            LADO DERECHO: Selector Multi-Tienda, Crear Tienda, Tema y Perfil
            ======================================================================= */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {/* Selector Interactivo de Tienda + Botón Crear Nueva Tienda */}
+          <div className="relative flex items-center gap-1.5" ref={storeSwitcherRef}>
+            <button
+              type="button"
+              onClick={() => {
+                setIsStoreSwitcherOpen((prev) => !prev);
+                fetchMyTenants();
+              }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-primary/10 text-primary hover:bg-primary/15 border border-primary/25 transition-all"
+              title="Cambiar entre tus tiendas o crear una nueva tienda"
+            >
+              {isSwitchingTenant ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+              ) : (
+                <Store className="h-3.5 w-3.5 shrink-0" />
+              )}
+              <span className="truncate max-w-[140px]">
+                {currentTenant?.name || 'Seleccionar Tienda'}
+              </span>
+              {currentTenant?.plan && (
+                <span className="hidden md:inline-block text-[9px] uppercase px-1.5 py-0.5 rounded-md bg-primary/15 text-primary font-extrabold">
+                  {currentTenant.plan}
+                </span>
+              )}
+              <ChevronDown
+                className={cn(
+                  'h-3.5 w-3.5 transition-transform duration-200',
+                  isStoreSwitcherOpen && 'rotate-180',
+                )}
+              />
+            </button>
+
+            {/* Acción Rápida Visible: Crear Nueva Tienda */}
+            <button
+              type="button"
+              onClick={() => setIsCreateStoreOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-card hover:bg-muted text-foreground border border-border/80 transition-all shadow-2xs"
+              title="Crear una nueva tienda independiente bajo tu cuenta"
+            >
+              <Plus className="h-3.5 w-3.5 text-primary" />
+              <span className="hidden xl:inline">Crear nueva tienda</span>
+            </button>
+
+            {/* Menú Desplegable de Tiendas del Usuario */}
+            {isStoreSwitcherOpen && (
+              <div className="absolute right-0 top-full mt-2 w-72 rounded-2xl border border-border bg-card shadow-2xl p-2 z-50 animate-in fade-in-80 zoom-in-95 duration-150 text-xs">
+                <div className="px-2.5 py-2 border-b border-border/70 flex items-center justify-between">
+                  <div>
+                    <p className="font-bold text-foreground">Mis Tiendas Autorizadas</p>
+                    {planQuota && (
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        Plan {planQuota.effectivePlan}: {planQuota.ownedCount} de{' '}
+                        {planQuota.maxStores}{' '}
+                        {planQuota.maxStores === 1 ? 'tienda' : 'tiendas'}
+                      </p>
+                    )}
+                  </div>
+                  {planQuota && (
+                    <Badge variant="outline" className="text-[9px] font-bold">
+                      {planQuota.ownedCount}/{planQuota.maxStores}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="py-1.5 max-h-60 overflow-y-auto space-y-1">
+                  {storesList.map((store) => {
+                    const isActive = store.slug === currentTenant?.slug;
+                    return (
+                      <button
+                        key={store.id || store.slug}
+                        type="button"
+                        disabled={isSwitchingTenant}
+                        onClick={() => handleSelectTenant(store.slug)}
+                        className={cn(
+                          'w-full flex items-center justify-between gap-2 px-2.5 py-2 rounded-xl text-left transition-colors',
+                          isActive
+                            ? 'bg-primary/10 text-primary font-bold'
+                            : 'hover:bg-muted text-foreground font-medium',
+                        )}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span
+                            className="h-6 w-6 rounded-lg flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                            style={{
+                              backgroundColor: store.primaryColor || '#1D8B94',
+                            }}
+                          >
+                            {store.name?.slice(0, 2).toUpperCase() || 'FS'}
+                          </span>
+                          <div className="min-w-0">
+                            <p className="truncate text-xs leading-tight">{store.name}</p>
+                            <p className="truncate text-[10px] text-muted-foreground font-mono">
+                              {store.slug}.fashionstore.com
+                            </p>
+                          </div>
+                        </div>
+                        {isActive && <Check className="h-4 w-4 text-primary shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="pt-1.5 border-t border-border/70">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsStoreSwitcherOpen(false);
+                      setIsCreateStoreOpen(true);
+                    }}
+                    className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition-colors shadow-xs"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    <span>Crear nueva tienda</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Indicador de Conectividad & Sincronización */}
           <OfflineBadge className="hidden md:inline-flex" />
 
@@ -101,7 +301,7 @@ export function Topbar() {
 
           {/* Acceso a la Tienda de Clientes */}
           <Link
-            to="/"
+            to={currentTenant?.slug ? `/store?tenant=${currentTenant.slug}` : '/store'}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted border border-border/70 transition-all shadow-2xs"
@@ -165,22 +365,51 @@ export function Topbar() {
 
               {/* Menú Desplegable */}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-border bg-card shadow-xl p-1.5 z-50 animate-in fade-in-80 zoom-in-95 duration-150 text-xs">
+                <div className="absolute right-0 mt-2 w-60 rounded-2xl border border-border bg-card shadow-xl p-1.5 z-50 animate-in fade-in-80 zoom-in-95 duration-150 text-xs">
                   {/* Info del Usuario */}
                   <div className="p-3 border-b border-border/70">
                     <p className="font-bold text-foreground truncate">
                       {user.firstName} {user.lastName}
                     </p>
                     <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
-                    <div className="mt-1.5">
+                    <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
                       <Badge variant="outline" className="text-[9px] px-1.5 py-0 uppercase font-bold">
                         Rol: {roleName}
                       </Badge>
+                      {planQuota && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 font-bold">
+                          Plan {planQuota.effectivePlan} ({planQuota.ownedCount}/{planQuota.maxStores})
+                        </Badge>
+                      )}
                     </div>
                   </div>
 
                   {/* Opciones del Menú */}
                   <div className="p-1 space-y-0.5">
+                    {/* Opción: Crear nueva tienda desde el panel */}
+                    <button
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setIsCreateStoreOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-primary hover:bg-primary/10 transition-colors font-semibold text-left"
+                    >
+                      <Plus className="h-3.5 w-3.5 text-primary" />
+                      <span>Crear nueva tienda</span>
+                    </button>
+
+                    {/* Opción: Cambiar de Tienda */}
+                    <button
+                      onClick={() => {
+                        setIsDropdownOpen(false);
+                        setIsStoreSwitcherOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-foreground hover:bg-muted transition-colors font-medium text-left"
+                    >
+                      <Store className="h-3.5 w-3.5 text-primary" />
+                      <span>Mis tiendas ({storesList.length})</span>
+                    </button>
+
                     {/* Opción de Configuración */}
                     <button
                       onClick={() => {
@@ -208,6 +437,9 @@ export function Topbar() {
           )}
         </div>
       </header>
+
+      {/* Modal para Crear Nueva Tienda (reutilizando identidad global autenticada) */}
+      <CreateStoreModal open={isCreateStoreOpen} onOpenChange={setIsCreateStoreOpen} />
 
       {/* Modal de Configuración Desacoplado y Reutilizable */}
       <SettingsModal open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />

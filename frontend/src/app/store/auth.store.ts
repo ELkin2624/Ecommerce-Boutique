@@ -38,6 +38,8 @@ export const useAuthStore = create<AuthState>()(
           user,
           accessToken,
           refreshToken: refreshToken || null,
+          activeBranchId: null,
+          activeBranchName: null,
           isAuthenticated: true,
         });
       },
@@ -58,6 +60,8 @@ export const useAuthStore = create<AuthState>()(
           user: null,
           accessToken: null,
           refreshToken: null,
+          activeBranchId: null,
+          activeBranchName: null,
           isAuthenticated: false,
         });
       },

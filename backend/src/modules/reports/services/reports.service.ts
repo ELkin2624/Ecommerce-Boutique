@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service.js';
 import { AiClientService } from '../../ai-client/ai-client.service.js';
+import { TenantContext } from '../../../common/multitenancy/tenant-context.js';
 
 @Injectable()
 export class ReportsService {
@@ -151,7 +152,11 @@ export class ReportsService {
         body: JSON.stringify({
           data_source_id: dataSourceId,
           end_user_id: userId || 'admin-fashionstore',
-          tenant_value: 'fashion-store',
+          tenant_value:
+            TenantContext.getSchema() ||
+            TenantContext.getTenantSlug() ||
+            process.env.TENANT_VALUE ||
+            'tenant_tienda_zapatin',
           role: userRole || 'admin',
           expires_in_minutes: 1440,
         }),

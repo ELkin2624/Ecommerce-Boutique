@@ -1,3 +1,4 @@
+import { useTenantStore } from '@/app/store/tenant.store';
 import { StoreHero } from '@/widgets/store-hero';
 import { StoreEditorialStories } from '@/widgets/store-stories';
 import { StoreArSpotlight } from '@/widgets/store-ar-spotlight';
@@ -7,6 +8,9 @@ import {
 } from '@/features/store-catalog';
 
 export function StoreHomePage() {
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || 'Exclusiva';
+
   const {
     categories,
     isLoading,
@@ -65,7 +69,7 @@ export function StoreHomePage() {
               CATÁLOGO & PRENDAS
             </span>
             <h2 className="text-2xl sm:text-4xl font-light text-foreground uppercase tracking-tight font-serif">
-              Colección Boutique Kitty
+              Colección {storeName}
             </h2>
           </div>
         </div>

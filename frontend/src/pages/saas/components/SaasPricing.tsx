@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Check, Sparkles, ArrowRight, ShieldCheck, Building, Store, Crown,
+  Check, Sparkles, ArrowRight, ShieldCheck, Store, Crown,
 } from 'lucide-react';
 
 interface SaasPricingProps {
@@ -85,15 +85,10 @@ export const SaasPricing: React.FC<SaasPricingProps> = ({ onSelectPlan }) => {
   ];
 
   return (
-    <section id="planes" className="py-20 lg:py-28 bg-saas-bg-subtle transition-colors duration-200">
+    <section id="planes" className="py-20 lg:py-28 bg-saas-bg-subtle transition-colors duration-200 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header (Shopify Layout) */}
         <div className="text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-holst-50 dark:bg-holst-900 border border-holst-200 dark:border-holst-600/40 text-xs font-bold text-holst-600 dark:text-holst-400 mb-4">
-            <Building className="w-3.5 h-3.5" />
-            <span>Precios Transparentes • Sin Comisiones Ocultas</span>
-          </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-saas-text-primary">
             Planes diseñados para cada etapa de tu negocio
           </h2>

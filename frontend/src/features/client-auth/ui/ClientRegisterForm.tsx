@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Mail, Lock, Phone } from 'lucide-react';
 import { clientAuthApi } from '../api/clientAuthApi';
 import { useAuthStore } from '@/app/store/auth.store';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { Button } from '@/shared/ui/Button';
 import { toast } from '@/shared/ui/Toast';
 
@@ -73,7 +74,8 @@ export function ClientRegisterForm({ onSuccess, redirectTo }: ClientRegisterForm
         refreshToken,
       });
 
-      toast.success('¡Cuenta creada con éxito!', `Bienvenido(a) a Boutique Kitty, ${user.firstName}.`);
+      const storeName = useTenantStore.getState().currentTenant?.name || 'nuestra tienda';
+      toast.success('¡Cuenta creada con éxito!', `Bienvenido(a) a ${storeName}, ${user.firstName}.`);
 
       if (onSuccess) {
         onSuccess();

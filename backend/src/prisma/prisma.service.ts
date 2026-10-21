@@ -19,6 +19,10 @@ export class PrismaService
     return Reflect.get(this, 'tenant', this);
   }
 
+  get tenantMembership(): any {
+    return Reflect.get(this, 'tenantMembership', this);
+  }
+
   constructor(private readonly connectionManager: TenantConnectionManager) {
     super();
 
@@ -31,7 +35,7 @@ export class PrismaService
         }
 
         // SaaS/Central models always query the public schema
-        if (prop === 'tenant') {
+        if (prop === 'tenant' || prop === 'tenantMembership') {
           const val = Reflect.get(target, prop, target);
           return typeof val === 'function' ? (val as any).bind(target) : val;
         }

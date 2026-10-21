@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { SaasNavbar } from './components/SaasNavbar';
-import { SaasHero } from './components/SaasHero';
 import { SaasPricing } from './components/SaasPricing';
 import { SaasAlwaysIncluded } from './components/SaasAlwaysIncluded';
 import { SaasFeatures } from './components/SaasFeatures';
@@ -21,12 +20,9 @@ export const SaasLandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-saas-bg text-saas-text-primary flex flex-col selection:bg-holst-600 selection:text-white transition-colors duration-200">
-      {/* 1. Header & Navigation with Holst Palette & Theme Toggle */}
+    <div className="min-h-screen bg-saas-bg text-saas-text-primary flex flex-col pt-16 selection:bg-holst-600 selection:text-white transition-colors duration-200">
+      {/* 1. Header & Navigation with Holst Palette & Theme Toggle (Fixed Top) */}
       <SaasNavbar onOpenRegister={handleOpenRegister} />
-
-      {/* 2. Hero Section: Headline, Annual Billing Switch, Dual CTAs, Live Mockup */}
-      <SaasHero onOpenRegister={handleOpenRegister} />
 
       {/* 3. Core Pricing Cards (Shopify-Style 3-Tier Grid with 20% Annual Discount) */}
       <SaasPricing onSelectPlan={handleOpenRegister} />

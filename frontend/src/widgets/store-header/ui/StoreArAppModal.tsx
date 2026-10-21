@@ -1,4 +1,5 @@
 import { Sparkles, X, CheckCircle2, Camera, Smartphone, Download } from 'lucide-react';
+import { useTenantStore } from '@/app/store/tenant.store';
 
 interface StoreArAppModalProps {
   onClose: () => void;
@@ -75,7 +76,8 @@ export function StoreArAppModal({ onClose }: StoreArAppModalProps) {
           <button
             type="button"
             onClick={() => {
-              alert('App Móvil Boutique Kitty disponible para Android en tienda oficial.');
+              const storeName = useTenantStore.getState().currentTenant?.name || 'nuestra tienda';
+              alert(`App Móvil de ${storeName} disponible para Android.`);
               onClose();
             }}
             className="flex-1 h-11 px-4 rounded-full border border-border bg-muted/60 hover:bg-muted text-foreground font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"

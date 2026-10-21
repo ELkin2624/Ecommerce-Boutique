@@ -5,12 +5,14 @@ interface UiState {
   sidebarOpen: boolean;
   theme: 'light' | 'dark';
   tableDensity: 'compact' | 'comfortable';
+  storeSettingsOpen: boolean;
 
   toggleSidebar: () => void;
   setSidebarOpen: (open: boolean) => void;
   setTheme: (theme: 'light' | 'dark') => void;
   toggleTheme: () => void;
   setTableDensity: (density: 'compact' | 'comfortable') => void;
+  setStoreSettingsOpen: (open: boolean) => void;
 }
 
 function getInitialTheme(): 'light' | 'dark' {
@@ -71,6 +73,8 @@ export const useUiStore = create<UiState>()(
           return { theme: next };
         }),
       setTableDensity: (density) => set({ tableDensity: density }),
+      storeSettingsOpen: false,
+      setStoreSettingsOpen: (open) => set({ storeSettingsOpen: open }),
     }),
     {
       name: 'fashionstore-ui',

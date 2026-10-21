@@ -1,4 +1,5 @@
 import { apiClient } from '@/shared/api/axios-client';
+import { queryClient } from '@/app/providers/QueryProvider';
 import { outboxManager } from '../outbox/outbox-manager';
 import { conflictResolver } from './conflict-resolver';
 import { syncEvents } from './sync-events';
@@ -26,12 +27,17 @@ export class OfflineSyncEngine {
    */
   async syncNow(): Promise<SyncCycleResult | null> {
     if (this.isSyncing) {
-      console.log('[SyncEngine] Ciclo ya en ejecución, omitiendo llamada redundante.');
       return null;
     }
 
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      console.log('[SyncEngine] El navegador está offline, omitiendo sincronización.');
+      return null;
+    }
+
+    const pendingItems = await outboxManager.getPending();
+    const total = pendingItems.length;
+
+    if (total === 0) {
       return null;
     }
 
@@ -45,23 +51,6 @@ export class OfflineSyncEngine {
     let conflicts = 0;
 
     try {
-      const pendingItems = await outboxManager.getPending();
-      const total = pendingItems.length;
-
-      if (total === 0) {
-        const emptyResult: SyncCycleResult = {
-          totalProcessed: 0,
-          succeeded: 0,
-          failed: 0,
-          conflicts: 0,
-          startedAt,
-          completedAt: Date.now(),
-          items: [],
-        };
-        syncEvents.emit('sync:complete', emptyResult);
-        return emptyResult;
-      }
-
       for (let i = 0; i < total; i++) {
         const item = pendingItems[i];
 
@@ -98,6 +87,10 @@ export class OfflineSyncEngine {
         completedAt: Date.now(),
         items: results,
       };
+
+      if (succeeded > 0 || conflicts > 0) {
+        queryClient.invalidateQueries();
+      }
 
       syncEvents.emit('sync:complete', finalResult);
       return finalResult;

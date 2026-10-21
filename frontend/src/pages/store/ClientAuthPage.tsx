@@ -1,11 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { ClientLoginForm, ClientRegisterForm } from '@/features/client-auth';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
 import { AppLogo } from '@/shared/ui/AppLogo';
 
 export function ClientAuthPage() {
   const location = useLocation();
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || BRAND_CONFIG.name;
+  const storeTagline =
+    currentTenant?.settings?.tagline ||
+    (currentTenant?.settings as any)?.storefront?.tagline ||
+    BRAND_CONFIG.storeTagline;
+
   const isRegister = location.pathname.includes('register');
   const redirectTo = (location.state as any)?.from?.pathname || '/';
 
@@ -14,12 +22,20 @@ export function ClientAuthPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Branding */}
         <div className="flex flex-col items-center text-center space-y-2">
-          <AppLogo size="lg" showText={false} />
+          <AppLogo
+            size="lg"
+            showText={false}
+            title={storeName}
+            logoUrl={currentTenant?.logoUrl}
+            primaryColor={currentTenant?.primaryColor || '#1D8B94'}
+            useMonogram={true}
+            withContainer={true}
+          />
           <h1 className="text-2xl sm:text-3xl font-bold font-serif text-foreground">
-            {BRAND_CONFIG.name}
+            {storeName}
           </h1>
           <p className="text-xs text-muted-foreground max-w-xs">
-            {BRAND_CONFIG.storeTagline}
+            {storeTagline}
           </p>
         </div>
 

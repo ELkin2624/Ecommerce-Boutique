@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowDown, Sparkles } from 'lucide-react';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { HERO_SLIDES } from '../model/hero.config';
 
 interface StoreHeroProps {
@@ -7,23 +8,69 @@ interface StoreHeroProps {
 }
 
 export function StoreHero({ onExploreClick }: StoreHeroProps) {
+  const { currentTenant } = useTenantStore();
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const storeName = currentTenant?.name || 'Boutique Oficial';
+  const storeCategory = currentTenant?.category || 'Boutique de Moda';
+  const customTagline = currentTenant?.settings?.tagline;
+  const customHero = (currentTenant?.settings as any)?.storefront?.hero;
+
+  const dynamicSlides = [
+    {
+      id: 'slide-1',
+      image: customHero?.bannerUrl || '/fondos/canguro.webp',
+      fallbackImage: '/fondos/vestido.webp',
+      eyebrow: `${storeName.toUpperCase()} · ${storeCategory.toUpperCase()}`,
+      headlinePrefix:
+        customHero?.headlinePrefix ||
+        (customTagline ? customTagline : 'Todo lo que buscas,'),
+      headlineHighlight:
+        customHero?.headlineHighlight || (customTagline ? '' : 'en un solo lugar.'),
+      description:
+        customHero?.description ||
+        `Descubre la colección oficial y curaduría de ${storeName}. Calidad garantizada y probador virtual 3D interactivo.`,
+      primaryCtaText: customHero?.primaryCtaText || 'Descubrir Colección',
+    },
+    {
+      id: 'slide-2',
+      image: '/fondos/vestido.webp',
+      fallbackImage: '/fondos/canguro.webp',
+      eyebrow: `${storeName.toUpperCase()} · EXCLUSIVIDAD`,
+      headlinePrefix: 'Nacida para brillar',
+      headlineHighlight: 'con luz propia.',
+      description:
+        'Diseños exclusivos que capturan la mirada, combinando caídas impecables, detalles sofisticados y elegancia sin esfuerzo.',
+      primaryCtaText: 'Explorar Catálogo',
+    },
+    {
+      id: 'slide-3',
+      image: '/fondos/canguro2.webp',
+      fallbackImage: '/fondos/vestido.webp',
+      eyebrow: `${storeName.toUpperCase()} · TENDENCIAS`,
+      headlinePrefix: 'El estilo que buscas',
+      headlineHighlight: 'no se sigue, se define.',
+      description:
+        'Prendas contemporáneas con ajuste perfecto y tecnología de probador virtual 3D interactivo en tiempo real.',
+      primaryCtaText: 'Ver Prendas & Tendencias',
+    },
+  ];
 
   // Transición automática cinematográfica cada 6 segundos
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+      setCurrentSlide((prev) => (prev + 1) % dynamicSlides.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [dynamicSlides.length]);
 
-  const activeSlide = HERO_SLIDES[currentSlide];
+  const activeSlide = dynamicSlides[currentSlide];
 
   return (
     <section className="relative min-h-[90vh] flex flex-col justify-between pt-6 pb-12 px-6 sm:px-12 md:px-16 overflow-hidden">
       {/* Fondos Rotativos de Pantalla Completa (Full Width & Full Height) */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        {HERO_SLIDES.map((slide, index) => {
+        {dynamicSlides.map((slide, index) => {
           const isActive = index === currentSlide;
           return (
             <div
@@ -123,10 +170,10 @@ export function StoreHero({ onExploreClick }: StoreHeroProps) {
           <span className="text-[11px] font-mono font-bold text-foreground">
             0{currentSlide + 1}
           </span>
-          <span className="text-[10px] font-mono text-muted-foreground">/ 0{HERO_SLIDES.length}</span>
+          <span className="text-[10px] font-mono text-muted-foreground">/ 0{dynamicSlides.length}</span>
 
           <div className="flex items-center gap-1.5 ml-1">
-            {HERO_SLIDES.map((slide, idx) => (
+            {dynamicSlides.map((slide, idx) => (
               <button
                 key={slide.id}
                 type="button"

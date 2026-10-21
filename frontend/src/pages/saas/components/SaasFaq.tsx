@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 
 export const SaasFaq: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -41,10 +41,6 @@ export const SaasFaq: React.FC = () => {
     <section id="faqs" className="py-20 lg:py-28 bg-saas-bg transition-colors duration-200 border-t border-saas-border">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-holst-50 dark:bg-holst-900 border border-holst-200 dark:border-holst-600/40 text-xs font-bold text-holst-600 dark:text-holst-400 mb-3">
-            <HelpCircle className="w-3.5 h-3.5" />
-            <span>Respuestas Claras & Sin Rodeos</span>
-          </div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-saas-text-primary">
             Preguntas Frecuentes
           </h2>

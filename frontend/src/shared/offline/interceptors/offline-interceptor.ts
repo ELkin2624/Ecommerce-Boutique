@@ -83,8 +83,8 @@ export function setupOfflineInterceptor(axiosInstance: AxiosInstance): void {
       const isBrowserOffline = typeof navigator !== 'undefined' && !navigator.onLine;
       const url = config.url || '';
 
-      // Nunca cortocircuitar autenticación
-      if (isBrowserOffline && !url.includes('/auth/')) {
+      // Nunca cortocircuitar autenticación ni operaciones del plano de control SaaS
+      if (isBrowserOffline && !url.includes('/auth/') && !url.includes('/saas/')) {
         const offlineError: any = new Error(`Modo offline activo: ${config.method?.toUpperCase()} ${url}`);
         offlineError.name = 'AxiosError';
         offlineError.code = 'ERR_NETWORK';
@@ -105,7 +105,11 @@ export function setupOfflineInterceptor(axiosInstance: AxiosInstance): void {
       // Guardar consultas GET exitosas en el almacén Clave-Valor de IndexedDB
       if (response.config.method?.toUpperCase() === 'GET' && response.config.url) {
         const rawUrl = response.config.url;
-        if (!rawUrl.includes('/auth/') && !rawUrl.includes('/voice')) {
+        if (
+          !rawUrl.includes('/auth/') &&
+          !rawUrl.includes('/saas/') &&
+          !rawUrl.includes('/voice')
+        ) {
           const cleanPath = normalizePath(rawUrl);
           const paramsSuffix = response.config.params ? JSON.stringify(response.config.params) : '';
           const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24 horas
@@ -147,20 +151,26 @@ export function setupOfflineInterceptor(axiosInstance: AxiosInstance): void {
       const method = (config.method || 'GET').toUpperCase();
       const cleanPath = normalizePath(rawUrl);
 
-      // No interceptar autenticación
-      if (rawUrl.includes('/auth/')) {
+      // No interceptar autenticación, plano de control SaaS (creación/cambio de tienda),
+      // ni peticiones internas del motor de sincronización
+      const isSyncEngineRequest = Boolean(
+        config.headers?.['X-Offline-Synced'] || config.headers?.['x-offline-synced'],
+      );
+      if (
+        rawUrl.includes('/auth/') ||
+        rawUrl.includes('/saas/') ||
+        isSyncEngineRequest
+      ) {
         return Promise.reject(error);
       }
 
-      // Detectar desconexión de red o servidor inalcanzable
+      // Detectar desconexión real de red (no confundir un timeout ECONNABORTED en línea con modo offline)
       const isOfflineError =
         error?.isOfflineShortCircuit ||
         (typeof navigator !== 'undefined' && !navigator.onLine) ||
         error?.code === 'ERR_NETWORK' ||
-        error?.code === 'ECONNABORTED' ||
         error?.message?.includes('Network Error') ||
-        error?.message?.includes('net::ERR_INTERNET_DISCONNECTED') ||
-        !error?.response;
+        error?.message?.includes('net::ERR_INTERNET_DISCONNECTED');
 
       if (!isOfflineError) {
         return Promise.reject(error);

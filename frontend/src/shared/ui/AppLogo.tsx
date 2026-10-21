@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Store } from 'lucide-react';
 
 export interface AppLogoProps {
   /** Tamaño del logo: 'xs' (24px), 'sm' (36px), 'md' (48px), 'lg' (64px), 'xl' (80px) */
@@ -10,7 +10,7 @@ export interface AppLogoProps {
   showText?: boolean;
   /** Orientación de la composición (horizontal o vertical) */
   layout?: 'horizontal' | 'vertical';
-  /** Título de marca personalizado (por defecto usa BRAND_CONFIG.name) */
+  /** Título de marca personalizado */
   title?: string;
   /** Subtítulo descriptivo */
   subtitle?: string;
@@ -20,14 +20,20 @@ export interface AppLogoProps {
   imageClassName?: string;
   /** Si debe incluir un contenedor con fondo/borde estilizado */
   withContainer?: boolean;
+  /** URL de logo personalizado del tenant */
+  logoUrl?: string | null;
+  /** Color primario de la tienda para monograma o acentos */
+  primaryColor?: string;
+  /** Forzar monograma cuando no haya logoUrl */
+  useMonogram?: boolean;
 }
 
 const sizeMap = {
-  xs: { img: 'h-6 w-6', text: 'text-xs', sub: 'text-[9px]', box: 'h-8 w-8' },
-  sm: { img: 'h-8 w-8', text: 'text-sm', sub: 'text-[10px]', box: 'h-10 w-10' },
-  md: { img: 'h-10 w-10', text: 'text-base', sub: 'text-xs', box: 'h-12 w-12' },
-  lg: { img: 'h-14 w-14', text: 'text-xl', sub: 'text-xs', box: 'h-16 w-16' },
-  xl: { img: 'h-20 w-20', text: 'text-2xl', sub: 'text-sm', box: 'h-24 w-24' },
+  xs: { img: 'h-6 w-6', text: 'text-xs', sub: 'text-[9px]', box: 'h-8 w-8', font: 'text-[10px]' },
+  sm: { img: 'h-8 w-8', text: 'text-sm', sub: 'text-[10px]', box: 'h-10 w-10', font: 'text-xs' },
+  md: { img: 'h-10 w-10', text: 'text-base', sub: 'text-xs', box: 'h-12 w-12', font: 'text-sm' },
+  lg: { img: 'h-14 w-14', text: 'text-xl', sub: 'text-xs', box: 'h-16 w-16', font: 'text-lg' },
+  xl: { img: 'h-20 w-20', text: 'text-2xl', sub: 'text-sm', box: 'h-24 w-24', font: 'text-2xl' },
 };
 
 export const AppLogo: React.FC<AppLogoProps> = ({
@@ -39,9 +45,25 @@ export const AppLogo: React.FC<AppLogoProps> = ({
   className,
   imageClassName,
   withContainer = false,
+  logoUrl,
+  primaryColor = '#1D8B94',
+  useMonogram = false,
 }) => {
   const [hasError, setHasError] = useState(false);
   const dims = sizeMap[size];
+
+  // Calcular iniciales para el monograma
+  const initials = title
+    ? title
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((w) => w[0]?.toUpperCase())
+        .join('')
+    : 'FS';
+
+  // Si tiene logo personalizado y no dio error, se renderiza la imagen
+  const hasCustomLogo = Boolean(logoUrl && !hasError);
 
   const logoImg = (
     <div
@@ -53,7 +75,35 @@ export const AppLogo: React.FC<AppLogoProps> = ({
         ],
       )}
     >
-      {hasError ? (
+      {hasCustomLogo ? (
+        <img
+          src={logoUrl!}
+          alt={title}
+          onError={() => setHasError(true)}
+          className={cn(
+            dims.img,
+            'object-contain drop-shadow-sm transition-all duration-300 group-hover:scale-105 rounded-lg',
+            imageClassName,
+          )}
+        />
+      ) : useMonogram || (title && title !== BRAND_CONFIG.name) ? (
+        // Monograma estilizado de alta gama con el color del comercio
+        <div
+          className={cn(
+            dims.img,
+            'rounded-xl text-white font-black tracking-wider flex items-center justify-center shadow-md transition-all duration-300 group-hover:scale-105 select-none',
+            dims.font,
+            imageClassName,
+          )}
+          style={{
+            backgroundColor: primaryColor,
+            backgroundImage: `linear-gradient(135deg, ${primaryColor} 0%, rgba(0,0,0,0.18) 100%)`,
+          }}
+          title={title}
+        >
+          {initials}
+        </div>
+      ) : hasError ? (
         <div
           className={cn(
             dims.img,
@@ -63,8 +113,9 @@ export const AppLogo: React.FC<AppLogoProps> = ({
           <Sparkles className="h-4 w-4" />
         </div>
       ) : (
+        // Fallback a FashionStore SaaS logo
         <img
-          src={BRAND_CONFIG.logo.default}
+          src="/logo/logo-fashion.svg"
           alt={title}
           onError={() => setHasError(true)}
           className={cn(

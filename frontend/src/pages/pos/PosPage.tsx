@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Scan,
   Search,
@@ -11,6 +11,7 @@ import {
   Banknote,
   QrCode,
   CheckCircle2,
+  AlertTriangle,
 } from 'lucide-react';
 import { apiClient } from '@/shared/api/axios-client';
 import { queryKeys } from '@/shared/api/query-keys';
@@ -19,10 +20,10 @@ import type { InventoryStock, PaymentMethod, Order } from '@/shared/types/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/Card';
 import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
-import { ReceiptModal } from '@/features/pos/ui/ReceiptModal';
+import { ReceiptModal, PosSyncModal } from '@/features/pos';
 import { toast } from '@/shared/ui/Toast';
 import { formatCurrency } from '@/shared/lib/utils';
-import { offlineApi, offlineDb, OfflineBadge } from '@/shared/offline';
+import { offlineApi, offlineDb, OfflineBadge, useOfflineSync } from '@/shared/offline';
 
 
 interface PosCartItem {
@@ -38,12 +39,15 @@ interface PosCartItem {
 
 export function PosPage() {
   const { activeBranchId, activeBranchName } = useAuthStore();
+  const queryClient = useQueryClient();
+  const { failedCount } = useOfflineSync();
   const [searchTerm, setSearchTerm] = useState('');
   const [barcodeInput, setBarcodeInput] = useState('');
   const [cart, setCart] = useState<PosCartItem[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('CASH');
   const [isProcessing, setIsProcessing] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [isSyncModalOpen, setIsSyncModalOpen] = useState(false);
 
   // Obtener stock disponible en el piso de venta (con soporte offline mediante IndexedDB)
   const { data: rawStockData, refetch: refetchStock } = useQuery<any>({
@@ -175,7 +179,10 @@ export function PosPage() {
     }
 
     setIsProcessing(true);
-    const idempotencyKey = `POS-${activeBranchId}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const idempotencyKey =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `POS-${activeBranchId}-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
     const checkoutPayload = {
       branchId: activeBranchId,
@@ -222,11 +229,77 @@ export function PosPage() {
         endpoint: '/orders/checkout',
         payload: checkoutPayload,
         optimisticSave: async () => {
+          // 1. Guardar recibo en la base de datos local Dexie
           await offlineDb.orders.put({
             ...localOrderReceipt,
             isLocalOnly: true,
             offlinePendingSync: true,
           });
+
+          // 2. Decrementar el stock localmente en kvCache para evitar vender el mismo ítem agotado
+          const cacheKey = `pos_stock_${activeBranchId || 'all'}`;
+          try {
+            const cached = await offlineDb.kvCache.get(cacheKey);
+            if (cached && cached.data) {
+              const updatedData = Array.isArray(cached.data)
+                ? cached.data.map((st: any) => {
+                    const cItem = cart.find(
+                      (c) => c.variantId === (st.variantId || st.variant?.id),
+                    );
+                    if (cItem) {
+                      return {
+                        ...st,
+                        quantity: Math.max(0, (st.quantity || 0) - cItem.quantity),
+                      };
+                    }
+                    return st;
+                  })
+                : cached.data;
+              await offlineDb.kvCache.put({ ...cached, data: updatedData });
+            }
+          } catch (cacheErr) {
+            console.warn('[POS] Error actualizando stock en kvCache:', cacheErr);
+          }
+
+          // 3. Actualizar la memoria de React Query de inmediato
+          queryClient.setQueryData(
+            queryKeys.inventory.stocks(activeBranchId || undefined),
+            (old: any) => {
+              if (!old) return old;
+              if (Array.isArray(old)) {
+                return old.map((st: any) => {
+                  const cItem = cart.find(
+                    (c) => c.variantId === (st.variantId || st.variant?.id),
+                  );
+                  if (cItem) {
+                    return {
+                      ...st,
+                      quantity: Math.max(0, (st.quantity || 0) - cItem.quantity),
+                    };
+                  }
+                  return st;
+                });
+              }
+              if (old.items && Array.isArray(old.items)) {
+                return {
+                  ...old,
+                  items: old.items.map((st: any) => {
+                    const cItem = cart.find(
+                      (c) => c.variantId === (st.variantId || st.variant?.id),
+                    );
+                    if (cItem) {
+                      return {
+                        ...st,
+                        quantity: Math.max(0, (st.quantity || 0) - cItem.quantity),
+                      };
+                    }
+                    return st;
+                  }),
+                };
+              }
+              return old;
+            },
+          );
         },
       });
 
@@ -261,9 +334,34 @@ export function PosPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <OfflineBadge />
+          <OfflineBadge onClick={() => setIsSyncModalOpen(true)} />
         </div>
       </div>
+
+      {/* Banner de alerta si ocurrieron conflictos ACID en sincronización */}
+      {failedCount > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-destructive/30 bg-destructive/10 text-destructive text-sm shadow-sm animate-in fade-in">
+          <div className="flex items-center gap-2.5">
+            <AlertTriangle className="h-5 w-5 shrink-0 text-destructive" />
+            <div>
+              <p className="font-semibold text-destructive">
+                Atención: {failedCount} {failedCount === 1 ? 'venta offline fue rechazada' : 'ventas offline fueron rechazadas'} por el servidor (conflicto de inventario).
+              </p>
+              <p className="text-xs text-destructive/80">
+                La prenda se vendió previamente en otro terminal o canal. El servidor mantuvo la integridad ACID.
+              </p>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            variant="destructive"
+            onClick={() => setIsSyncModalOpen(true)}
+            className="shrink-0 text-xs font-bold"
+          >
+            Ver Conflictos
+          </Button>
+        </div>
+      )}
 
       {/* POS Grid: Left catalog search / Right ticket */}
       <div className="grid gap-6 lg:grid-cols-12 items-start">
@@ -491,6 +589,12 @@ export function PosPage() {
         open={Boolean(completedOrder)}
         onOpenChange={(open) => !open && setCompletedOrder(null)}
         order={completedOrder}
+      />
+
+      {/* Sincronización Outbox & Gestión de Conflictos ACID Modal */}
+      <PosSyncModal
+        open={isSyncModalOpen}
+        onOpenChange={setIsSyncModalOpen}
       />
     </div>
   );

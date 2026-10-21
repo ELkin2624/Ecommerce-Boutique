@@ -1,4 +1,5 @@
 import { ArrowDown } from 'lucide-react';
+import { useTenantStore } from '@/app/store/tenant.store';
 
 interface StoreEditorialStoriesProps {
   onSelectWomen: () => void;
@@ -9,6 +10,9 @@ export function StoreEditorialStories({
   onSelectWomen,
   onSelectMen,
 }: StoreEditorialStoriesProps) {
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || 'Boutique Oficial';
+
   return (
     <section className="max-w-7xl mx-auto px-6 sm:px-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -16,7 +20,7 @@ export function StoreEditorialStories({
         <div className="group relative aspect-[4/5] sm:aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-100 border border-border/40 shadow-sm flex flex-col justify-end p-8 sm:p-10 text-white">
           <img
             src="/fondos/vestido.webp"
-            alt="Colección Mujer Boutique Kitty"
+            alt={`Colección Mujer ${storeName}`}
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out"
             onError={(e) => {
               (e.target as HTMLImageElement).src =
@@ -53,7 +57,7 @@ export function StoreEditorialStories({
         <div className="group relative aspect-[4/5] sm:aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-100 border border-border/40 shadow-sm flex flex-col justify-end p-8 sm:p-10 text-white">
           <img
             src="/fondos/canguro2.webp"
-            alt="Colección Hombre & Urbana Boutique Kitty"
+            alt={`Colección Hombre & Urbana ${storeName}`}
             className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out"
             onError={(e) => {
               (e.target as HTMLImageElement).src =

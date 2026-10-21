@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, X, ArrowRight } from 'lucide-react';
+import { useTenantStore } from '@/app/store/tenant.store';
 import type { Product } from '@/shared/types/api';
 
 interface StoreSearchModalProps {
@@ -9,6 +10,8 @@ interface StoreSearchModalProps {
 }
 
 export function StoreSearchModal({ products, onClose }: StoreSearchModalProps) {
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || 'Colección Oficial';
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredSearchResults = products.filter((p) => {
@@ -69,7 +72,7 @@ export function StoreSearchModal({ products, onClose }: StoreSearchModalProps) {
                   <div className="space-y-0.5">
                     <p className="text-xs font-bold">{prod.name}</p>
                     <p className="text-[11px] text-muted-foreground">
-                      {prod.brand || 'Boutique Kitty'} · {prod.category?.name || 'General'}
+                      {prod.brand || storeName} · {prod.category?.name || 'General'}
                     </p>
                   </div>
                   <div className="h-6 w-8 rounded-full border border-border bg-card flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">

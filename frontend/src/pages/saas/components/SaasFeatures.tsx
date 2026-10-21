@@ -1,10 +1,6 @@
 import React from 'react';
 import {
-  ShoppingBag,
-  Store,
-  Cpu,
-  Truck,
-  Layers,
+  ShoppingBag, Store, Cpu,Truck
 } from 'lucide-react';
 
 export const SaasFeatures: React.FC = () => {
@@ -48,15 +44,10 @@ export const SaasFeatures: React.FC = () => {
   ];
 
   return (
-    <section id="ecosistema" className="py-24 bg-saas-bg transition-colors duration-200 border-t border-saas-border">
+    <section id="productos" className="py-24 bg-saas-bg transition-colors duration-200 border-t border-saas-border scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-holst-50 dark:bg-holst-900 border border-holst-200 dark:border-holst-600/40 text-xs font-bold text-holst-600 dark:text-holst-400 mb-4">
-            <Layers className="w-3.5 h-3.5" />
-            <span>Ecosistema Tecnológico de Vanguardia</span>
-          </div>
-
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-saas-text-primary">
             Todo lo que tu boutique necesita para dominar el retail
           </h2>

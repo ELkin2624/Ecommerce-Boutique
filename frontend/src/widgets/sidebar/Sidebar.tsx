@@ -3,10 +3,11 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, ShoppingCart, ReceiptText, Boxes, CalendarCheck,
   Shirt, Building2, Users, Sparkles, Tag, Truck, PanelLeftClose,
-  PanelLeftOpen,
+  PanelLeftOpen, Settings,
 } from 'lucide-react';
 import { useAuthStore } from '@/app/store/auth.store';
 import { useUiStore } from '@/app/store/ui.store';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { cn } from '@/shared/lib/utils';
 import { AppLogo } from '@/shared/ui/AppLogo';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
@@ -111,7 +112,13 @@ const navGroups: NavGroup[] = [
 
 export function Sidebar() {
   const { hasPermission } = useAuthStore();
-  const { sidebarOpen, toggleSidebar } = useUiStore();
+  const { sidebarOpen, toggleSidebar, setStoreSettingsOpen } = useUiStore();
+  const { currentTenant } = useTenantStore();
+
+  const storeName = currentTenant?.name || BRAND_CONFIG.name;
+  const storeCategory =
+    currentTenant?.category ||
+    (currentTenant?.plan ? `Plan ${currentTenant.plan}` : BRAND_CONFIG.subtitle);
 
   return (
     <aside
@@ -129,14 +136,37 @@ export function Sidebar() {
       >
         {sidebarOpen ? (
           <>
-            <div className="flex items-center gap-2.5 min-w-0">
-              <AppLogo size="sm" showText={false} />
-              <div className="flex flex-col min-w-0">
-                <span className="font-bold text-sm text-foreground truncate font-serif">
-                  {BRAND_CONFIG.name}
-                </span>
-                <span className="text-[10px] text-muted-foreground truncate">
-                  {BRAND_CONFIG.subtitle}
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <AppLogo
+                size="sm"
+                showText={false}
+                title={storeName}
+                logoUrl={currentTenant?.logoUrl}
+                primaryColor={currentTenant?.primaryColor || '#1D8B94'}
+                useMonogram={true}
+              />
+              <div className="flex flex-col min-w-0 flex-1">
+                <div className="flex items-center gap-1">
+                  <span
+                    className="font-bold text-sm text-foreground truncate font-serif"
+                    title={storeName}
+                  >
+                    {storeName}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setStoreSettingsOpen(true)}
+                    className="p-1 rounded-md text-muted-foreground hover:text-primary hover:bg-muted transition-colors shrink-0"
+                    title="Editar nombre y configuración de tienda"
+                  >
+                    <Settings className="h-3 w-3" />
+                  </button>
+                </div>
+                <span
+                  className="text-[10px] text-muted-foreground truncate"
+                  title={storeCategory}
+                >
+                  {storeCategory}
                 </span>
               </div>
             </div>
@@ -167,7 +197,15 @@ export function Sidebar() {
             >
               {/* 1. Logo de la marca: visible siempre que el cursor NO esté encima */}
               <div className="transition-all duration-200 group-hover/toggle:opacity-0 group-hover/toggle:scale-75 group-hover/toggle:invisible flex items-center justify-center pointer-events-none">
-                <AppLogo size="xs" showText={false} imageClassName="h-7 w-7" />
+                <AppLogo
+                  size="xs"
+                  showText={false}
+                  imageClassName="h-7 w-7"
+                  title={storeName}
+                  logoUrl={currentTenant?.logoUrl}
+                  primaryColor={currentTenant?.primaryColor || '#1D8B94'}
+                  useMonogram={true}
+                />
               </div>
 
               {/* 2. Icono de abrir menú: aparece al hacer hover sobre el botón */}
@@ -232,8 +270,13 @@ export function Sidebar() {
 
       {/* Footer Info sutil */}
       {sidebarOpen && (
-        <div className="p-3 border-t border-border/50 text-[11px] text-muted-foreground/70 text-center">
-          {BRAND_CONFIG.name} · {BRAND_CONFIG.version}
+        <div className="p-3 border-t border-border/50 text-[11px] text-muted-foreground/70 text-center flex flex-col items-center gap-0.5">
+          <span className="font-semibold text-foreground/80 truncate max-w-[200px]">
+            {storeName}
+          </span>
+          <span className="text-[10px] text-muted-foreground">
+            Impulsado por FashionStore
+          </span>
         </div>
       )}
     </aside>

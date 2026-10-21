@@ -3,6 +3,7 @@ import { Dialog } from '@/shared/ui/Dialog';
 import { Button } from '@/shared/ui/Button';
 import { formatCurrency, formatDate } from '@/shared/lib/utils';
 import { AppLogo } from '@/shared/ui/AppLogo';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
 import type { Order } from '@/shared/types/api';
 
@@ -13,6 +14,9 @@ interface ReceiptModalProps {
 }
 
 export function ReceiptModal({ open, onOpenChange, order }: ReceiptModalProps) {
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || BRAND_CONFIG.name;
+
   if (!order) return null;
 
   const handlePrint = () => {
@@ -31,9 +35,16 @@ export function ReceiptModal({ open, onOpenChange, order }: ReceiptModalProps) {
         <div className="border border-dashed p-6 rounded-lg bg-card text-foreground space-y-4 text-xs font-mono">
           <div className="text-center space-y-1 border-b pb-3">
             <div className="flex justify-center mb-1">
-              <AppLogo size="sm" withContainer={false} />
+              <AppLogo
+                size="sm"
+                withContainer={false}
+                title={storeName}
+                logoUrl={currentTenant?.logoUrl}
+                primaryColor={currentTenant?.primaryColor || '#1D8B94'}
+                useMonogram={true}
+              />
             </div>
-            <h3 className="font-bold text-sm uppercase tracking-wider">{BRAND_CONFIG.legalName}</h3>
+            <h3 className="font-bold text-sm uppercase tracking-wider">{storeName}</h3>
             <p className="text-muted-foreground">{order.branchName || order.branch?.name || 'Sucursal Principal'}</p>
             <p className="text-muted-foreground">NIT: 1029384756 • Factura POS</p>
           </div>
@@ -74,7 +85,7 @@ export function ReceiptModal({ open, onOpenChange, order }: ReceiptModalProps) {
           </div>
 
           <div className="text-center text-[10px] text-muted-foreground pt-3 border-t">
-            ¡Gracias por su compra en {BRAND_CONFIG.name}!
+            ¡Gracias por su compra en {storeName}!
             <br />
             Este documento acredita su compra en caja física.
           </div>

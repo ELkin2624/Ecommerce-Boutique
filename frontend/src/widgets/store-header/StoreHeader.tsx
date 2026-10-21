@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '@/shared/api/axios-client';
 import type { Product, Category } from '@/shared/types/api';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { StoreHeaderLogo } from './ui/StoreHeaderLogo';
 import { StoreHeaderNav } from './ui/StoreHeaderNav';
 import { StoreHeaderAuth } from './ui/StoreHeaderAuth';
@@ -9,10 +10,15 @@ import { StoreArAppModal } from './ui/StoreArAppModal';
 import { StoreSearchModal } from './ui/StoreSearchModal';
 
 export function StoreHeader() {
+  const { currentTenant } = useTenantStore();
   const [activeMenu, setActiveMenu] = useState<'categories' | 'ar_app' | null>(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+
+  const announcement =
+    (currentTenant?.settings as any)?.announcement ||
+    (currentTenant?.settings as any)?.storefront?.announcement;
 
   useEffect(() => {
     // Cargar categorías y productos para navegación y búsqueda rápida
@@ -58,6 +64,14 @@ export function StoreHeader() {
 
   return (
     <>
+      {announcement && (
+        <div
+          className="w-full py-1.5 px-4 text-center text-xs font-semibold tracking-wide text-white transition-all shadow-xs relative z-50 flex items-center justify-center gap-2"
+          style={{ backgroundColor: currentTenant?.primaryColor || '#1D8B94' }}
+        >
+          <span>{announcement}</span>
+        </div>
+      )}
       <header className="sticky top-0 z-50 w-full pt-3 pb-2 px-3 sm:px-6 pointer-events-none transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 pointer-events-auto">
           {/* 1. Botón Logo Circular */}

@@ -8,6 +8,8 @@ import type { EnrichedLocation } from './types';
 import { toast } from '@/shared/ui/Toast';
 import { offlineApi } from '@/shared/offline';
 
+import { useTenantStore } from '@/app/store/tenant.store';
+
 export function useBranchesData({
   searchTerm,
   cityFilter,
@@ -18,11 +20,13 @@ export function useBranchesData({
   branchFilter: string;
 }) {
   const queryClient = useQueryClient();
+  const currentTenant = useTenantStore((s) => s.currentTenant);
+  const tenantKey = currentTenant?.slug || 'default';
 
   const { data: branches = [], isLoading: isLoadingBranches } = useQuery<Branch[]>({
-    queryKey: queryKeys.branches.all,
+    queryKey: [...queryKeys.branches.all, tenantKey],
     queryFn: async () => {
-      const { data } = await offlineApi.get<Branch[]>('branches_all', async () => {
+      const { data } = await offlineApi.get<Branch[]>(`branches_all_${tenantKey}`, async () => {
         const res = await apiClient.get('/branches');
         return res.data;
       });
@@ -32,9 +36,9 @@ export function useBranchesData({
   });
 
   const { data: cities = [] } = useQuery<City[]>({
-    queryKey: queryKeys.branches.cities,
+    queryKey: [...queryKeys.branches.cities, tenantKey],
     queryFn: async () => {
-      const { data } = await offlineApi.get<City[]>('branches_cities', async () => {
+      const { data } = await offlineApi.get<City[]>(`branches_cities_${tenantKey}`, async () => {
         const res = await apiClient.get('/branches/cities');
         return res.data;
       });

@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import * as crypto from 'crypto';
 import { PrismaService } from '../../../prisma/prisma.service.js';
+import { TenantContext } from '../../../common/multitenancy/tenant-context.js';
 import { RegisterDto } from '../dto/register.dto.js';
 import { LoginDto } from '../dto/login.dto.js';
 
@@ -81,8 +82,10 @@ export class AuthService {
   }
 
   async login(dto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: dto.email.toLowerCase() },
+    const normalizedEmail = dto.email.toLowerCase().trim();
+
+    let user = await this.prisma.user.findUnique({
+      where: { email: normalizedEmail },
       include: {
         roles: {
           include: {
@@ -100,6 +103,68 @@ export class AuthService {
       },
     });
 
+    // Si el usuario no existe en el esquema de este tenant, verificar si existe globalmente y tiene membresía
+    if (!user) {
+      const globalUser = await this.prisma.publicClient.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+      const currentTenantId = TenantContext.getTenantId();
+
+      if (globalUser && currentTenantId) {
+        const membership = await this.prisma.publicClient.tenantMembership.findFirst({
+          where: {
+            tenantId: currentTenantId,
+            userId: globalUser.id,
+          },
+        });
+
+        if (membership) {
+          const isPassValid = await argon2.verify(globalUser.passwordHash, dto.password);
+          if (isPassValid) {
+            // Aprovisionar usuario local en el esquema del tenant con su rol asignado
+            const roleName = membership.role === 'OWNER' ? 'ADMIN' : membership.role;
+            const targetRole = await this.prisma.role.findFirst({
+              where: { name: roleName },
+            });
+
+            user = await this.prisma.user.create({
+              data: {
+                id: globalUser.id,
+                email: globalUser.email,
+                passwordHash: globalUser.passwordHash,
+                firstName: globalUser.firstName,
+                lastName: globalUser.lastName,
+                phone: globalUser.phone,
+                isActive: true,
+                roles: targetRole
+                  ? {
+                      create: {
+                        roleId: targetRole.id,
+                      },
+                    }
+                  : undefined,
+              },
+              include: {
+                roles: {
+                  include: {
+                    role: {
+                      include: {
+                        permissions: {
+                          include: {
+                            permission: true,
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            });
+          }
+        }
+      }
+    }
+
     if (!user) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }
@@ -108,10 +173,25 @@ export class AuthService {
       throw new ForbiddenException('La cuenta se encuentra desactivada');
     }
 
-    const isPasswordValid = await argon2.verify(
+    let isPasswordValid = await argon2.verify(
       user.passwordHash,
       dto.password,
     );
+
+    // Si la contraseña local no coincidió, comprobar si la contraseña global se actualizó
+    if (!isPasswordValid) {
+      const globalUser = await this.prisma.publicClient.user.findUnique({
+        where: { email: normalizedEmail },
+      });
+      if (globalUser && (await argon2.verify(globalUser.passwordHash, dto.password))) {
+        await this.prisma.user.update({
+          where: { id: user.id },
+          data: { passwordHash: globalUser.passwordHash },
+        });
+        isPasswordValid = true;
+      }
+    }
+
     if (!isPasswordValid) {
       throw new UnauthorizedException('Credenciales incorrectas');
     }

@@ -1,20 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  Sparkles,
-  Maximize2,
-  Minimize2,
-  RefreshCw,
-  ExternalLink,
-  Mic,
-  Layers,
-  BarChart3,
-  ShieldCheck,
-  AlertCircle,
-  Loader2,
+  Sparkles, Maximize2, Minimize2, RefreshCw, ExternalLink,
+  AlertCircle, Loader2,
 } from 'lucide-react';
 import { apiClient } from '@/shared/api/axios-client';
 import { useUiStore } from '@/app/store/ui.store';
-import { Badge } from '@/shared/ui/Badge';
 import { Button } from '@/shared/ui/Button';
 import { toast } from '@/shared/ui/Toast';
 
@@ -105,31 +95,11 @@ export function ReportsPage() {
               <Sparkles className="w-5 h-5 text-indigo-500" />
               Reportes & Analítica IA
             </h1>
-            <Badge variant="outline" className="gap-1.5 text-xs font-semibold py-0.5 border-indigo-200 dark:border-indigo-800 bg-indigo-50/50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-              <span>Conexión Segura Multitenant</span>
-            </Badge>
           </div>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Genera reportes por voz (Whisper) o texto en lenguaje natural, y crea consultas complejas en el editor visual QBE.
-          </p>
         </div>
 
         {/* Acciones de Control */}
         <div className="flex items-center gap-2 self-end sm:self-auto">
-          {/* Badges de Capacidades */}
-          <div className="hidden lg:flex items-center gap-1.5 text-xs text-muted-foreground mr-2">
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/60 text-[11px] font-medium">
-              <Mic className="w-3 h-3 text-indigo-500" /> Voz
-            </span>
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/60 text-[11px] font-medium">
-              <Layers className="w-3 h-3 text-cyan-500" /> QBE
-            </span>
-            <span className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/60 text-[11px] font-medium">
-              <BarChart3 className="w-3 h-3 text-amber-500" /> Gráficos
-            </span>
-          </div>
-
           <Button
             variant="outline"
             size="sm"

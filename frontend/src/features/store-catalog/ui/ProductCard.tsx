@@ -8,6 +8,7 @@ import {
   getAvailableSizes,
 } from '@/entities/product';
 import { useCartStore } from '@/features/cart';
+import { useTenantStore } from '@/app/store/tenant.store';
 import { toast } from '@/shared/ui/Toast';
 
 interface ProductCardProps {
@@ -17,6 +18,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const { addItem } = useCartStore();
+  const { currentTenant } = useTenantStore();
+  const defaultBrand = currentTenant?.name || 'Colección Oficial';
   const priceInfo = getProductPriceRange(product);
   const coverImage = getProductCoverImage(product);
   const sizes = getAvailableSizes(product.variants || []);
@@ -38,7 +41,7 @@ export function ProductCard({ product }: ProductCardProps) {
       variantId: variant.id,
       productId: product.id,
       productName: product.name,
-      brand: product.brand || 'Boutique Kitty',
+      brand: product.brand || defaultBrand,
       sku: variant.sku,
       size: variant.size,
       color: variant.color,
@@ -100,7 +103,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Info Editorial Prada */}
       <div className="pt-3 pb-1 space-y-1">
         <div className="flex items-center justify-between gap-1 text-[10px] tracking-widest text-muted-foreground uppercase font-mono">
-          <span>{product.brand || 'BOUTIQUE KITTY'}</span>
+          <span>{product.brand || defaultBrand.toUpperCase()}</span>
           <ArrowRight className="h-3 w-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
         </div>
 

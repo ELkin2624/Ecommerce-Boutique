@@ -31,6 +31,7 @@ model User {
   orders        Order[]
   cart          Cart?
   movements     InventoryMovement[]
+  memberships   TenantMembership[]
 
   @@map("users")
 }
@@ -479,7 +480,7 @@ model Promotion {
 // ==========================================
 
 model Tenant {
-  id           String   @id @default(uuid())
+  id           String   @id @default(uuid()) @db.Uuid
   name         String
   slug         String   @unique
   schemaName   String   @unique @map("schema_name")
@@ -495,6 +496,25 @@ model Tenant {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  memberships  TenantMembership[]
+
   @@map("tenants")
+}
+
+model TenantMembership {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @map("tenant_id") @db.Uuid
+  userId    String   @map("user_id")
+  role      String   @default("OWNER") // OWNER, ADMIN, STORE_MANAGER, CASHIER, CLIENT
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([userId])
+  @@index([tenantId])
+  @@map("tenant_memberships")
 }
 

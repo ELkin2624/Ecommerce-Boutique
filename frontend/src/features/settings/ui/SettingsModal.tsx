@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Palette, Type, Layout, Sliders, RotateCcw, X } from 'lucide-react';
+import { Store, Palette, Type, Layout, Sliders, RotateCcw, X } from 'lucide-react';
 import { useSettingsStore } from '../model/useSettingsStore';
 import { Button } from '@/shared/ui/Button';
+import { StoreSettingsTab } from './tabs/StoreSettingsTab';
 import { AppearanceTab } from './tabs/AppearanceTab';
 import { TypographyTab } from './tabs/TypographyTab';
 import { InterfaceTab } from './tabs/InterfaceTab';
 
-type SettingsTab = 'appearance' | 'typography' | 'interface';
+type SettingsTab = 'store' | 'appearance' | 'typography' | 'interface';
 
 interface TabConfig {
   id: SettingsTab;
@@ -15,19 +16,21 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
+  { id: 'store', label: 'Mi Tienda & Marca', icon: Store },
   { id: 'appearance', label: 'Tema & Apariencia', icon: Palette },
-  { id: 'typography', label: 'Tipografía & Escala Fluida', icon: Type },
+  { id: 'typography', label: 'Tipografía & Escala', icon: Type },
   { id: 'interface', label: 'Rendimiento & Densidad', icon: Layout },
 ];
 
 interface SettingsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  defaultTab?: SettingsTab;
 }
 
-export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
+export function SettingsModal({ open, onOpenChange, defaultTab = 'store' }: SettingsModalProps) {
   const { resetToDefaults } = useSettingsStore();
-  const [activeTab, setActiveTab] = useState<SettingsTab>('appearance');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(defaultTab);
 
   if (!open) return null;
 
@@ -87,6 +90,7 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
 
         {/* Tab Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {activeTab === 'store' && <StoreSettingsTab />}
           {activeTab === 'appearance' && <AppearanceTab />}
           {activeTab === 'typography' && <TypographyTab />}
           {activeTab === 'interface' && <InterfaceTab />}

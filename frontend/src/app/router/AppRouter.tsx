@@ -82,7 +82,7 @@ export function AppRouter() {
               <div className="flex flex-col items-center gap-3">
                 <AppLogo size="md" withContainer={true} className="animate-pulse" />
                 <span className="text-xs font-semibold text-muted-foreground">
-                  Cargando {BRAND_CONFIG.name}...
+                  Cargando plataforma...
                 </span>
               </div>
             </div>
@@ -136,6 +136,7 @@ export function AppRouter() {
           {/* 2. ACCESO ADMINISTRATIVO Y POS                                           */}
           {/* ========================================================================= */}
           <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route path="/login" element={<AdminLoginPage />} />
 
           {/* Redirección rápida /admin -> /dashboard */}
           <Route path="/admin" element={<Navigate to="/dashboard" replace />} />

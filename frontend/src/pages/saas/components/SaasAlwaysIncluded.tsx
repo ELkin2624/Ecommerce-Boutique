@@ -1,12 +1,6 @@
 import React from 'react';
 import {
-  Database,
-  Store,
-  ShieldCheck,
-  Cloud,
-  RefreshCw,
-  CreditCard,
-  Sparkles,
+  Database, Store, ShieldCheck, Cloud, RefreshCw, CreditCard,
 } from 'lucide-react';
 
 export const SaasAlwaysIncluded: React.FC = () => {
@@ -50,14 +44,9 @@ export const SaasAlwaysIncluded: React.FC = () => {
   ];
 
   return (
-    <section id="siempre-incluido" className="py-20 bg-saas-bg transition-colors duration-200 border-t border-saas-border">
+    <section id="beneficios" className="py-20 bg-saas-bg transition-colors duration-200 border-t border-saas-border scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-holst-50 dark:bg-holst-900 border border-holst-200 dark:border-holst-600/40 text-xs font-bold text-holst-600 dark:text-holst-400 mb-3">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Fundamentos de Grado Enterprise</span>
-          </div>
-
           <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-saas-text-primary">
             Siempre incluido en cada uno de nuestros planes
           </h2>

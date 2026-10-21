@@ -72,6 +72,15 @@ created: 2026-09-09
    - Preguntas típicas de la docente de SI2 y cómo responderlas técnicamente.
    - Casos de prueba en vivo para demostrar la IA en la defensa.
 
+7. **[[07_AUDITORIA_Y_REMEDIACION_MULTITENANCY]]** ⭐ *(Fuente de Verdad Multitenancy SaaS)*:
+   - Modelo de negocio: Usuario Global, Tenant, Membresía, Plan (`STARTER`, `PRO`, `ENTERPRISE`) y Esquema PostgreSQL.
+   - Diagnóstico basado en evidencia, aprovisionamiento limpio (0 sucursales/almacenes/POS/ciudades iniciales), selector y creación de tiendas en panel, y pruebas automatizadas A–G.
+
+8. **[[08_OFFLINE_POS_PWA_Y_CONCURRENCIA_ACID]]** ⭐ *(Alta Disponibilidad Offline & ACID)*:
+   - Arquitectura Offline-First con IndexedDB (Dexie.js), sincronización asíncrona mediante el patrón Outbox y PWA con Workbox precaching.
+   - Idempotencia con claves UUID para evitar ventas o cobros duplicados en reconexión.
+   - Integridad transaccional ACID en PostgreSQL ante condiciones de carrera (Race Condition "1 Stock Restante") con política estricta `SERVER_WINS` y feedback inmediato en mostrador (`PosSyncModal`).
+
 ---
 
 ## ⚡ Guía Rápida de Decisión

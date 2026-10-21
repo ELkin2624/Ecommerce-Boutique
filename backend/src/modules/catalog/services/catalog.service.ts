@@ -284,20 +284,16 @@ export class CatalogService {
 
   async createProduct(dto: CreateProductDto, userId: string) {
     if (!dto.categoryId) {
-      let defaultCat = await this.prisma.category.findFirst();
-      if (!defaultCat) {
-        defaultCat = await this.prisma.category.create({
-          data: { name: 'General', slug: 'general' },
-        });
-      }
-      dto.categoryId = defaultCat.id;
-    } else {
-      const category = await this.prisma.category.findUnique({
-        where: { id: dto.categoryId },
-      });
-      if (!category) {
-        throw new NotFoundException(`Categoría con ID ${dto.categoryId} no encontrada`);
-      }
+      throw new BadRequestException(
+        'Debes seleccionar o crear una categoría antes de registrar un producto.',
+      );
+    }
+
+    const category = await this.prisma.category.findUnique({
+      where: { id: dto.categoryId },
+    });
+    if (!category) {
+      throw new NotFoundException(`Categoría con ID ${dto.categoryId} no encontrada`);
     }
 
     const newProductId = await this.prisma.$transaction(async (tx) => {

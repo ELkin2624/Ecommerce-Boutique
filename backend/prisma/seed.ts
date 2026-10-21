@@ -1,16 +1,70 @@
-import {
-  PrismaClient,
-  LocationType,
-  MovementType,
-  OrderStatus,
-  OrderType,
-  PaymentMethod,
-  PaymentStatus,
-  ReservationStatus,
-} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
 
-const prisma = new PrismaClient();
+const LocationType = {
+  WAREHOUSE: 'WAREHOUSE',
+  SALES_FLOOR: 'SALES_FLOOR',
+} as const;
+
+const MovementType = {
+  PURCHASE_RECEIPT: 'PURCHASE_RECEIPT',
+  TRANSFER: 'TRANSFER',
+  RESERVATION_HOLD: 'RESERVATION_HOLD',
+  RESERVATION_RELEASE: 'RESERVATION_RELEASE',
+  SALE: 'SALE',
+  RETURN: 'RETURN',
+  ADJUSTMENT: 'ADJUSTMENT',
+} as const;
+
+const OrderStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+const OrderType = {
+  ONLINE: 'ONLINE',
+  IN_STORE: 'IN_STORE',
+} as const;
+
+const PaymentMethod = {
+  CASH: 'CASH',
+  CARD: 'CARD',
+  QR: 'QR',
+  GATEWAY: 'GATEWAY',
+} as const;
+
+const PaymentStatus = {
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+} as const;
+
+const ReservationStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PREPARED: 'PREPARED',
+  READY: 'READY',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED',
+} as const;
+
+const targetSchema = process.env.TARGET_SCHEMA || process.env.TENANT_SCHEMA || 'public';
+const baseDbUrl = process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5435/fashionstore_db?schema=public';
+const [baseUrl] = baseDbUrl.split('?');
+const connectionUrl = `${baseUrl}?schema=${targetSchema}`;
+
+console.log(`🔌 Conectando Prisma al esquema: "${targetSchema}"`);
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: connectionUrl,
+    },
+  },
+});
 
 // Helper para generar fechas pasadas
 function daysAgo(days: number, hoursOffset: number = 0): Date {

@@ -142,18 +142,10 @@ export class BranchesService {
           where: { id: dto.warehouseId },
           data: { branchId: branch.id },
         });
+      }
 
-        // Crear solo piso de ventas inicial
-        await tx.inventoryLocation.create({
-          data: {
-            branchId: branch.id,
-            name: `Piso de Ventas ${dto.name.trim()}`,
-            type: 'SALES_FLOOR',
-            isActive: true,
-          },
-        });
-      } else if (dto.locations && dto.locations.length > 0) {
-        // Crear ubicaciones iniciales especificadas
+      if (dto.locations && dto.locations.length > 0) {
+        // Crear únicamente las ubicaciones explícitamente solicitadas por el usuario
         for (const loc of dto.locations) {
           await tx.inventoryLocation.create({
             data: {
@@ -164,24 +156,6 @@ export class BranchesService {
             },
           });
         }
-      } else {
-        // Por defecto: crear piso de ventas y almacén principal
-        await tx.inventoryLocation.create({
-          data: {
-            branchId: branch.id,
-            name: `Piso de Ventas ${dto.name.trim()}`,
-            type: 'SALES_FLOOR',
-            isActive: true,
-          },
-        });
-        await tx.inventoryLocation.create({
-          data: {
-            branchId: branch.id,
-            name: `Almacén Principal ${dto.name.trim()}`,
-            type: 'WAREHOUSE',
-            isActive: true,
-          },
-        });
       }
 
       return branch;

@@ -2,6 +2,7 @@ import { ShoppingBag, Ruler, Check, Minus, Plus } from 'lucide-react';
 import type { Product, ProductVariant } from '@/shared/types/api';
 import { formatPrice } from '@/entities/product';
 import { Button } from '@/shared/ui/Button';
+import { useTenantStore } from '@/app/store/tenant.store';
 
 interface ProductDetailInfoProps {
   product: Product;
@@ -22,6 +23,8 @@ export function ProductDetailInfo({
   onAddToCart,
   onOpenFittingModal,
 }: ProductDetailInfoProps) {
+  const { currentTenant } = useTenantStore();
+  const storeName = currentTenant?.name || 'Colección Oficial';
   const availableSizes = Array.from(new Set(product.variants?.map((v) => v.size) || []));
   const availableColors = Array.from(new Set(product.variants?.map((v) => v.color) || []));
 
@@ -34,7 +37,7 @@ export function ProductDetailInfo({
       <div className="space-y-2 border-b border-border/40 pb-5">
         <div className="flex items-center gap-2">
           <span className="text-[11px] font-mono uppercase tracking-[0.25em] text-muted-foreground font-semibold">
-            {product.brand || 'Boutique Kitty'}
+            {product.brand || storeName}
           </span>
           {product.category && (
             <>

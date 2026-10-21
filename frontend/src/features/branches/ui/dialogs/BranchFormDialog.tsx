@@ -27,8 +27,8 @@ export function BranchFormDialog({ open, onOpenChange, branchToEdit }: BranchFor
   });
 
   const [isCreatingCity, setIsCreatingCity] = useState(false);
-  const [createSalesFloor, setCreateSalesFloor] = useState(true);
-  const [createWarehouse, setCreateWarehouse] = useState(true);
+  const [createSalesFloor, setCreateSalesFloor] = useState(false);
+  const [createWarehouse, setCreateWarehouse] = useState(false);
 
   const { data: cities = [] } = useQuery<City[]>({
     queryKey: queryKeys.branches.cities,
@@ -49,15 +49,18 @@ export function BranchFormDialog({ open, onOpenChange, branchToEdit }: BranchFor
       setIsCreatingCity(false);
     } else {
       setFormData({ name: '', address: '', phone: '', cityId: '', newCityName: '' });
-      setIsCreatingCity(false);
-      setCreateSalesFloor(true);
-      setCreateWarehouse(true);
+      setIsCreatingCity(cities.length === 0);
+      setCreateSalesFloor(false);
+      setCreateWarehouse(false);
     }
-  }, [branchToEdit, open]);
+  }, [branchToEdit, open, cities.length]);
 
   useEffect(() => {
     if (!branchToEdit && cities.length > 0) {
+      setIsCreatingCity(false);
       setFormData((prev) => (prev.cityId ? prev : { ...prev, cityId: cities[0].id }));
+    } else if (!branchToEdit && cities.length === 0) {
+      setIsCreatingCity(true);
     }
   }, [cities, branchToEdit]);
 

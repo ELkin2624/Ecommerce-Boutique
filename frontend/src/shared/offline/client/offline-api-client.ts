@@ -34,6 +34,35 @@ export interface OfflineMutationResult<R = any> {
  * de mutaciones en el Outbox cuando no hay red o cuando el servidor no responde.
  */
 export class OfflineApiClient {
+  private getScopedCacheKey(cacheKey: string): string {
+    const activeTenant =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('fashionstore_tenant_slug') ||
+          localStorage.getItem('fashionstore-active-tenant') ||
+          'no-tenant'
+        : 'no-tenant';
+    return cacheKey.startsWith(`${activeTenant}:`)
+      ? cacheKey
+      : `${activeTenant}:${cacheKey}`;
+  }
+
+  /**
+   * Limpia las tablas de caché local en IndexedDB al cambiar de tienda o cerrar sesión
+   * para evitar contaminación visual entre tenants.
+   */
+  async clearTenantCache(): Promise<void> {
+    try {
+      await Promise.all([
+        offlineDb.kvCache.clear(),
+        offlineDb.branches.clear(),
+        offlineDb.categories.clear(),
+        offlineDb.products.clear(),
+      ]);
+    } catch (err) {
+      console.warn('[OfflineClient] Error limpiando caché de tenant:', err);
+    }
+  }
+
   /**
    * Ejecuta una consulta con estrategia Offline-First / Cache-First / Stale-While-Revalidate.
    */
@@ -44,9 +73,10 @@ export class OfflineApiClient {
   ): Promise<{ data: T; fromCache: boolean }> {
     const { ttl = 30 * 60 * 1000, strategy = 'STALE_WHILE_REVALIDATE' } = options;
     const now = Date.now();
+    const scopedKey = this.getScopedCacheKey(cacheKey);
 
-    // 1. Consultar si existe en la base local IndexedDB
-    const cached = await offlineDb.kvCache.get(cacheKey);
+    // 1. Consultar si existe en la base local IndexedDB (aislado por tenant)
+    const cached = await offlineDb.kvCache.get(scopedKey);
     const isCacheValid = cached && cached.expiresAt > now;
 
     // Si la estrategia es CACHE_FIRST y está vigente, retornar sin tocar la red
@@ -59,7 +89,7 @@ export class OfflineApiClient {
       if (cached) {
         return { data: cached.data as T, fromCache: true };
       }
-      throw new Error(`[OfflineClient] Sin conexión a internet y sin copia local para "${cacheKey}".`);
+      throw new Error(`[OfflineClient] Sin conexión a internet y sin copia local para "${scopedKey}".`);
     }
 
     // 3. Si hay red, ejecutar la petición
@@ -68,7 +98,7 @@ export class OfflineApiClient {
 
       // Guardar asíncronamente en IndexedDB sin bloquear el render
       offlineDb.kvCache.put({
-        key: cacheKey,
+        key: scopedKey,
         data,
         expiresAt: now + ttl,
         updatedAt: now,
@@ -78,7 +108,7 @@ export class OfflineApiClient {
     } catch (networkError) {
       // Si la red falló pero teníamos caché (aunque esté expirado), salvar la experiencia de usuario
       if (cached) {
-        console.warn(`[OfflineClient] Fallo de red para "${cacheKey}". Usando respaldo local en IndexedDB.`);
+        console.warn(`[OfflineClient] Fallo de red para "${scopedKey}". Usando respaldo local en IndexedDB.`);
         return { data: cached.data as T, fromCache: true };
       }
       throw networkError;
@@ -170,6 +200,16 @@ export class OfflineApiClient {
    */
   async preloadCriticalData(): Promise<void> {
     if (!networkMonitor.getState().isOnline) return;
+
+    // No precargar catálogos de tienda si aún no hay una tienda activa seleccionada
+    const hasTenantContext =
+      typeof window !== 'undefined' &&
+      Boolean(
+        localStorage.getItem('fashionstore_tenant_slug') ||
+          new URLSearchParams(window.location.search).get('tenant') ||
+          new URLSearchParams(window.location.search).get('tenant_slug'),
+      );
+    if (!hasTenantContext) return;
 
     try {
       // 1. Precargar sucursales

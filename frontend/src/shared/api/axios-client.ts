@@ -10,22 +10,39 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   withCredentials: true,
-  timeout: 15000,
+  timeout: 30000,
 });
 
-// Interceptor de Inquilino (Multi-Tenant Header)
+// Interceptor de Inquilino (Multi-Tenant Header con soporte de subdominios y query params)
 apiClient.interceptors.request.use((config) => {
-  let tenantSlug = 'boutique-elegance';
+  let tenantSlug: string | null = null;
 
   if (typeof window !== 'undefined') {
-    const urlParams = new URLSearchParams(window.location.search);
-    const queryTenant = urlParams.get('tenant') || urlParams.get('tenant_slug');
-    const storedTenant = localStorage.getItem('fashionstore_tenant_slug');
+    // 1. Detección automática por subdominio en producción (ej. tienda1.fashionstore.com)
+    const host = window.location.hostname;
+    const parts = host.split('.');
+    if (
+      parts.length > 2 &&
+      parts[0] !== 'www' &&
+      parts[0] !== 'api' &&
+      parts[0] !== 'localhost'
+    ) {
+      tenantSlug = parts[0];
+    } else {
+      // 2. Detección por query param o localStorage en desarrollo local
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryTenant = urlParams.get('tenant') || urlParams.get('tenant_slug');
+      const storedTenant = localStorage.getItem('fashionstore_tenant_slug');
 
-    tenantSlug = queryTenant || storedTenant || 'boutique-elegance';
+      tenantSlug = queryTenant || storedTenant || null;
+    }
   }
 
-  if (tenantSlug) {
+  // Rutas SaaS centrales no requieren header de inquilino
+  const isSaasUrl =
+    config.url?.includes('/saas') || config.url?.includes('/docs');
+
+  if (tenantSlug && !isSaasUrl) {
     config.headers['x-tenant-slug'] = tenantSlug;
   }
 
