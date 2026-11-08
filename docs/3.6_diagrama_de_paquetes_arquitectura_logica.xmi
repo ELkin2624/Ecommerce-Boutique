@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" name="3.6. Diagrama de Paquetes - Arquitectura Logica" xmi:id="EAPK_PCKG0001_0001_4000_8000_000000000001" visibility="public">
+			<packagedElement xmi:type="uml:Package" name="Frontend Web &amp; POS (Feature-Sliced Design)" xmi:id="EAPK_FSD0000_ROOT" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="app (Providers, Router, Global CSS)" xmi:id="EAPK_FSD0001_APP" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="pages (PosPage, StoresPage, ReportsPage)" xmi:id="EAPK_FSD0002_PAGES" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="widgets (Navbar, Sidebar, PosSyncModal)" xmi:id="EAPK_FSD0003_WIDGETS" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="features (pos, cart, checkout, saas)" xmi:id="EAPK_FSD0004_FEATURES" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="entities (user, product, order, branch)" xmi:id="EAPK_FSD0005_ENTITIES" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="shared (apiClient, offlineDexie, uiPrimitives)" xmi:id="EAPK_FSD0006_SHARED" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Backend Transaccional (NestJS Modular)" xmi:id="EAPK_BE0000_ROOT" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Presentation Layer (Controllers, DTOs, Guards)" xmi:id="EAPK_BE0001_PRESENTATION" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Application Layer (Use Case Services: Orders, SaaS)" xmi:id="EAPK_BE0002_APPLICATION" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Domain Layer (Entities, TaxRules, PlanLimits)" xmi:id="EAPK_BE0003_DOMAIN" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Infrastructure Layer (Prisma, Schemas, Redis, Stripe)" xmi:id="EAPK_BE0004_INFRASTRUCTURE" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="Microservicio de IA &amp; Analitica (FastAPI)" xmi:id="EAPK_AI0000_ROOT" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="app.core (Config, Security, Exceptions)" xmi:id="EAPK_AI0001_CORE" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="app.database (SQLAlchemy 2.0, Alembic)" xmi:id="EAPK_AI0002_DATABASE" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="modules.generative_reports (ReportIQ Engine)" xmi:id="EAPK_AI0003_REPORTS" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="modules.virtual_fitting (AR Textures &amp; Pillow)" xmi:id="EAPK_AI0004_FITTING" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="modules.recommendations (Collaborative Filtering)" xmi:id="EAPK_AI0005_RECOM" visibility="public"/>
+			<packagedElement xmi:type="uml:Package" name="app.services (Boto3 S3 Client &amp; Gemini LLM)" xmi:id="EAPK_AI0006_SERVICES" visibility="public"/>
+			<packagedElement xmi:type="uml:Dependency" name="uses" xmi:id="EAID_PDEP0001" supplier="EAPK_FSD0002_PAGES" client="EAPK_FSD0001_APP"/>
+			<packagedElement xmi:type="uml:Dependency" name="composes" xmi:id="EAID_PDEP0002" supplier="EAPK_FSD0003_WIDGETS" client="EAPK_FSD0002_PAGES"/>
+			<packagedElement xmi:type="uml:Dependency" name="triggers" xmi:id="EAID_PDEP0003" supplier="EAPK_FSD0004_FEATURES" client="EAPK_FSD0002_PAGES"/>
+			<packagedElement xmi:type="uml:Dependency" name="binds" xmi:id="EAID_PDEP0004" supplier="EAPK_FSD0004_FEATURES" client="EAPK_FSD0003_WIDGETS"/>
+			<packagedElement xmi:type="uml:Dependency" name="mutates" xmi:id="EAID_PDEP0005" supplier="EAPK_FSD0005_ENTITIES" client="EAPK_FSD0004_FEATURES"/>
+			<packagedElement xmi:type="uml:Dependency" name="types" xmi:id="EAID_PDEP0006" supplier="EAPK_FSD0006_SHARED" client="EAPK_FSD0005_ENTITIES"/>
+			<packagedElement xmi:type="uml:Dependency" name="invokes" xmi:id="EAID_PDEP0007" supplier="EAPK_BE0002_APPLICATION" client="EAPK_BE0001_PRESENTATION"/>
+			<packagedElement xmi:type="uml:Dependency" name="executes" xmi:id="EAID_PDEP0008" supplier="EAPK_BE0003_DOMAIN" client="EAPK_BE0002_APPLICATION"/>
+			<packagedElement xmi:type="uml:Dependency" name="implements (DIP)" xmi:id="EAID_PDEP0009" supplier="EAPK_BE0003_DOMAIN" client="EAPK_BE0004_INFRASTRUCTURE"/>
+			<packagedElement xmi:type="uml:Dependency" name="persists" xmi:id="EAID_PDEP0010" supplier="EAPK_BE0004_INFRASTRUCTURE" client="EAPK_BE0002_APPLICATION"/>
+			<packagedElement xmi:type="uml:Dependency" name="HTTP/REST API Calls" xmi:id="EAID_PDEP0011" supplier="EAPK_BE0001_PRESENTATION" client="EAPK_FSD0006_SHARED"/>
+			<packagedElement xmi:type="uml:Dependency" name="HTTP/gRPC AI Calls" xmi:id="EAID_PDEP0012" supplier="EAPK_AI0003_REPORTS" client="EAPK_BE0004_INFRASTRUCTURE"/>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_PCKG0001_0001_4000_8000_000000000001" xmi:type="uml:Package" name="3.6. Diagrama de Paquetes - Arquitectura Logica" scope="public">
+				<model package2="EAPK_PCKG0001_0001_4000_8000_000000000001" package="EAPK_PCKG0001_0001_4000_8000_000000000001" tpos="0" ea_localid="1" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0000_ROOT" xmi:type="uml:Package" name="Frontend Web &amp; POS (Feature-Sliced Design)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" tpos="0" ea_localid="201" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0001_APP" xmi:type="uml:Package" name="app (Providers, Router, Global CSS)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="202" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0002_PAGES" xmi:type="uml:Package" name="pages (PosPage, StoresPage, ReportsPage)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="203" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0003_WIDGETS" xmi:type="uml:Package" name="widgets (Navbar, Sidebar, PosSyncModal)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="204" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0004_FEATURES" xmi:type="uml:Package" name="features (pos, cart, checkout, saas)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="205" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0005_ENTITIES" xmi:type="uml:Package" name="entities (user, product, order, branch)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="206" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_FSD0006_SHARED" xmi:type="uml:Package" name="shared (apiClient, offlineDexie, uiPrimitives)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_FSD0000_ROOT" tpos="0" ea_localid="207" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_BE0000_ROOT" xmi:type="uml:Package" name="Backend Transaccional (NestJS Modular)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" tpos="0" ea_localid="208" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_BE0001_PRESENTATION" xmi:type="uml:Package" name="Presentation Layer (Controllers, DTOs, Guards)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_BE0000_ROOT" tpos="0" ea_localid="209" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_BE0002_APPLICATION" xmi:type="uml:Package" name="Application Layer (Use Case Services: Orders, SaaS)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_BE0000_ROOT" tpos="0" ea_localid="210" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_BE0003_DOMAIN" xmi:type="uml:Package" name="Domain Layer (Entities, TaxRules, PlanLimits)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_BE0000_ROOT" tpos="0" ea_localid="211" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_BE0004_INFRASTRUCTURE" xmi:type="uml:Package" name="Infrastructure Layer (Prisma, Schemas, Redis, Stripe)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_BE0000_ROOT" tpos="0" ea_localid="212" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0000_ROOT" xmi:type="uml:Package" name="Microservicio de IA &amp; Analitica (FastAPI)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" tpos="0" ea_localid="213" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0001_CORE" xmi:type="uml:Package" name="app.core (Config, Security, Exceptions)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="214" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0002_DATABASE" xmi:type="uml:Package" name="app.database (SQLAlchemy 2.0, Alembic)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="215" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0003_REPORTS" xmi:type="uml:Package" name="modules.generative_reports (ReportIQ Engine)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="216" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0004_FITTING" xmi:type="uml:Package" name="modules.virtual_fitting (AR Textures &amp; Pillow)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="217" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0005_RECOM" xmi:type="uml:Package" name="modules.recommendations (Collaborative Filtering)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="218" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAPK_AI0006_SERVICES" xmi:type="uml:Package" name="app.services (Boto3 S3 Client &amp; Gemini LLM)" scope="public">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" owner="EAPK_AI0000_ROOT" tpos="0" ea_localid="219" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_PDEP0001">
+				<source xmi:idref="EAPK_FSD0001_APP"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0002_PAGES"><role visibility="Public"/></target>
+				<model ea_localid="601"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="uses"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0002">
+				<source xmi:idref="EAPK_FSD0002_PAGES"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0003_WIDGETS"><role visibility="Public"/></target>
+				<model ea_localid="602"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="composes"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0003">
+				<source xmi:idref="EAPK_FSD0002_PAGES"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0004_FEATURES"><role visibility="Public"/></target>
+				<model ea_localid="603"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="triggers"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0004">
+				<source xmi:idref="EAPK_FSD0003_WIDGETS"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0004_FEATURES"><role visibility="Public"/></target>
+				<model ea_localid="604"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="binds"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0005">
+				<source xmi:idref="EAPK_FSD0004_FEATURES"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0005_ENTITIES"><role visibility="Public"/></target>
+				<model ea_localid="605"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="mutates"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0006">
+				<source xmi:idref="EAPK_FSD0005_ENTITIES"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_FSD0006_SHARED"><role visibility="Public"/></target>
+				<model ea_localid="606"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="types"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0007">
+				<source xmi:idref="EAPK_BE0001_PRESENTATION"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_BE0002_APPLICATION"><role visibility="Public"/></target>
+				<model ea_localid="607"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="invokes"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0008">
+				<source xmi:idref="EAPK_BE0002_APPLICATION"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_BE0003_DOMAIN"><role visibility="Public"/></target>
+				<model ea_localid="608"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="executes"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0009">
+				<source xmi:idref="EAPK_BE0004_INFRASTRUCTURE"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_BE0003_DOMAIN"><role visibility="Public"/></target>
+				<model ea_localid="609"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="implements (DIP)"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0010">
+				<source xmi:idref="EAPK_BE0002_APPLICATION"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_BE0004_INFRASTRUCTURE"><role visibility="Public"/></target>
+				<model ea_localid="610"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="persists"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0011">
+				<source xmi:idref="EAPK_FSD0006_SHARED"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_BE0001_PRESENTATION"><role visibility="Public"/></target>
+				<model ea_localid="611"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="HTTP/REST API Calls"/>
+			</connector>
+			<connector xmi:idref="EAID_PDEP0012">
+				<source xmi:idref="EAPK_BE0004_INFRASTRUCTURE"><role visibility="Public"/></source>
+				<target xmi:idref="EAPK_AI0003_REPORTS"><role visibility="Public"/></target>
+				<model ea_localid="612"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="HTTP/gRPC AI Calls"/>
+			</connector>
+		</connectors>
+		<diagrams>
+			<diagram xmi:id="EAID_DIAG0006_PACKAGES">
+				<model package="EAPK_PCKG0001_0001_4000_8000_000000000001" localID="1" owner="EAPK_PCKG0001_0001_4000_8000_000000000001"/>
+				<properties name="3.6. Diagrama de Paquetes - Arquitectura Logica" type="Package"/>
+				<project author="FashionStore Team" version="2.5.1" created="2026-11-07 00:00:00" modified="2026-11-07 00:00:00"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;HighlightForeign=1;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;DocSize.cx=1400;DocSize.cy=900;ShowDetails=0;Orientation=L;Zoom=100;ShowTags=0;OpParams=1;VisibleAttributeDetail=0;ShowOpRetType=0;ShowIcons=1;CollabNums=0;HideProps=1;ShowReqs=0;ShowCons=0;PaperSize=1;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=UML 2.1;ExplicitNavigability=0;ShowShape=1;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ShowNotes=0;SuppressBrackets=1;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;"/>
+				<style2 value="ExcludeRTF=0;DocAll=0;HideQuals=1;AttPkg=1;ShowTests=0;ShowMaint=0;SuppressFOC=0;MatrixActive=0;SwimlanesActive=1;KanbanActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ProfileData=;MDGDgm=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=0;SuppressBrackets=1;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;SuppressedCompartments=;SaveTag=D95F455B;"/>
+				<elements>
+					<element geometry="Left=60;Top=90;Right=370;Bottom=150;" subject="EAPK_FSD0001_APP" seqno="1" style="DUID=P0001;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=180;Right=370;Bottom=240;" subject="EAPK_FSD0002_PAGES" seqno="2" style="DUID=P0002;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=270;Right=370;Bottom=330;" subject="EAPK_FSD0003_WIDGETS" seqno="3" style="DUID=P0003;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=360;Right=370;Bottom=420;" subject="EAPK_FSD0004_FEATURES" seqno="4" style="DUID=P0004;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=450;Right=370;Bottom=510;" subject="EAPK_FSD0005_ENTITIES" seqno="5" style="DUID=P0005;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=540;Right=370;Bottom=620;" subject="EAPK_FSD0006_SHARED" seqno="6" style="DUID=P0006;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=460;Top=90;Right=800;Bottom=180;" subject="EAPK_BE0001_PRESENTATION" seqno="7" style="DUID=P0007;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=460;Top=220;Right=800;Bottom=310;" subject="EAPK_BE0002_APPLICATION" seqno="8" style="DUID=P0008;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=460;Top=360;Right=800;Bottom=450;" subject="EAPK_BE0003_DOMAIN" seqno="9" style="DUID=P0009;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=460;Top=500;Right=800;Bottom=620;" subject="EAPK_BE0004_INFRASTRUCTURE" seqno="10" style="DUID=P000A;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=90;Right=1240;Bottom=160;" subject="EAPK_AI0001_CORE" seqno="11" style="DUID=P000B;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=190;Right=1240;Bottom=260;" subject="EAPK_AI0002_DATABASE" seqno="12" style="DUID=P000C;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=290;Right=1240;Bottom=360;" subject="EAPK_AI0003_REPORTS" seqno="13" style="DUID=P000D;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=390;Right=1240;Bottom=460;" subject="EAPK_AI0004_FITTING" seqno="14" style="DUID=P000E;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=490;Right=1240;Bottom=550;" subject="EAPK_AI0005_RECOM" seqno="15" style="DUID=P000F;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=890;Top=570;Right=1240;Bottom=640;" subject="EAPK_AI0006_SERVICES" seqno="16" style="DUID=P0010;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=40;Top=50;Right=390;Bottom=680;" subject="EAPK_FSD0000_ROOT" seqno="17" style="DUID=P0011;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=440;Top=50;Right=820;Bottom=680;" subject="EAPK_BE0000_ROOT" seqno="18" style="DUID=P0012;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=870;Top=50;Right=1260;Bottom=680;" subject="EAPK_AI0000_ROOT" seqno="19" style="DUID=P0013;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>

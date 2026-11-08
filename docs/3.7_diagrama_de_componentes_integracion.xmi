@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" name="3.7. Diagrama de Componentes (Integracion)" xmi:id="EAPK_COMP0001_0001_4000_8000_000000000001" visibility="public">
+			<packagedElement xmi:type="uml:Component" name="Frontend Web &amp; POS Client (React 18 + Vite)" xmi:id="EAID_COMP_FE_WEB" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="App Movil FashionStore (React Native + Expo)" xmi:id="EAID_COMP_APP_MOV" visibility="public"/>
+			<packagedElement xmi:type="uml:Interface" name="IStorefrontAndAdminAPI (HTTP REST :3000)" xmi:id="EAID_INTF_REST_API" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ login(credentials): AuthResponse" xmi:id="EAID_OP_REST_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ createTenant(data): TenantDTO" xmi:id="EAID_OP_REST_02" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ getCatalog(filters): ProductList" xmi:id="EAID_OP_REST_03" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Interface" name="IPosSyncAPI (Idempotent REST :3000)" xmi:id="EAID_INTF_POS_SYNC" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ syncOfflineOrder(payload): SyncResult" xmi:id="EAID_OP_POS_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ reconcileInventory(diff): KardexStatus" xmi:id="EAID_OP_POS_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Interface" name="IBranchAlertsSocket (WebSocket WSS :3001)" xmi:id="EAID_INTF_WSS_ALERTS" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ joinBranchRoom(branchId): void" xmi:id="EAID_OP_WSS_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ broadcastStockAlert(alert): void" xmi:id="EAID_OP_WSS_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Component" name="Backend Core API Gateway (NestJS / Node.js 20)" xmi:id="EAID_COMP_BE_CORE" visibility="public"/>
+			<packagedElement xmi:type="uml:Interface" name="IReportIQInternalAPI (HTTPX REST :8000)" xmi:id="EAID_INTF_REPORTIQ" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ queryAnalytics(prompt): ParsedQuery" xmi:id="EAID_OP_REP_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ generateReport(query): ReportResult" xmi:id="EAID_OP_REP_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Interface" name="IPostgresRelational (TCP/IP :5432 / Pool)" xmi:id="EAID_INTF_PG_SQL" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ executeQuery(sql, params): ResultSet" xmi:id="EAID_OP_PG_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ setTenantSearchPath(slug): void" xmi:id="EAID_OP_PG_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Interface" name="IObjectStorageAPI (HTTPS REST S3 :443)" xmi:id="EAID_INTF_S3_API" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ getPresignedPutUrl(key): PresignedUrl" xmi:id="EAID_OP_S3_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ getAssetUrl(path): string" xmi:id="EAID_OP_S3_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Interface" name="IStripePayments (HTTPS REST :443)" xmi:id="EAID_INTF_STRIPE_PAY" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ createPaymentIntent(order): StripeIntent" xmi:id="EAID_OP_ST_01" visibility="public"/>
+				<ownedOperation xmi:type="uml:Operation" name="+ verifyWebhook(payload, sig): boolean" xmi:id="EAID_OP_ST_02" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Component" name="Microservicio IA &amp; Reportes (FastAPI / Python 3.11)" xmi:id="EAID_COMP_AI_SVC" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Motor de Base de Datos (PostgreSQL 16 Multi-tenant)" xmi:id="EAID_COMP_DB_PG" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Almacenamiento S3 &amp; CDN (AWS S3 + CloudFront)" xmi:id="EAID_COMP_STORAGE_S3" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Pasarela de Pagos Externa (Stripe Cloud API)" xmi:id="EAID_COMP_STRIPE" visibility="public"/>
+			<packagedElement xmi:type="uml:Interface" name="IGeminiGenerativeAI (HTTPS REST :443)" xmi:id="EAID_INTF_GEMINI_AI" visibility="public">
+				<ownedOperation xmi:type="uml:Operation" name="+ generateJsonContent(prompt, schema): JsonModel" xmi:id="EAID_OP_GEM_01" visibility="public"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Component" name="Plataforma LLM Externa (Google Gemini 1.5 Flash)" xmi:id="EAID_COMP_GEMINI" visibility="public"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;use&gt;&gt; HTTP/REST" xmi:id="EAID_CONN01" supplier="EAID_INTF_REST_API" client="EAID_COMP_FE_WEB"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;use&gt;&gt; Outbox Sync" xmi:id="EAID_CONN02" supplier="EAID_INTF_POS_SYNC" client="EAID_COMP_FE_WEB"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;bind&gt;&gt; WSS Client" xmi:id="EAID_CONN03" supplier="EAID_INTF_WSS_ALERTS" client="EAID_COMP_FE_WEB"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;use&gt;&gt; HTTP/REST" xmi:id="EAID_CONN04" supplier="EAID_INTF_REST_API" client="EAID_COMP_APP_MOV"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;bind&gt;&gt; WSS Client" xmi:id="EAID_CONN05" supplier="EAID_INTF_WSS_ALERTS" client="EAID_COMP_APP_MOV"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN06" supplier="EAID_INTF_REST_API" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN07" supplier="EAID_INTF_POS_SYNC" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN08" supplier="EAID_INTF_WSS_ALERTS" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;call&gt;&gt; HTTPX Internal" xmi:id="EAID_CONN09" supplier="EAID_INTF_REPORTIQ" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;query&gt;&gt; TCP :5432 (RW)" xmi:id="EAID_CONN10" supplier="EAID_INTF_PG_SQL" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;upload&gt;&gt; Presigned Put" xmi:id="EAID_CONN11" supplier="EAID_INTF_S3_API" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;delegate&gt;&gt; Charge / Webhooks" xmi:id="EAID_CONN12" supplier="EAID_INTF_STRIPE_PAY" client="EAID_COMP_BE_CORE"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN13" supplier="EAID_INTF_REPORTIQ" client="EAID_COMP_AI_SVC"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;query&gt;&gt; TCP :5432 (RO)" xmi:id="EAID_CONN14" supplier="EAID_INTF_PG_SQL" client="EAID_COMP_AI_SVC"/>
+			<packagedElement xmi:type="uml:Dependency" name="&lt;&lt;prompt&gt;&gt; GenAI Flash" xmi:id="EAID_CONN15" supplier="EAID_INTF_GEMINI_AI" client="EAID_COMP_AI_SVC"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN16" supplier="EAID_INTF_PG_SQL" client="EAID_COMP_DB_PG"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN17" supplier="EAID_INTF_S3_API" client="EAID_COMP_STORAGE_S3"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN18" supplier="EAID_INTF_STRIPE_PAY" client="EAID_COMP_STRIPE"/>
+			<packagedElement xmi:type="uml:Realization" name="realizes" xmi:id="EAID_CONN19" supplier="EAID_INTF_GEMINI_AI" client="EAID_COMP_GEMINI"/>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_COMP0001_0001_4000_8000_000000000001" xmi:type="uml:Package" name="3.7. Diagrama de Componentes (Integracion)" scope="public">
+				<model package2="EAPK_COMP0001_0001_4000_8000_000000000001" package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="1" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+			</element>
+			<element xmi:idref="EAID_COMP_FE_WEB" xmi:type="uml:Component" name="Frontend Web &amp; POS Client (React 18 + Vite)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="101" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="SPA para comercio electronico, administracion SaaS y mostrador POS con resiliencia offline Dexie.js."/>
+			</element>
+			<element xmi:idref="EAID_COMP_APP_MOV" xmi:type="uml:Component" name="App Movil FashionStore (React Native + Expo)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="102" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Aplicacion movil de compras y probador virtual AR con Vision Camera y Shopify Skia."/>
+			</element>
+			<element xmi:idref="EAID_INTF_REST_API" xmi:type="uml:Interface" name="IStorefrontAndAdminAPI (HTTP REST :3000)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="103" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Contrato REST JSON para catalogo, autenticacion JWT, administracion de tiendas y pedidos."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_REST_01" name="+ login(credentials): AuthResponse" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_REST_02" name="+ createTenant(data): TenantDTO" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_REST_03" name="+ getCatalog(filters): ProductList" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_INTF_POS_SYNC" xmi:type="uml:Interface" name="IPosSyncAPI (Idempotent REST :3000)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="104" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Contrato idempotente para envio de ventas offline y resolucion automatica de conflictos."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_POS_01" name="+ syncOfflineOrder(payload): SyncResult" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_POS_02" name="+ reconcileInventory(diff): KardexStatus" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_INTF_WSS_ALERTS" xmi:type="uml:Interface" name="IBranchAlertsSocket (WebSocket WSS :3001)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="105" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Canal de eventos bidireccional para alertas de probadores, ventas en mostrador y reservas."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_WSS_01" name="+ joinBranchRoom(branchId): void" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_WSS_02" name="+ broadcastStockAlert(alert): void" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_COMP_BE_CORE" xmi:type="uml:Component" name="Backend Core API Gateway (NestJS / Node.js 20)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="106" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Orquestador transaccional, middleware multitenant search_path, emisor de JWT y broker de eventos."/>
+			</element>
+			<element xmi:idref="EAID_INTF_REPORTIQ" xmi:type="uml:Interface" name="IReportIQInternalAPI (HTTPX REST :8000)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="107" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Contrato analitico interno entre NestJS y FastAPI para consultas en lenguaje natural."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_REP_01" name="+ queryAnalytics(prompt): ParsedQuery" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_REP_02" name="+ generateReport(query): ReportResult" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_INTF_PG_SQL" xmi:type="uml:Interface" name="IPostgresRelational (TCP/IP :5432 / Pool)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="108" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Conexion a esquemas dedicados tenant_&lt;slug&gt; y public mediante Prisma ORM y SQLAlchemy."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_PG_01" name="+ executeQuery(sql, params): ResultSet" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_PG_02" name="+ setTenantSearchPath(slug): void" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_INTF_S3_API" xmi:type="uml:Interface" name="IObjectStorageAPI (HTTPS REST S3 :443)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="109" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Gestion de objetos multimedia mediante URLs prefirmadas e invalidacion de CDN."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_S3_01" name="+ getPresignedPutUrl(key): PresignedUrl" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_S3_02" name="+ getAssetUrl(path): string" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_INTF_STRIPE_PAY" xmi:type="uml:Interface" name="IStripePayments (HTTPS REST :443)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="110" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Procesamiento seguro de cobros con tarjeta, intents y recepcion de webhooks firmados."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_ST_01" name="+ createPaymentIntent(order): StripeIntent" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+					<operation xmi:idref="EAID_OP_ST_02" name="+ verifyWebhook(payload, sig): boolean" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_COMP_AI_SVC" xmi:type="uml:Component" name="Microservicio IA &amp; Reportes (FastAPI / Python 3.11)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="112" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Motor analitico ReportIQ, recomendador de tallas y generacion de descriptores con Pydantic."/>
+			</element>
+			<element xmi:idref="EAID_COMP_DB_PG" xmi:type="uml:Component" name="Motor de Base de Datos (PostgreSQL 16 Multi-tenant)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="113" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Instancia PostgreSQL con aislamiento logico por esquemas, indices B-Tree y Kardex contable."/>
+			</element>
+			<element xmi:idref="EAID_COMP_STORAGE_S3" xmi:type="uml:Component" name="Almacenamiento S3 &amp; CDN (AWS S3 + CloudFront)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="114" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Repositorio de texturas WebP para probador AR, fotos de productos y archivos estaticos."/>
+			</element>
+			<element xmi:idref="EAID_COMP_STRIPE" xmi:type="uml:Component" name="Pasarela de Pagos Externa (Stripe Cloud API)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="115" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Infraestructura PCI-DSS Nivel 1 para pasarela de pagos internacionales y suscripciones."/>
+			</element>
+			<element xmi:idref="EAID_INTF_GEMINI_AI" xmi:type="uml:Interface" name="IGeminiGenerativeAI (HTTPS REST :443)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="111" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Interface" stereotype="interface" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Inferencia de lenguaje natural y conversion determinista a esquemas JSON Pydantic v2."/>
+				<operations>
+					<operation xmi:idref="EAID_OP_GEM_01" name="+ generateJsonContent(prompt, schema): JsonModel" scope="Public">
+						<properties returnarray="0" pure="0" const="0" static="0" isAbstract="false" isQuery="false" synchronized="0"/>
+					</operation>
+				</operations>
+			</element>
+			<element xmi:idref="EAID_COMP_GEMINI" xmi:type="uml:Component" name="Plataforma LLM Externa (Google Gemini 1.5 Flash)" scope="public">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" tpos="0" ea_localid="116" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore SaaS Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+				<documentation value="Modelo fundacional de IA para procesamiento analitico de prompts analiticos."/>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_CONN01">
+				<source xmi:idref="EAID_COMP_FE_WEB"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_REST_API"><role visibility="Public"/></target>
+				<model ea_localid="601"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;use&gt;&gt; HTTP/REST"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN02">
+				<source xmi:idref="EAID_COMP_FE_WEB"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_POS_SYNC"><role visibility="Public"/></target>
+				<model ea_localid="602"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;use&gt;&gt; Outbox Sync"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN03">
+				<source xmi:idref="EAID_COMP_FE_WEB"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_WSS_ALERTS"><role visibility="Public"/></target>
+				<model ea_localid="603"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;bind&gt;&gt; WSS Client"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN04">
+				<source xmi:idref="EAID_COMP_APP_MOV"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_REST_API"><role visibility="Public"/></target>
+				<model ea_localid="604"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;use&gt;&gt; HTTP/REST"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN05">
+				<source xmi:idref="EAID_COMP_APP_MOV"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_WSS_ALERTS"><role visibility="Public"/></target>
+				<model ea_localid="605"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;bind&gt;&gt; WSS Client"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN06">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_REST_API"><role visibility="Public"/></target>
+				<model ea_localid="606"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN07">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_POS_SYNC"><role visibility="Public"/></target>
+				<model ea_localid="607"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN08">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_WSS_ALERTS"><role visibility="Public"/></target>
+				<model ea_localid="608"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN09">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_REPORTIQ"><role visibility="Public"/></target>
+				<model ea_localid="609"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;call&gt;&gt; HTTPX Internal"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN10">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_PG_SQL"><role visibility="Public"/></target>
+				<model ea_localid="610"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;query&gt;&gt; TCP :5432 (RW)"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN11">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_S3_API"><role visibility="Public"/></target>
+				<model ea_localid="611"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;upload&gt;&gt; Presigned Put"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN12">
+				<source xmi:idref="EAID_COMP_BE_CORE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_STRIPE_PAY"><role visibility="Public"/></target>
+				<model ea_localid="612"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;delegate&gt;&gt; Charge / Webhooks"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN13">
+				<source xmi:idref="EAID_COMP_AI_SVC"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_REPORTIQ"><role visibility="Public"/></target>
+				<model ea_localid="613"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN14">
+				<source xmi:idref="EAID_COMP_AI_SVC"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_PG_SQL"><role visibility="Public"/></target>
+				<model ea_localid="614"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;query&gt;&gt; TCP :5432 (RO)"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN15">
+				<source xmi:idref="EAID_COMP_AI_SVC"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_GEMINI_AI"><role visibility="Public"/></target>
+				<model ea_localid="615"/>
+				<properties ea_type="Dependency" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="&lt;&lt;prompt&gt;&gt; GenAI Flash"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN16">
+				<source xmi:idref="EAID_COMP_DB_PG"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_PG_SQL"><role visibility="Public"/></target>
+				<model ea_localid="616"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN17">
+				<source xmi:idref="EAID_COMP_STORAGE_S3"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_S3_API"><role visibility="Public"/></target>
+				<model ea_localid="617"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN18">
+				<source xmi:idref="EAID_COMP_STRIPE"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_STRIPE_PAY"><role visibility="Public"/></target>
+				<model ea_localid="618"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+			<connector xmi:idref="EAID_CONN19">
+				<source xmi:idref="EAID_COMP_GEMINI"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_INTF_GEMINI_AI"><role visibility="Public"/></target>
+				<model ea_localid="619"/>
+				<properties ea_type="Realisation" direction="Source -&gt; Destination"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="realizes"/>
+			</connector>
+		</connectors>
+		<diagrams>
+			<diagram xmi:id="EAID_DIAG0007_COMPONENTS">
+				<model package="EAPK_COMP0001_0001_4000_8000_000000000001" localID="1" owner="EAPK_COMP0001_0001_4000_8000_000000000001"/>
+				<properties name="3.7. Diagrama de Componentes (Integracion)" type="Component"/>
+				<project author="FashionStore SaaS Team" version="1.0" created="2026-11-07 22:45:00" modified="2026-11-07 22:45:00"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideConnLabels=0;ShowOp=1;OpList=1;"/>
+				<style2 value="SaveTag=0;ScreenFont=1;NoAutoLayout=1;"/>
+				<elements>
+					<element geometry="Left=50;Top=90;Right=380;Bottom=260;" subject="EAID_COMP_FE_WEB" seqno="1" style="DUID=D0001;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=50;Top=400;Right=380;Bottom=570;" subject="EAID_COMP_APP_MOV" seqno="2" style="DUID=D0002;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=450;Top=80;Right=760;Bottom=190;" subject="EAID_INTF_REST_API" seqno="3" style="DUID=D0003;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=450;Top=240;Right=760;Bottom=340;" subject="EAID_INTF_POS_SYNC" seqno="4" style="DUID=D0004;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=450;Top=420;Right=760;Bottom=530;" subject="EAID_INTF_WSS_ALERTS" seqno="5" style="DUID=D0005;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=840;Top=80;Right=1180;Bottom=680;" subject="EAID_COMP_BE_CORE" seqno="6" style="DUID=D0006;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1260;Top=90;Right=1570;Bottom=190;" subject="EAID_INTF_REPORTIQ" seqno="7" style="DUID=D0007;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1260;Top=250;Right=1570;Bottom=360;" subject="EAID_INTF_PG_SQL" seqno="8" style="DUID=D0008;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1260;Top=410;Right=1570;Bottom=510;" subject="EAID_INTF_S3_API" seqno="9" style="DUID=D0009;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1260;Top=570;Right=1570;Bottom=670;" subject="EAID_INTF_STRIPE_PAY" seqno="10" style="DUID=D0010;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1650;Top=70;Right=1980;Bottom=210;" subject="EAID_COMP_AI_SVC" seqno="11" style="DUID=D0011;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1650;Top=240;Right=1980;Bottom=380;" subject="EAID_COMP_DB_PG" seqno="12" style="DUID=D0012;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1650;Top=400;Right=1980;Bottom=530;" subject="EAID_COMP_STORAGE_S3" seqno="13" style="DUID=D0013;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1650;Top=560;Right=1980;Bottom=680;" subject="EAID_COMP_STRIPE" seqno="14" style="DUID=D0014;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=2060;Top=90;Right=2360;Bottom=190;" subject="EAID_INTF_GEMINI_AI" seqno="15" style="DUID=D0015;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=2440;Top=70;Right=2760;Bottom=210;" subject="EAID_COMP_GEMINI" seqno="16" style="DUID=D0016;ShowOp=1;OpList=1;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>

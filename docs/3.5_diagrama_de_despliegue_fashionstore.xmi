@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" name="3.5. Diagrama de Despliegue (UML 2.5.1)" xmi:id="EAPK_DEPL0001_0001_4000_8000_000000000001" visibility="public">
+			<packagedElement xmi:type="uml:Node" name="Dispositivo Cliente - PC / Laptop / Smartphone" xmi:id="EAID_DEV_CLIENT" visibility="public"/>
+			<packagedElement xmi:type="uml:ExecutionEnvironment" name="Navegador Web - Runtime Movil (Chrome / Edge / React Native Hermes Engine)" xmi:id="EAID_EXEC_CLIENT_RUNTIME" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="App Web FashionStore (React 19 + Vite / SPA / FSD / Recharts)" xmi:id="EAID_COMP_WEB_APP" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="App Movil FashionStore (React Native 0.86+ / AR MediaPipe / Skia)" xmi:id="EAID_COMP_MOB_APP" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Almacenamiento Local Offline (IndexedDB Dexie.js syncQueue / SQLite Local)" xmi:id="EAID_COMP_LOCAL_DB" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Router Local - Gateway Cliente (Ethernet / Wi-Fi / Red Movil 4G-5G)" xmi:id="EAID_DEV_ROUTER_LOCAL" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Router Perimetral &amp; Firewall (Cloudflare WAF / GCP Cloud Armor &amp; Load Balancer)" xmi:id="EAID_DEV_ROUTER_PERIMETRAL" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Servidor de Almacenamiento Estatico (AWS S3 + CloudFront CDN Global Edge)" xmi:id="EAID_DEV_S3_STORAGE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Bucket Web Assets (HTML5, JS, CSS, Icons)" xmi:id="EAID_COMP_STATIC_PWA" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Bucket Media Texturas WebP y Fotos Catalogo" xmi:id="EAID_COMP_STATIC_AR" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Servidor de Aplicaciones (Google Cloud Run / Linux Host)" xmi:id="EAID_DEV_APP_SERVER" visibility="public"/>
+			<packagedElement xmi:type="uml:ExecutionEnvironment" name="Motor Docker Engine &lt;&lt;execution environment&gt;&gt;" xmi:id="EAID_EXEC_DOCKER_ENGINE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Contenedor Backend Core - NestJS 12 (Node.js 20 / :3000) - Auth JWT, RBAC, Inventario, Orders" xmi:id="EAID_COMP_BACKEND_CORE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Contenedor Microservicio IA - FastAPI (Python 3.11 / :8000) - ReportIQ (Zero SQL), Fitting AR" xmi:id="EAID_COMP_AI_SERVICE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Contenedor WebSockets - NestJS Gateway (:3001) - Alertas Reservas / Sync Outbox POS" xmi:id="EAID_COMP_WS_GATEWAY" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Servidor de Base de Datos (Amazon RDS Multi-AZ / PostgreSQL 16)" xmi:id="EAID_DEV_DB_SERVER" visibility="public"/>
+			<packagedElement xmi:type="uml:ExecutionEnvironment" name="Motor Relacional PostgreSQL 16 &amp; Redis 7 &lt;&lt;execution environment&gt;&gt;" xmi:id="EAID_EXEC_POSTGRES_ENGINE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Base de Datos: fashionstore_db - Schema 'public' (Global, Tenants) - Schemas 'tenant_&lt;slug&gt;' (Aislados)" xmi:id="EAID_COMP_PG_DATABASE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Almacen Redis 7 - AWS ElastiCache (:6379) - Token Blacklist &amp; Rate-Limits" xmi:id="EAID_COMP_REDIS_CACHE" visibility="public"/>
+			<packagedElement xmi:type="uml:Node" name="Servicios Externos en la Nube (Third-Party Cloud)" xmi:id="EAID_DEV_EXT_INTEGRATIONS" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Plataforma Stripe (PCI-DSS Cloud) - Subscriptions Billing &amp; Webhooks (:443)" xmi:id="EAID_COMP_STRIPE" visibility="public"/>
+			<packagedElement xmi:type="uml:Component" name="Google Gemini AI Infrastructure - Gemini 1.5 Pro / Flash API (:443)" xmi:id="EAID_COMP_GEMINI" visibility="public"/>
+			<packagedElement xmi:type="uml:Association" name="Conexion LAN / Wi-Fi / 4G-5G" xmi:id="EAID_CP01">
+				<memberEnd xmi:idref="EAID_DEV_CLIENT"/>
+				<memberEnd xmi:idref="EAID_DEV_ROUTER_LOCAL"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" name="Protocolos Publicos (HTTPS :443 / WSS :443) RED WAN / INTERNET (Trafico Cifrado TLS 1.3)" xmi:id="EAID_CP02">
+				<memberEnd xmi:idref="EAID_DEV_ROUTER_LOCAL"/>
+				<memberEnd xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" name="HTTPS (:443) Descarga de Estaticos" xmi:id="EAID_CP03">
+				<memberEnd xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"/>
+				<memberEnd xmi:idref="EAID_DEV_S3_STORAGE"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" name="WSS / HTTPS (:3000 / :8000 / :3001) Reenvio a Subred Privada (VNet / Cloud Run)" xmi:id="EAID_CP04">
+				<memberEnd xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"/>
+				<memberEnd xmi:idref="EAID_DEV_APP_SERVER"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" name="Red Interna / Protocolo TCP/IP Puerto Seguro (:5432) Prisma ORM Connection Pool &amp; Redis (:6379)" xmi:id="EAID_CP05">
+				<memberEnd xmi:idref="EAID_DEV_APP_SERVER"/>
+				<memberEnd xmi:idref="EAID_DEV_DB_SERVER"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" name="HTTPS REST API (:443) Integraciones Externas (Stripe &amp; Gemini)" xmi:id="EAID_CP06">
+				<memberEnd xmi:idref="EAID_DEV_APP_SERVER"/>
+				<memberEnd xmi:idref="EAID_DEV_EXT_INTEGRATIONS"/>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_DEPL0001_0001_4000_8000_000000000001" xmi:type="uml:Package" name="3.5. Diagrama de Despliegue (UML 2.5.1)" scope="public">
+				<model package2="EAPK_DEPL0001_0001_4000_8000_000000000001" package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="1" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+			</element>
+			<element xmi:idref="EAID_DEV_CLIENT" xmi:type="uml:Node" name="Dispositivo Cliente - PC / Laptop / Smartphone" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="101" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_EXEC_CLIENT_RUNTIME" xmi:type="uml:ExecutionEnvironment" name="Navegador Web - Runtime Movil (Chrome / Edge / React Native Hermes Engine)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_CLIENT" tpos="0" ea_localid="102" ea_eleType="element"/>
+				<properties isSpecification="false" sType="ExecutionEnvironment" stereotype="execution environment" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_WEB_APP" xmi:type="uml:Component" name="App Web FashionStore (React 19 + Vite / SPA / FSD / Recharts)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_CLIENT_RUNTIME" tpos="0" ea_localid="103" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_MOB_APP" xmi:type="uml:Component" name="App Movil FashionStore (React Native 0.86+ / AR MediaPipe / Skia)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_CLIENT_RUNTIME" tpos="0" ea_localid="104" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_LOCAL_DB" xmi:type="uml:Component" name="Almacenamiento Local Offline (IndexedDB Dexie.js syncQueue / SQLite Local)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_CLIENT_RUNTIME" tpos="0" ea_localid="105" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_ROUTER_LOCAL" xmi:type="uml:Node" name="Router Local - Gateway Cliente (Ethernet / Wi-Fi / Red Movil 4G-5G)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="106" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_ROUTER_PERIMETRAL" xmi:type="uml:Node" name="Router Perimetral &amp; Firewall (Cloudflare WAF / GCP Cloud Armor &amp; Load Balancer)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="107" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_S3_STORAGE" xmi:type="uml:Node" name="Servidor de Almacenamiento Estatico (AWS S3 + CloudFront CDN Global Edge)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="108" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_STATIC_PWA" xmi:type="uml:Component" name="Bucket Web Assets (HTML5, JS, CSS, Icons)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_S3_STORAGE" tpos="0" ea_localid="109" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_STATIC_AR" xmi:type="uml:Component" name="Bucket Media Texturas WebP y Fotos Catalogo" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_S3_STORAGE" tpos="0" ea_localid="110" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_APP_SERVER" xmi:type="uml:Node" name="Servidor de Aplicaciones (Google Cloud Run / Linux Host)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="111" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_EXEC_DOCKER_ENGINE" xmi:type="uml:ExecutionEnvironment" name="Motor Docker Engine &lt;&lt;execution environment&gt;&gt;" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_APP_SERVER" tpos="0" ea_localid="112" ea_eleType="element"/>
+				<properties isSpecification="false" sType="ExecutionEnvironment" stereotype="execution environment" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_BACKEND_CORE" xmi:type="uml:Component" name="Contenedor Backend Core - NestJS 12 (Node.js 20 / :3000) - Auth JWT, RBAC, Inventario, Orders" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_DOCKER_ENGINE" tpos="0" ea_localid="113" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_AI_SERVICE" xmi:type="uml:Component" name="Contenedor Microservicio IA - FastAPI (Python 3.11 / :8000) - ReportIQ (Zero SQL), Fitting AR" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_DOCKER_ENGINE" tpos="0" ea_localid="114" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_WS_GATEWAY" xmi:type="uml:Component" name="Contenedor WebSockets - NestJS Gateway (:3001) - Alertas Reservas / Sync Outbox POS" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_DOCKER_ENGINE" tpos="0" ea_localid="115" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_DB_SERVER" xmi:type="uml:Node" name="Servidor de Base de Datos (Amazon RDS Multi-AZ / PostgreSQL 16)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="116" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="database server" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_EXEC_POSTGRES_ENGINE" xmi:type="uml:ExecutionEnvironment" name="Motor Relacional PostgreSQL 16 &amp; Redis 7 &lt;&lt;execution environment&gt;&gt;" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_DB_SERVER" tpos="0" ea_localid="117" ea_eleType="element"/>
+				<properties isSpecification="false" sType="ExecutionEnvironment" stereotype="execution environment" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_PG_DATABASE" xmi:type="uml:Component" name="Base de Datos: fashionstore_db - Schema 'public' (Global, Tenants) - Schemas 'tenant_&lt;slug&gt;' (Aislados)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_POSTGRES_ENGINE" tpos="0" ea_localid="118" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_REDIS_CACHE" xmi:type="uml:Component" name="Almacen Redis 7 - AWS ElastiCache (:6379) - Token Blacklist &amp; Rate-Limits" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_EXEC_POSTGRES_ENGINE" tpos="0" ea_localid="119" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_DEV_EXT_INTEGRATIONS" xmi:type="uml:Node" name="Servicios Externos en la Nube (Third-Party Cloud)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" tpos="0" ea_localid="120" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Node" stereotype="device" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_STRIPE" xmi:type="uml:Component" name="Plataforma Stripe (PCI-DSS Cloud) - Subscriptions Billing &amp; Webhooks (:443)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_EXT_INTEGRATIONS" tpos="0" ea_localid="121" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+			<element xmi:idref="EAID_COMP_GEMINI" xmi:type="uml:Component" name="Google Gemini AI Infrastructure - Gemini 1.5 Pro / Flash API (:443)" scope="public">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" owner="EAID_DEV_EXT_INTEGRATIONS" tpos="0" ea_localid="122" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Component" stereotype="component" nType="0" scope="public"/>
+				<project author="FashionStore Team" version="1.0" status="Proposed"/>
+				<appearance linemode="3" linecolor="0" fillcolor="16777215" linewidth="1"/>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_CP01">
+				<source xmi:idref="EAID_DEV_CLIENT"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_ROUTER_LOCAL"><role visibility="Public"/></target>
+				<model ea_localid="501"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="Conexion LAN / Wi-Fi / 4G-5G"/>
+			</connector>
+			<connector xmi:idref="EAID_CP02">
+				<source xmi:idref="EAID_DEV_ROUTER_LOCAL"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"><role visibility="Public"/></target>
+				<model ea_localid="502"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="Protocolos Publicos (HTTPS :443 / WSS :443) RED WAN / INTERNET (Trafico Cifrado TLS 1.3)"/>
+			</connector>
+			<connector xmi:idref="EAID_CP03">
+				<source xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_S3_STORAGE"><role visibility="Public"/></target>
+				<model ea_localid="503"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="HTTPS (:443) Descarga de Estaticos"/>
+			</connector>
+			<connector xmi:idref="EAID_CP04">
+				<source xmi:idref="EAID_DEV_ROUTER_PERIMETRAL"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_APP_SERVER"><role visibility="Public"/></target>
+				<model ea_localid="504"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="WSS / HTTPS (:3000 / :8000 / :3001) Reenvio a Subred Privada (VNet / Cloud Run)"/>
+			</connector>
+			<connector xmi:idref="EAID_CP05">
+				<source xmi:idref="EAID_DEV_APP_SERVER"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_DB_SERVER"><role visibility="Public"/></target>
+				<model ea_localid="505"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="Red Interna / Protocolo TCP/IP Puerto Seguro (:5432) Prisma ORM Connection Pool &amp; Redis (:6379)"/>
+			</connector>
+			<connector xmi:idref="EAID_CP06">
+				<source xmi:idref="EAID_DEV_APP_SERVER"><role visibility="Public"/></source>
+				<target xmi:idref="EAID_DEV_EXT_INTEGRATIONS"><role visibility="Public"/></target>
+				<model ea_localid="506"/>
+				<properties ea_type="CommunicationPath" direction="Bi-Directional"/>
+				<appearance linemode="3" linecolor="0" linewidth="1" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels mt="HTTPS REST API (:443) Integraciones Externas (Stripe &amp; Gemini)"/>
+			</connector>
+		</connectors>
+		<diagrams>
+			<diagram xmi:id="EAID_DIAG0005_DEPLOYMENT">
+				<model package="EAPK_DEPL0001_0001_4000_8000_000000000001" localID="1" owner="EAPK_DEPL0001_0001_4000_8000_000000000001"/>
+				<properties name="3.5. Diagrama de Despliegue (UML 2.5.1)" type="Deployment"/>
+				<project author="FashionStore Team" version="2.5.1" created="2026-11-07 00:00:00" modified="2026-11-07 00:00:00"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;HighlightForeign=1;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;DocSize.cx=1600;DocSize.cy=1200;ShowDetails=0;Orientation=L;Zoom=100;ShowTags=0;OpParams=1;VisibleAttributeDetail=0;ShowOpRetType=0;ShowIcons=1;CollabNums=0;HideProps=1;ShowReqs=0;ShowCons=0;PaperSize=1;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=UML 2.1;ExplicitNavigability=0;ShowShape=1;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ShowNotes=0;SuppressBrackets=1;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;"/>
+				<style2 value="ExcludeRTF=0;DocAll=0;HideQuals=1;AttPkg=1;ShowTests=0;ShowMaint=0;SuppressFOC=0;MatrixActive=0;SwimlanesActive=1;KanbanActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ProfileData=;MDGDgm=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=0;SuppressBrackets=1;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;SuppressedCompartments=;SaveTag=D95F455B;"/>
+				<elements>
+					<element geometry="Left=80;Top=150;Right=280;Bottom=270;" subject="EAID_COMP_WEB_APP" seqno="1" style="DUID=D0001;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=300;Top=150;Right=500;Bottom=270;" subject="EAID_COMP_MOB_APP" seqno="2" style="DUID=D0002;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=80;Top=290;Right=500;Bottom=395;" subject="EAID_COMP_LOCAL_DB" seqno="3" style="DUID=D0003;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1140;Top=340;Right=1460;Bottom=395;" subject="EAID_COMP_STATIC_PWA" seqno="4" style="DUID=D0004;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1140;Top=405;Right=1460;Bottom=455;" subject="EAID_COMP_STATIC_AR" seqno="5" style="DUID=D0005;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=590;Top=620;Right=820;Bottom=740;" subject="EAID_COMP_BACKEND_CORE" seqno="6" style="DUID=D0006;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=840;Top=620;Right=1070;Bottom=740;" subject="EAID_COMP_AI_SERVICE" seqno="7" style="DUID=D0007;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=590;Top=760;Right=1070;Bottom=850;" subject="EAID_COMP_WS_GATEWAY" seqno="8" style="DUID=D0008;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=80;Top=670;Right=250;Bottom=820;" subject="EAID_COMP_PG_DATABASE" seqno="9" style="DUID=D0009;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=270;Top=670;Right=440;Bottom=820;" subject="EAID_COMP_REDIS_CACHE" seqno="10" style="DUID=D000A;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=570;Top=990;Right=810;Bottom=1060;" subject="EAID_COMP_STRIPE" seqno="11" style="DUID=D000B;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=850;Top=990;Right=1090;Bottom=1060;" subject="EAID_COMP_GEMINI" seqno="12" style="DUID=D000C;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=90;Right=520;Bottom=420;" subject="EAID_EXEC_CLIENT_RUNTIME" seqno="13" style="DUID=D000D;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=570;Top=560;Right=1090;Bottom=870;" subject="EAID_EXEC_DOCKER_ENGINE" seqno="14" style="DUID=D000E;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=60;Top=610;Right=460;Bottom=840;" subject="EAID_EXEC_POSTGRES_ENGINE" seqno="15" style="DUID=D000F;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=40;Top=40;Right=540;Bottom=440;" subject="EAID_DEV_CLIENT" seqno="16" style="DUID=D0010;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=680;Top=140;Right=980;Bottom=250;" subject="EAID_DEV_ROUTER_LOCAL" seqno="17" style="DUID=D0011;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=640;Top=320;Right=1020;Bottom=430;" subject="EAID_DEV_ROUTER_PERIMETRAL" seqno="18" style="DUID=D0012;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=1120;Top=280;Right=1480;Bottom=470;" subject="EAID_DEV_S3_STORAGE" seqno="19" style="DUID=D0013;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=550;Top=510;Right=1110;Bottom=890;" subject="EAID_DEV_APP_SERVER" seqno="20" style="DUID=D0014;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=40;Top=560;Right=480;Bottom=860;" subject="EAID_DEV_DB_SERVER" seqno="21" style="DUID=D0015;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+					<element geometry="Left=550;Top=940;Right=1110;Bottom=1080;" subject="EAID_DEV_EXT_INTEGRATIONS" seqno="22" style="DUID=D0016;BCOL=16777215;BFIL=16777215;LCOL=0;LWTH=1;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>

@@ -1,0 +1,3562 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		
+		
+		<packagedElement xmi:type="uml:Package" name="3.3. Modelo de Dominio" xmi:id="EAPK_A1B2C3D4_0001_4000_8000_000000000001" visibility="public">
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Permiso" xmi:id="EAID_CLASS0010_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0010_0001_4000_8000_000000000000">
+					
+					
+					<body>Privilegio de acceso sobre recursos del sistema (RECURSO:ACCION)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Rol" xmi:id="EAID_CLASS0011_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0011_0001_4000_8000_000000000000">
+					
+					
+					<body>Rol asignado a usuarios (ADMIN, STORE_MANAGER, CASHIER, CLIENT, OWNER)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="User" xmi:id="EAID_CLASS0012_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<body>Usuario o cliente registrado en el ecosistema</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Notificacion" xmi:id="EAID_CLASS0013_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0013_0001_4000_8000_000000000000">
+					
+					
+					<body>Aviso o alerta generada para el usuario (stock, reservas, promociones)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Tenant" xmi:id="EAID_CLASS0014_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0014_0001_4000_8000_000000000000">
+					
+					
+					<body>Empresa de moda inquilina en la arquitectura multitenant SaaS</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="MembresiaTenant" xmi:id="EAID_CLASS0015_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0015_0001_4000_8000_000000000000">
+					
+					
+					<body>Asociacion que vincula a un usuario con una empresa inquilina y su rol</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Ciudad" xmi:id="EAID_CLASS0016_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0016_0001_4000_8000_000000000000">
+					
+					
+					<body>Ciudad o localizacion geografica de cobertura</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Sucursal" xmi:id="EAID_CLASS0017_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<body>Tienda fisica de la cadena de ropa</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="UbicacionInventario" xmi:id="EAID_CLASS0018_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0018_0001_4000_8000_000000000000">
+					
+					
+					<body>Almacen central (WAREHOUSE) o piso de venta (SALES_FLOOR)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="StockInventario" xmi:id="EAID_CLASS0019_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0019_0001_4000_8000_000000000000">
+					
+					
+					<body>Cantidad fisica disponible y stock de seguridad por variante y ubicacion</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="MovimientoInventario" xmi:id="EAID_CLASS0020_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0020_0001_4000_8000_000000000000">
+					
+					
+					<body>Registro inmutable de Kardex (compras, ventas, traslados, ajustes)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Proveedor" xmi:id="EAID_CLASS0021_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0021_0001_4000_8000_000000000000">
+					
+					
+					<body>Proveedor o fabricante de prendas de vestir</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Categoria" xmi:id="EAID_CLASS0022_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0022_0001_4000_8000_000000000000">
+					
+					
+					<body>Categoria de prendas (Vestidos, Blusas, Pantalones, etc.)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Temporada" xmi:id="EAID_CLASS0023_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0023_0001_4000_8000_000000000000">
+					
+					
+					<body>Temporada comercial (Verano 2026, Otono-Invierno, etc.)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Coleccion" xmi:id="EAID_CLASS0024_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0024_0001_4000_8000_000000000000">
+					
+					
+					<body>Capsula o coleccion especial de diseno</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Producto" xmi:id="EAID_CLASS0025_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<body>Prenda de vestir maestra del catalogo</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="ProductoImagen" xmi:id="EAID_CLASS0026_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0026_0001_4000_8000_000000000000">
+					
+					
+					<body>Imagenes y recursos multimedia/AR de la prenda</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="VarianteProducto" xmi:id="EAID_CLASS0027_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<body>Prenda especifica por talla, color, SKU, codigo de barras y precio</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Carrito" xmi:id="EAID_CLASS0028_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0028_0001_4000_8000_000000000000">
+					
+					
+					<body>Carrito de compra digital del cliente</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="ItemCarrito" xmi:id="EAID_CLASS0029_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0029_0001_4000_8000_000000000000">
+					
+					
+					<body>Linea de prenda y cantidad agregada al carrito</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Pedido" xmi:id="EAID_CLASS0030_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<body>Orden de venta presencial (POS) o digital (E-commerce)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="DetallePedido" xmi:id="EAID_CLASS0031_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0031_0001_4000_8000_000000000000">
+					
+					
+					<body>Prenda vendida con cantidad y precio unitario registrado</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Pago" xmi:id="EAID_CLASS0032_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0032_0001_4000_8000_000000000000">
+					
+					
+					<body>Transaccion monetaria asociada a un pedido (Efectivo, Tarjeta, QR, Pasarela)</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="ReservaProbador" xmi:id="EAID_CLASS0033_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0033_0001_4000_8000_000000000000">
+					
+					
+					<body>Apartado de prendas para prueba fisica en vestidor de sucursal</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="DetalleReserva" xmi:id="EAID_CLASS0034_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0034_0001_4000_8000_000000000000">
+					
+					
+					<body>Prenda seleccionada para el vestidor fisico</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Class" name="Promocion" xmi:id="EAID_CLASS0035_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<ownedComment xmi:type="uml:Comment" xmi:id="COMM_EAID_CLASS0035_0001_4000_8000_000000000000">
+					
+					
+					<body>Regla de descuento o cupon comercial aplicable a ventas</body>
+					
+				
+				</ownedComment>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Permiso_Rol" xmi:id="EAID_ASSC0100_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0100_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0100_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0100_0001_4000_8000_000000000000_SRC" name="permisos" type="EAID_CLASS0010_0001_4000_8000_000000000000" association="EAID_ASSC0100_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0100_0001_4000_8000_000000000000_SRC" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0100_0001_4000_8000_000000000000_SRC" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0010_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0100_0001_4000_8000_000000000000_DST" name="roles" type="EAID_CLASS0011_0001_4000_8000_000000000000" association="EAID_ASSC0100_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0100_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0100_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0011_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Rol_User" xmi:id="EAID_ASSC0101_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0101_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0101_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0101_0001_4000_8000_000000000000_SRC" name="rol" type="EAID_CLASS0011_0001_4000_8000_000000000000" association="EAID_ASSC0101_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0101_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0101_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0011_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0101_0001_4000_8000_000000000000_DST" name="usuarios" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0101_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0101_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0101_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_Notificacion" xmi:id="EAID_ASSC0102_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0102_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0102_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0102_0001_4000_8000_000000000000_SRC" name="usuario" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0102_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0102_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0102_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0102_0001_4000_8000_000000000000_DST" name="notificaciones" type="EAID_CLASS0013_0001_4000_8000_000000000000" association="EAID_ASSC0102_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0102_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0102_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0013_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Tenant_MembresiaTenant" xmi:id="EAID_ASSC0103_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0103_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0103_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0103_0001_4000_8000_000000000000_SRC" name="tenant" type="EAID_CLASS0014_0001_4000_8000_000000000000" association="EAID_ASSC0103_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0103_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0103_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0014_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0103_0001_4000_8000_000000000000_DST" name="membresias" type="EAID_CLASS0015_0001_4000_8000_000000000000" association="EAID_ASSC0103_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0103_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0103_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0015_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_MembresiaTenant" xmi:id="EAID_ASSC0104_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0104_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0104_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0104_0001_4000_8000_000000000000_SRC" name="usuario" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0104_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0104_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0104_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0104_0001_4000_8000_000000000000_DST" name="membresias" type="EAID_CLASS0015_0001_4000_8000_000000000000" association="EAID_ASSC0104_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0104_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0104_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0015_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Tenant_Sucursal" xmi:id="EAID_ASSC0105_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0105_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0105_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0105_0001_4000_8000_000000000000_SRC" name="tenant" type="EAID_CLASS0014_0001_4000_8000_000000000000" association="EAID_ASSC0105_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0105_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0105_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0014_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0105_0001_4000_8000_000000000000_DST" name="sucursales" type="EAID_CLASS0017_0001_4000_8000_000000000000" association="EAID_ASSC0105_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0105_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0105_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Ciudad_Sucursal" xmi:id="EAID_ASSC0106_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0106_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0106_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0106_0001_4000_8000_000000000000_SRC" name="ciudad" type="EAID_CLASS0016_0001_4000_8000_000000000000" association="EAID_ASSC0106_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0106_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0106_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0016_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0106_0001_4000_8000_000000000000_DST" name="sucursales" type="EAID_CLASS0017_0001_4000_8000_000000000000" association="EAID_ASSC0106_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0106_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0106_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Sucursal_UbicacionInventario" xmi:id="EAID_ASSC0107_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0107_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0107_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0107_0001_4000_8000_000000000000_SRC" name="sucursal" type="EAID_CLASS0017_0001_4000_8000_000000000000" association="EAID_ASSC0107_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0107_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0107_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0107_0001_4000_8000_000000000000_DST" name="ubicaciones" type="EAID_CLASS0018_0001_4000_8000_000000000000" association="EAID_ASSC0107_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0107_0001_4000_8000_000000000000_DST" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0107_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="UbicacionInventario_StockInventario" xmi:id="EAID_ASSC0108_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0108_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0108_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0108_0001_4000_8000_000000000000_SRC" name="ubicacion" type="EAID_CLASS0018_0001_4000_8000_000000000000" association="EAID_ASSC0108_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0108_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0108_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0108_0001_4000_8000_000000000000_DST" name="stocks" type="EAID_CLASS0019_0001_4000_8000_000000000000" association="EAID_ASSC0108_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0108_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0108_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0019_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="VarianteProducto_StockInventario" xmi:id="EAID_ASSC0109_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0109_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0109_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0109_0001_4000_8000_000000000000_SRC" name="variante" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0109_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0109_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0109_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0109_0001_4000_8000_000000000000_DST" name="existencias" type="EAID_CLASS0019_0001_4000_8000_000000000000" association="EAID_ASSC0109_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0109_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0109_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0019_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="UbicacionInventario_MovimientoInventario" xmi:id="EAID_ASSC0110_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0110_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0110_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0110_0001_4000_8000_000000000000_SRC" name="ubicacion" type="EAID_CLASS0018_0001_4000_8000_000000000000" association="EAID_ASSC0110_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0110_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0110_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0110_0001_4000_8000_000000000000_DST" name="movimientos" type="EAID_CLASS0020_0001_4000_8000_000000000000" association="EAID_ASSC0110_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0110_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0110_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="VarianteProducto_MovimientoInventario" xmi:id="EAID_ASSC0111_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0111_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0111_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0111_0001_4000_8000_000000000000_SRC" name="variante" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0111_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0111_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0111_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0111_0001_4000_8000_000000000000_DST" name="movimientos" type="EAID_CLASS0020_0001_4000_8000_000000000000" association="EAID_ASSC0111_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0111_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0111_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_MovimientoInventario" xmi:id="EAID_ASSC0112_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0112_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0112_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0112_0001_4000_8000_000000000000_SRC" name="responsable" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0112_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0112_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0112_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0112_0001_4000_8000_000000000000_DST" name="movimientosRegistrados" type="EAID_CLASS0020_0001_4000_8000_000000000000" association="EAID_ASSC0112_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0112_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0112_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Proveedor_Producto" xmi:id="EAID_ASSC0113_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0113_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0113_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0113_0001_4000_8000_000000000000_SRC" name="proveedor" type="EAID_CLASS0021_0001_4000_8000_000000000000" association="EAID_ASSC0113_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0113_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0113_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0021_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0113_0001_4000_8000_000000000000_DST" name="productos" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0113_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0113_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0113_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Categoria_Producto" xmi:id="EAID_ASSC0114_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0114_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0114_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0114_0001_4000_8000_000000000000_SRC" name="categoria" type="EAID_CLASS0022_0001_4000_8000_000000000000" association="EAID_ASSC0114_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0114_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0114_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0022_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0114_0001_4000_8000_000000000000_DST" name="productos" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0114_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0114_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0114_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Temporada_Producto" xmi:id="EAID_ASSC0115_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0115_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0115_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0115_0001_4000_8000_000000000000_SRC" name="temporada" type="EAID_CLASS0023_0001_4000_8000_000000000000" association="EAID_ASSC0115_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0115_0001_4000_8000_000000000000_SRC" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0115_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0023_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0115_0001_4000_8000_000000000000_DST" name="productos" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0115_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0115_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0115_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Coleccion_Producto" xmi:id="EAID_ASSC0116_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0116_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0116_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0116_0001_4000_8000_000000000000_SRC" name="coleccion" type="EAID_CLASS0024_0001_4000_8000_000000000000" association="EAID_ASSC0116_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0116_0001_4000_8000_000000000000_SRC" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0116_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0024_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0116_0001_4000_8000_000000000000_DST" name="productos" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0116_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0116_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0116_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Producto_ProductoImagen" xmi:id="EAID_ASSC0117_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0117_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0117_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0117_0001_4000_8000_000000000000_SRC" name="producto" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0117_0001_4000_8000_000000000000" aggregation="composite">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0117_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0117_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0117_0001_4000_8000_000000000000_DST" name="imagenes" type="EAID_CLASS0026_0001_4000_8000_000000000000" association="EAID_ASSC0117_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0117_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0117_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0026_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Producto_VarianteProducto" xmi:id="EAID_ASSC0118_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0118_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0118_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0118_0001_4000_8000_000000000000_SRC" name="producto" type="EAID_CLASS0025_0001_4000_8000_000000000000" association="EAID_ASSC0118_0001_4000_8000_000000000000" aggregation="composite">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0118_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0118_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0118_0001_4000_8000_000000000000_DST" name="variantes" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0118_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0118_0001_4000_8000_000000000000_DST" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0118_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_Carrito" xmi:id="EAID_ASSC0119_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0119_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0119_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0119_0001_4000_8000_000000000000_SRC" name="usuario" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0119_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0119_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0119_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0119_0001_4000_8000_000000000000_DST" name="carrito" type="EAID_CLASS0028_0001_4000_8000_000000000000" association="EAID_ASSC0119_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0119_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0119_0001_4000_8000_000000000000_DST" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0028_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Carrito_ItemCarrito" xmi:id="EAID_ASSC0120_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0120_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0120_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0120_0001_4000_8000_000000000000_SRC" name="carrito" type="EAID_CLASS0028_0001_4000_8000_000000000000" association="EAID_ASSC0120_0001_4000_8000_000000000000" aggregation="composite">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0120_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0120_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0028_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0120_0001_4000_8000_000000000000_DST" name="items" type="EAID_CLASS0029_0001_4000_8000_000000000000" association="EAID_ASSC0120_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0120_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0120_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0029_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="VarianteProducto_ItemCarrito" xmi:id="EAID_ASSC0121_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0121_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0121_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0121_0001_4000_8000_000000000000_SRC" name="variante" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0121_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0121_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0121_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0121_0001_4000_8000_000000000000_DST" name="enCarritos" type="EAID_CLASS0029_0001_4000_8000_000000000000" association="EAID_ASSC0121_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0121_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0121_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0029_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_Pedido" xmi:id="EAID_ASSC0122_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0122_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0122_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0122_0001_4000_8000_000000000000_SRC" name="cliente" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0122_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0122_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0122_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0122_0001_4000_8000_000000000000_DST" name="pedidos" type="EAID_CLASS0030_0001_4000_8000_000000000000" association="EAID_ASSC0122_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0122_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0122_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Sucursal_Pedido" xmi:id="EAID_ASSC0123_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0123_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0123_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0123_0001_4000_8000_000000000000_SRC" name="sucursal" type="EAID_CLASS0017_0001_4000_8000_000000000000" association="EAID_ASSC0123_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0123_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0123_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0123_0001_4000_8000_000000000000_DST" name="pedidos" type="EAID_CLASS0030_0001_4000_8000_000000000000" association="EAID_ASSC0123_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0123_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0123_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Pedido_DetallePedido" xmi:id="EAID_ASSC0124_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0124_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0124_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0124_0001_4000_8000_000000000000_SRC" name="pedido" type="EAID_CLASS0030_0001_4000_8000_000000000000" association="EAID_ASSC0124_0001_4000_8000_000000000000" aggregation="composite">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0124_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0124_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0124_0001_4000_8000_000000000000_DST" name="detalles" type="EAID_CLASS0031_0001_4000_8000_000000000000" association="EAID_ASSC0124_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0124_0001_4000_8000_000000000000_DST" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0124_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0031_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="VarianteProducto_DetallePedido" xmi:id="EAID_ASSC0125_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0125_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0125_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0125_0001_4000_8000_000000000000_SRC" name="variante" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0125_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0125_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0125_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0125_0001_4000_8000_000000000000_DST" name="ventas" type="EAID_CLASS0031_0001_4000_8000_000000000000" association="EAID_ASSC0125_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0125_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0125_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0031_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Pedido_Pago" xmi:id="EAID_ASSC0126_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0126_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0126_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0126_0001_4000_8000_000000000000_SRC" name="pedido" type="EAID_CLASS0030_0001_4000_8000_000000000000" association="EAID_ASSC0126_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0126_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0126_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0126_0001_4000_8000_000000000000_DST" name="pagos" type="EAID_CLASS0032_0001_4000_8000_000000000000" association="EAID_ASSC0126_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0126_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0126_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0032_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Promocion_Pedido" xmi:id="EAID_ASSC0127_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0127_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0127_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0127_0001_4000_8000_000000000000_SRC" name="promociones" type="EAID_CLASS0035_0001_4000_8000_000000000000" association="EAID_ASSC0127_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0127_0001_4000_8000_000000000000_SRC" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0127_0001_4000_8000_000000000000_SRC" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0035_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0127_0001_4000_8000_000000000000_DST" name="pedidos" type="EAID_CLASS0030_0001_4000_8000_000000000000" association="EAID_ASSC0127_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0127_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0127_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="User_ReservaProbador" xmi:id="EAID_ASSC0128_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0128_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0128_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0128_0001_4000_8000_000000000000_SRC" name="cliente" type="EAID_CLASS0012_0001_4000_8000_000000000000" association="EAID_ASSC0128_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0128_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0128_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0128_0001_4000_8000_000000000000_DST" name="reservasProbador" type="EAID_CLASS0033_0001_4000_8000_000000000000" association="EAID_ASSC0128_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0128_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0128_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="Sucursal_ReservaProbador" xmi:id="EAID_ASSC0129_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0129_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0129_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0129_0001_4000_8000_000000000000_SRC" name="sucursal" type="EAID_CLASS0017_0001_4000_8000_000000000000" association="EAID_ASSC0129_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0129_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0129_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0129_0001_4000_8000_000000000000_DST" name="reservasAtendidas" type="EAID_CLASS0033_0001_4000_8000_000000000000" association="EAID_ASSC0129_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0129_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0129_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="ReservaProbador_DetalleReserva" xmi:id="EAID_ASSC0130_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0130_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0130_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0130_0001_4000_8000_000000000000_SRC" name="reserva" type="EAID_CLASS0033_0001_4000_8000_000000000000" association="EAID_ASSC0130_0001_4000_8000_000000000000" aggregation="composite">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0130_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0130_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0130_0001_4000_8000_000000000000_DST" name="prendasReservadas" type="EAID_CLASS0034_0001_4000_8000_000000000000" association="EAID_ASSC0130_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0130_0001_4000_8000_000000000000_DST" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0130_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0034_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+			
+			<packagedElement xmi:type="uml:Association" name="VarianteProducto_DetalleReserva" xmi:id="EAID_ASSC0131_0001_4000_8000_000000000000" visibility="public">
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0131_0001_4000_8000_000000000000_SRC" />
+				
+				
+				<memberEnd xmi:idref="END_EAID_ASSC0131_0001_4000_8000_000000000000_DST" />
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0131_0001_4000_8000_000000000000_SRC" name="variante" type="EAID_CLASS0027_0001_4000_8000_000000000000" association="EAID_ASSC0131_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0131_0001_4000_8000_000000000000_SRC" value="1" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0131_0001_4000_8000_000000000000_SRC" value="1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" /></ownedEnd>
+				
+				
+				<ownedEnd xmi:type="uml:Property" xmi:id="END_EAID_ASSC0131_0001_4000_8000_000000000000_DST" name="reservas" type="EAID_CLASS0034_0001_4000_8000_000000000000" association="EAID_ASSC0131_0001_4000_8000_000000000000" aggregation="none">
+					
+					
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="LV_EAID_ASSC0131_0001_4000_8000_000000000000_DST" value="0" />
+					
+					
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="UV_EAID_ASSC0131_0001_4000_8000_000000000000_DST" value="-1" />
+					
+				
+				<type xmi:idref="EAID_CLASS0034_0001_4000_8000_000000000000" /></ownedEnd>
+				
+			
+			</packagedElement>
+			
+		
+		</packagedElement>
+		
+	
+	</uml:Model>
+	
+	
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		
+		
+		<elements>
+			
+			
+			<element xmi:idref="EAPK_A1B2C3D4_0001_4000_8000_000000000001" xmi:type="uml:Package" name="3.3. Modelo de Dominio" scope="public">
+				
+				
+				<model package2="EAID_A1B2C3D4_0001_4000_8000_000000000001" package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="1" ea_eleType="package" />
+				
+				
+				<properties isSpecification="false" sType="Package" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0010_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Permiso" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="10" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0011_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Rol" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="11" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000" xmi:type="uml:Class" name="User" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="12" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0013_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Notificacion" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="13" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0014_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Tenant" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="14" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0015_0001_4000_8000_000000000000" xmi:type="uml:Class" name="MembresiaTenant" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="15" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0016_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Ciudad" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="16" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Sucursal" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="17" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000" xmi:type="uml:Class" name="UbicacionInventario" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="18" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0019_0001_4000_8000_000000000000" xmi:type="uml:Class" name="StockInventario" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="19" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000" xmi:type="uml:Class" name="MovimientoInventario" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="20" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0021_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Proveedor" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="21" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0022_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Categoria" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="22" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0023_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Temporada" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="23" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0024_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Coleccion" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="24" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Producto" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="25" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0026_0001_4000_8000_000000000000" xmi:type="uml:Class" name="ProductoImagen" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="26" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000" xmi:type="uml:Class" name="VarianteProducto" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="27" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0028_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Carrito" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="28" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0029_0001_4000_8000_000000000000" xmi:type="uml:Class" name="ItemCarrito" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="29" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Pedido" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="30" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0031_0001_4000_8000_000000000000" xmi:type="uml:Class" name="DetallePedido" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="31" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0032_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Pago" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="32" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000" xmi:type="uml:Class" name="ReservaProbador" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="33" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0034_0001_4000_8000_000000000000" xmi:type="uml:Class" name="DetalleReserva" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="34" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+			
+			<element xmi:idref="EAID_CLASS0035_0001_4000_8000_000000000000" xmi:type="uml:Class" name="Promocion" scope="public">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" tpos="0" ea_localid="35" ea_eleType="element" />
+				
+				
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" />
+				
+				
+				<project author="FashionStore Team" version="1.0" status="Proposed" />
+				
+			
+			</element>
+			
+		
+		</elements>
+		
+		
+		<connectors>
+			
+			
+			<connector xmi:idref="EAID_ASSC0100_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0010_0001_4000_8000_000000000000">
+					
+					
+					<role name="permisos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0011_0001_4000_8000_000000000000">
+					
+					
+					<role name="roles" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="100" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="0..*" rb="0..*" lt="permisos" rt="roles" mt="Permiso_Rol" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0101_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0011_0001_4000_8000_000000000000">
+					
+					
+					<role name="rol" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="usuarios" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="101" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="rol" rt="usuarios" mt="Rol_User" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0102_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="usuario" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0013_0001_4000_8000_000000000000">
+					
+					
+					<role name="notificaciones" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="102" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="usuario" rt="notificaciones" mt="User_Notificacion" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0103_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0014_0001_4000_8000_000000000000">
+					
+					
+					<role name="tenant" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0015_0001_4000_8000_000000000000">
+					
+					
+					<role name="membresias" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="103" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="tenant" rt="membresias" mt="Tenant_MembresiaTenant" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0104_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="usuario" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0015_0001_4000_8000_000000000000">
+					
+					
+					<role name="membresias" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="104" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="usuario" rt="membresias" mt="User_MembresiaTenant" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0105_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0014_0001_4000_8000_000000000000">
+					
+					
+					<role name="tenant" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<role name="sucursales" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="105" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="tenant" rt="sucursales" mt="Tenant_Sucursal" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0106_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0016_0001_4000_8000_000000000000">
+					
+					
+					<role name="ciudad" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<role name="sucursales" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="106" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="ciudad" rt="sucursales" mt="Ciudad_Sucursal" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0107_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<role name="sucursal" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000">
+					
+					
+					<role name="ubicaciones" multiplicity="1..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="107" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="1..*" lt="sucursal" rt="ubicaciones" mt="Sucursal_UbicacionInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0108_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000">
+					
+					
+					<role name="ubicacion" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0019_0001_4000_8000_000000000000">
+					
+					
+					<role name="stocks" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="108" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="ubicacion" rt="stocks" mt="UbicacionInventario_StockInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0109_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variante" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0019_0001_4000_8000_000000000000">
+					
+					
+					<role name="existencias" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="109" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="variante" rt="existencias" mt="VarianteProducto_StockInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0110_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0018_0001_4000_8000_000000000000">
+					
+					
+					<role name="ubicacion" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000">
+					
+					
+					<role name="movimientos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="110" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="ubicacion" rt="movimientos" mt="UbicacionInventario_MovimientoInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0111_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variante" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000">
+					
+					
+					<role name="movimientos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="111" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="variante" rt="movimientos" mt="VarianteProducto_MovimientoInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0112_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="responsable" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0020_0001_4000_8000_000000000000">
+					
+					
+					<role name="movimientosRegistrados" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="112" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="responsable" rt="movimientosRegistrados" mt="User_MovimientoInventario" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0113_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0021_0001_4000_8000_000000000000">
+					
+					
+					<role name="proveedor" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="productos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="113" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="proveedor" rt="productos" mt="Proveedor_Producto" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0114_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0022_0001_4000_8000_000000000000">
+					
+					
+					<role name="categoria" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="productos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="114" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="categoria" rt="productos" mt="Categoria_Producto" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0115_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0023_0001_4000_8000_000000000000">
+					
+					
+					<role name="temporada" multiplicity="0..1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="productos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="115" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="0..1" rb="0..*" lt="temporada" rt="productos" mt="Temporada_Producto" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0116_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0024_0001_4000_8000_000000000000">
+					
+					
+					<role name="coleccion" multiplicity="0..1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="productos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="116" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="0..1" rb="0..*" lt="coleccion" rt="productos" mt="Coleccion_Producto" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0117_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="producto" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="composite" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0026_0001_4000_8000_000000000000">
+					
+					
+					<role name="imagenes" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="117" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="producto" rt="imagenes" mt="Producto_ProductoImagen" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0118_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0025_0001_4000_8000_000000000000">
+					
+					
+					<role name="producto" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="composite" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variantes" multiplicity="1..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="118" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="1..*" lt="producto" rt="variantes" mt="Producto_VarianteProducto" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0119_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="usuario" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0028_0001_4000_8000_000000000000">
+					
+					
+					<role name="carrito" multiplicity="0..1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="119" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..1" lt="usuario" rt="carrito" mt="User_Carrito" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0120_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0028_0001_4000_8000_000000000000">
+					
+					
+					<role name="carrito" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="composite" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0029_0001_4000_8000_000000000000">
+					
+					
+					<role name="items" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="120" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="carrito" rt="items" mt="Carrito_ItemCarrito" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0121_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variante" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0029_0001_4000_8000_000000000000">
+					
+					
+					<role name="enCarritos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="121" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="variante" rt="enCarritos" mt="VarianteProducto_ItemCarrito" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0122_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="cliente" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<role name="pedidos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="122" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="cliente" rt="pedidos" mt="User_Pedido" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0123_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<role name="sucursal" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<role name="pedidos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="123" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="sucursal" rt="pedidos" mt="Sucursal_Pedido" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0124_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<role name="pedido" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="composite" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0031_0001_4000_8000_000000000000">
+					
+					
+					<role name="detalles" multiplicity="1..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="124" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="1..*" lt="pedido" rt="detalles" mt="Pedido_DetallePedido" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0125_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variante" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0031_0001_4000_8000_000000000000">
+					
+					
+					<role name="ventas" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="125" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="variante" rt="ventas" mt="VarianteProducto_DetallePedido" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0126_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<role name="pedido" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0032_0001_4000_8000_000000000000">
+					
+					
+					<role name="pagos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="126" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="pedido" rt="pagos" mt="Pedido_Pago" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0127_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0035_0001_4000_8000_000000000000">
+					
+					
+					<role name="promociones" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0030_0001_4000_8000_000000000000">
+					
+					
+					<role name="pedidos" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="127" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="0..*" rb="0..*" lt="promociones" rt="pedidos" mt="Promocion_Pedido" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0128_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0012_0001_4000_8000_000000000000">
+					
+					
+					<role name="cliente" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000">
+					
+					
+					<role name="reservasProbador" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="128" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="cliente" rt="reservasProbador" mt="User_ReservaProbador" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0129_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0017_0001_4000_8000_000000000000">
+					
+					
+					<role name="sucursal" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000">
+					
+					
+					<role name="reservasAtendidas" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="129" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="sucursal" rt="reservasAtendidas" mt="Sucursal_ReservaProbador" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0130_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0033_0001_4000_8000_000000000000">
+					
+					
+					<role name="reserva" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="composite" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0034_0001_4000_8000_000000000000">
+					
+					
+					<role name="prendasReservadas" multiplicity="1..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="130" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="1..*" lt="reserva" rt="prendasReservadas" mt="ReservaProbador_DetalleReserva" />
+			</connector>
+			
+			
+			<connector xmi:idref="EAID_ASSC0131_0001_4000_8000_000000000000">
+				
+				
+				<source xmi:idref="EAID_CLASS0027_0001_4000_8000_000000000000">
+					
+					
+					<role name="variante" multiplicity="1" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="1" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</source>
+				
+				
+				<target xmi:idref="EAID_CLASS0034_0001_4000_8000_000000000000">
+					
+					
+					<role name="reservas" multiplicity="0..*" visibility="Public" targetScope="instance" />
+					
+					
+					<type aggregation="none" containment="Unspecified" multiplicity="0..*" />
+					
+					
+					<modifiers isOrdered="false" isNavigable="true" />
+					
+				
+				</target>
+				
+				
+				<model ea_localid="131" />
+				
+				
+				<properties ea_type="Association" direction="Unspecified" />
+				
+				
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0" />
+				
+			
+				<labels lb="1" rb="0..*" lt="variante" rt="reservas" mt="VarianteProducto_DetalleReserva" />
+			</connector>
+			
+		
+		</connectors>
+		
+		
+		<diagrams>
+			
+			
+			<diagram xmi:id="EAID_DIAG0001_0001_4000_8000_000000000001">
+				
+				
+				<model package="EAPK_A1B2C3D4_0001_4000_8000_000000000001" localID="1" owner="EAPK_A1B2C3D4_0001_4000_8000_000000000001" />
+				
+				
+				<properties name="3.3. Modelo de Dominio" type="Logical" />
+				
+				
+				<project author="FashionStore Team" version="1.0" created="2026-11-06 00:00:00" modified="2026-11-06 00:00:00" />
+				
+				
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;HighlightForeign=1;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;DocSize.cx=850;DocSize.cy=1098;ShowDetails=0;Orientation=P;Zoom=100;ShowTags=0;OpParams=1;VisibleAttributeDetail=0;ShowOpRetType=1;ShowIcons=1;CollabNums=0;HideProps=0;ShowReqs=0;ShowCons=0;PaperSize=1;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=UML 2.1;ExplicitNavigability=0;ShowShape=1;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ShowNotes=0;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;" />
+				
+				
+				<style2 value="ExcludeRTF=0;DocAll=0;HideQuals=0;AttPkg=1;ShowTests=0;ShowMaint=0;SuppressFOC=0;MatrixActive=0;SwimlanesActive=1;KanbanActive=0;MatrixLineWidth=1;MatrixLineClr=0;MatrixLocked=0;TConnectorNotation=UML 2.1;TExplicitNavigability=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;ProfileData=;MDGDgm=;STBLDgm=;ShowNotes=0;VisibleAttributeDetail=0;ShowOpRetType=1;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;SuppressedCompartments=;Theme=:119;SaveTag=D95F455B;" />
+				
+				
+				<elements>
+					
+					
+					<element geometry="Left=50;Top=60;Right=200;Bottom=120;" subject="EAID_CLASS0010_0001_4000_8000_000000000000" seqno="1" style="DUID=F213A4A6;" />
+					
+					
+					<element geometry="Left=250;Top=60;Right=400;Bottom=120;" subject="EAID_CLASS0011_0001_4000_8000_000000000000" seqno="2" style="DUID=89A5F4A5;" />
+					
+					
+					<element geometry="Left=500;Top=180;Right=650;Bottom=240;" subject="EAID_CLASS0012_0001_4000_8000_000000000000" seqno="3" style="DUID=C958A0BD;" />
+					
+					
+					<element geometry="Left=500;Top=60;Right=650;Bottom=120;" subject="EAID_CLASS0013_0001_4000_8000_000000000000" seqno="4" style="DUID=07957368;" />
+					
+					
+					<element geometry="Left=750;Top=60;Right=900;Bottom=120;" subject="EAID_CLASS0014_0001_4000_8000_000000000000" seqno="5" style="DUID=11D64D3C;" />
+					
+					
+					<element geometry="Left=750;Top=180;Right=900;Bottom=240;" subject="EAID_CLASS0015_0001_4000_8000_000000000000" seqno="6" style="DUID=8E61AC47;" />
+					
+					
+					<element geometry="Left=50;Top=180;Right=200;Bottom=240;" subject="EAID_CLASS0016_0001_4000_8000_000000000000" seqno="7" style="DUID=04644DF2;" />
+					
+					
+					<element geometry="Left=250;Top=180;Right=400;Bottom=240;" subject="EAID_CLASS0017_0001_4000_8000_000000000000" seqno="8" style="DUID=CD08F17A;" />
+					
+					
+					<element geometry="Left=150;Top=310;Right=300;Bottom=370;" subject="EAID_CLASS0018_0001_4000_8000_000000000000" seqno="9" style="DUID=9BB66D12;" />
+					
+					
+					<element geometry="Left=50;Top=440;Right=200;Bottom=500;" subject="EAID_CLASS0019_0001_4000_8000_000000000000" seqno="10" style="DUID=120E4ACB;" />
+					
+					
+					<element geometry="Left=250;Top=440;Right=400;Bottom=500;" subject="EAID_CLASS0020_0001_4000_8000_000000000000" seqno="11" style="DUID=72A5E45F;" />
+					
+					
+					<element geometry="Left=50;Top=580;Right=200;Bottom=640;" subject="EAID_CLASS0021_0001_4000_8000_000000000000" seqno="12" style="DUID=6FD0BACC;" />
+					
+					
+					<element geometry="Left=230;Top=580;Right=380;Bottom=640;" subject="EAID_CLASS0022_0001_4000_8000_000000000000" seqno="13" style="DUID=C74FBAC6;" />
+					
+					
+					<element geometry="Left=50;Top=700;Right=200;Bottom=760;" subject="EAID_CLASS0023_0001_4000_8000_000000000000" seqno="14" style="DUID=EEC567A4;" />
+					
+					
+					<element geometry="Left=230;Top=700;Right=380;Bottom=760;" subject="EAID_CLASS0024_0001_4000_8000_000000000000" seqno="15" style="DUID=8AD957B6;" />
+					
+					
+					<element geometry="Left=450;Top=580;Right=600;Bottom=640;" subject="EAID_CLASS0025_0001_4000_8000_000000000000" seqno="16" style="DUID=1C8AB7E5;" />
+					
+					
+					<element geometry="Left=450;Top=720;Right=600;Bottom=780;" subject="EAID_CLASS0026_0001_4000_8000_000000000000" seqno="17" style="DUID=849E30A5;" />
+					
+					
+					<element geometry="Left=670;Top=580;Right=820;Bottom=640;" subject="EAID_CLASS0027_0001_4000_8000_000000000000" seqno="18" style="DUID=30FE7563;" />
+					
+					
+					<element geometry="Left=750;Top=310;Right=900;Bottom=370;" subject="EAID_CLASS0028_0001_4000_8000_000000000000" seqno="19" style="DUID=F4BE1992;" />
+					
+					
+					<element geometry="Left=950;Top=310;Right=1100;Bottom=370;" subject="EAID_CLASS0029_0001_4000_8000_000000000000" seqno="20" style="DUID=5110867E;" />
+					
+					
+					<element geometry="Left=670;Top=740;Right=820;Bottom=800;" subject="EAID_CLASS0030_0001_4000_8000_000000000000" seqno="21" style="DUID=3026B882;" />
+					
+					
+					<element geometry="Left=670;Top=880;Right=820;Bottom=940;" subject="EAID_CLASS0031_0001_4000_8000_000000000000" seqno="22" style="DUID=F53483FF;" />
+					
+					
+					<element geometry="Left=900;Top=740;Right=1050;Bottom=800;" subject="EAID_CLASS0032_0001_4000_8000_000000000000" seqno="23" style="DUID=05B65510;" />
+					
+					
+					<element geometry="Left=920;Top=440;Right=1070;Bottom=500;" subject="EAID_CLASS0033_0001_4000_8000_000000000000" seqno="24" style="DUID=B54AD527;" />
+					
+					
+					<element geometry="Left=920;Top=580;Right=1070;Bottom=640;" subject="EAID_CLASS0034_0001_4000_8000_000000000000" seqno="25" style="DUID=EC3F7915;" />
+					
+					
+					<element geometry="Left=900;Top=880;Right=1050;Bottom=940;" subject="EAID_CLASS0035_0001_4000_8000_000000000000" seqno="26" style="DUID=0F180990;" />
+					
+				
+				</elements>
+				
+			
+			</diagram>
+			
+		
+		</diagrams>
+		
+	
+	</xmi:Extension>
+</xmi:XMI>
