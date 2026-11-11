@@ -26,7 +26,7 @@ export function Header({
   cartCount = 0,
   rightAction,
 }: HeaderProps) {
-  const { currentTenant } = useTenantStore();
+  const { currentTenant, isOfflineMode, fetchTenants } = useTenantStore();
   const [switcherVisible, setSwitcherVisible] = useState(false);
 
   const resolvedTitle =
@@ -97,6 +97,26 @@ export function Header({
           )}
         </View>
       </View>
+
+      {/* Indicador global de Modo Offline visible cuando no hay conexión a internet */}
+      {isOfflineMode && (
+        <View style={styles.offlineStrip}>
+          <View style={styles.offlineStripLeft}>
+            <Ionicons name="cloud-offline-outline" size={14} color="#b45309" />
+            <Text style={styles.offlineStripText}>
+              Modo Offline • Sin conexión (usando datos locales SQLite)
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.offlineRetryBtn}
+            onPress={() => fetchTenants()}
+            activeOpacity={0.8}
+          >
+            <Ionicons name="refresh" size={12} color="#92400e" />
+            <Text style={styles.offlineRetryText}>Reconectar</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <TenantSwitcherModal
         visible={switcherVisible}
@@ -194,5 +214,43 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 9,
     fontWeight: '900',
+  },
+  offlineStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fffbeb',
+    borderBottomWidth: 1,
+    borderBottomColor: '#fde68a',
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+  },
+  offlineStripLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+    marginRight: 8,
+  },
+  offlineStripText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#92400e',
+  },
+  offlineRetryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#fef3c7',
+    borderWidth: 1,
+    borderColor: '#fcd34d',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
+  offlineRetryText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#92400e',
   },
 });

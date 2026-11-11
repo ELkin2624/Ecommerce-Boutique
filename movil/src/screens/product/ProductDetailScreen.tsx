@@ -11,6 +11,8 @@ import { Button } from '@/shared/ui/Button';
 import { Badge } from '@/shared/ui/Badge';
 import { formatCurrency } from '@/shared/lib/utils';
 import { apiClient } from '@/shared/api/api-client';
+import { sqliteService } from '@/shared/db/sqlite.service';
+import { useTenantStore } from '@/features/tenant/store/tenant.store';
 import { useCartStore } from '@/features/cart/model/useCartStore';
 import { useAuth } from '@/features/auth/hooks/use-auth';
 import { ProductImage } from '@/shared/ui/ProductImage';
@@ -60,17 +62,13 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
 
   const { totalCount, addItem } = useCartStore();
   const { isAuthenticated } = useAuth();
+  const activeTenantSlug = useTenantStore((state) => state.currentTenant?.slug) || 'boutique-elegance';
 
   useEffect(() => {
     async function loadData() {
       if (!id) return;
-      try {
-        setLoading(true);
-        const [productData, branchesData] = await Promise.all([
-          apiClient.get<Product>(`/catalog/products/${id}`),
-          apiClient.get<Branch[]>('/branches').catch(() => []),
-        ]);
 
+      const applyProductData = (productData: Product, branchesData: Branch[]) => {
         setProduct(productData);
         setBranches(branchesData);
 
@@ -92,14 +90,41 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
             productData.coverImage || productData.images?.[0]?.imageUrl || '';
           setSelectedImage(fallbackUri);
         }
+      };
+
+      try {
+        setLoading(true);
+
+        // 1. Cargar primero desde SQLite local para soporte inmediato en Modo Offline
+        const offlineRes = await sqliteService.getProductDetailFromSqlite(activeTenantSlug, id);
+        if (offlineRes.product) {
+          applyProductData(offlineRes.product, offlineRes.branches);
+        }
+
+        // 2. Intentar sincronizar con el backend cuando haya conexión
+        try {
+          const [productData, branchesData] = await Promise.all([
+            apiClient.get<Product>(`/catalog/products/${id}`),
+            apiClient.get<Branch[]>('/branches').catch(() => offlineRes.branches),
+          ]);
+
+          if (productData) {
+            applyProductData(productData, branchesData);
+            useTenantStore.getState().setOfflineMode(false);
+            await sqliteService.saveTenantBranchesToSqlite(activeTenantSlug, branchesData);
+          }
+        } catch {
+          // Modo Offline: conservar la prenda y sucursales cargadas desde SQLite
+          useTenantStore.getState().setOfflineMode(true);
+        }
       } catch {
-        Alert.alert('Error', 'No se pudo cargar la información de la prenda');
+        // Fallback silencioso si no hay conexión
       } finally {
         setLoading(false);
       }
     }
     loadData();
-  }, [id]);
+  }, [id, activeTenantSlug]);
 
   // Al cambiar colorway, actualizar variante y foto
   const handleSelectVariant = (variant: ProductVariant) => {

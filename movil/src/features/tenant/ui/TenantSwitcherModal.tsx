@@ -22,7 +22,8 @@ export const TenantSwitcherModal: React.FC<TenantSwitcherModalProps> = ({
   visible,
   onClose,
 }) => {
-  const { currentTenant, tenants, isLoading, fetchTenants, selectTenant } = useTenantStore();
+  const { currentTenant, tenants, isLoading, isOfflineMode, fetchTenants, selectTenant } =
+    useTenantStore();
 
   useEffect(() => {
     if (visible) {
@@ -54,7 +55,9 @@ export const TenantSwitcherModal: React.FC<TenantSwitcherModalProps> = ({
             <View>
               <Text style={styles.title}>Cambiar de Tienda</Text>
               <Text style={styles.subtitle}>
-                Elige otra boutique para ver sus prendas y catálogo
+                {isOfflineMode
+                  ? 'Modo Offline (SQLite) • Elige una boutique local'
+                  : 'Elige otra boutique para ver sus prendas y catálogo'}
               </Text>
             </View>
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>

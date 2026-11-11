@@ -22,7 +22,7 @@ export const StoreSelectionScreen: React.FC = () => {
     tenants,
     currentTenant,
     isLoading,
-    error,
+    isOfflineMode,
     fetchTenants,
     selectTenant,
   } = useTenantStore();
@@ -106,23 +106,31 @@ export const StoreSelectionScreen: React.FC = () => {
           />
         }
       >
+        {/* Banner informativo cuando las tiendas se cargan desde SQLite en Modo Offline */}
+        {isOfflineMode && (
+          <View style={styles.offlineBanner}>
+            <View style={styles.offlineIconWrap}>
+              <Ionicons name="server-outline" size={16} color="#0284c7" />
+            </View>
+            <View style={styles.offlineTextWrap}>
+              <Text style={styles.offlineTitle}>Modo Offline Activo (SQLite Local)</Text>
+              <Text style={styles.offlineSubtitle}>
+                Navegando con datos locales guardados en SQLite. Puedes elegir cualquier tienda y ver su catálogo sin conexión.
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.syncMiniBtn} onPress={handleRefresh}>
+              <Ionicons name="sync-outline" size={15} color="#0f172a" />
+            </TouchableOpacity>
+          </View>
+        )}
+
         {isLoading && tenants.length === 0 ? (
           <View style={styles.stateBox}>
             <ActivityIndicator size="large" color="#0f172a" />
-            <Text style={styles.stateTitle}>Conectando con el ecosistema de tiendas...</Text>
+            <Text style={styles.stateTitle}>Cargando directorio de tiendas...</Text>
             <Text style={styles.stateSubtitle}>
-              Cargando todas las boutiques registradas.
+              Consultando base de datos SQLite y ecosistema de boutiques.
             </Text>
-          </View>
-        ) : error && tenants.length === 0 ? (
-          <View style={styles.stateBox}>
-            <Ionicons name="cloud-offline-outline" size={48} color="#ef4444" />
-            <Text style={styles.stateTitle}>No se pudo cargar el directorio</Text>
-            <Text style={styles.stateSubtitle}>{error}</Text>
-            <TouchableOpacity style={styles.retryBtn} onPress={fetchTenants}>
-              <Ionicons name="refresh" size={16} color="#ffffff" />
-              <Text style={styles.retryBtnText}>Reintentar Conexión</Text>
-            </TouchableOpacity>
           </View>
         ) : filteredTenants.length === 0 ? (
           <View style={styles.stateBox}>
@@ -146,7 +154,9 @@ export const StoreSelectionScreen: React.FC = () => {
         ) : (
           <View style={styles.cardsList}>
             <View style={styles.listHeaderRow}>
-              <Text style={styles.listHeaderTitle}>BOUTIQUES REGISTRADAS</Text>
+              <Text style={styles.listHeaderTitle}>
+                {isOfflineMode ? 'BOUTIQUES EN SQLITE (OFFLINE)' : 'BOUTIQUES REGISTRADAS'}
+              </Text>
               <Text style={styles.listHeaderCount}>
                 Mostrando {filteredTenants.length} de {tenants.length}
               </Text>
@@ -176,6 +186,49 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 14,
     paddingBottom: 48,
+  },
+  offlineBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f9ff',
+    borderWidth: 1,
+    borderColor: '#bae6fd',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 14,
+    gap: 10,
+  },
+  offlineIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#e0f2fe',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  offlineTextWrap: {
+    flex: 1,
+  },
+  offlineTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#0369a1',
+  },
+  offlineSubtitle: {
+    fontSize: 11,
+    color: '#0c4a6e',
+    marginTop: 2,
+    lineHeight: 15,
+  },
+  syncMiniBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#bae6fd',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   cardsList: {
     width: '100%',
@@ -220,21 +273,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
     lineHeight: 18,
-  },
-  retryBtn: {
-    marginTop: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#0f172a',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  retryBtnText: {
-    color: '#ffffff',
-    fontSize: 12,
-    fontWeight: '800',
   },
   clearFiltersBtn: {
     marginTop: 14,
