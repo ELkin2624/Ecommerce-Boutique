@@ -1,0 +1,47 @@
+server {
+    listen ${PORT};
+    server_name localhost;
+
+    # Compresión Gzip para acelerar transferencias y minimizar uso de red
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml;
+
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+
+    # Soporte SPA: Cualquier ruta virtual (React Router) se resuelve en index.html
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Cache estático prolongado para assets versionados por hash de Vite
+    location ~* \.(?:css|js|jpg|jpeg|gif|png|ico|cur|gz|svg|svgz|mp4|ogg|ogv|webm|htc|woff|woff2|ttf|webp)$ {
+        expires 1y;
+        access_log off;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    # Service Worker y Manifest PWA sin caché para permitir auto-actualización
+    location ~* (?:sw\.js|manifest\.webmanifest)$ {
+        expires -1;
+        access_log off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+    }
+
+    # Health check endpoint para Google Cloud Run probes
+    location = /_health {
+        access_log off;
+        default_type text/plain;
+        return 200 'healthy';
+    }
+
+    # Páginas de error
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}

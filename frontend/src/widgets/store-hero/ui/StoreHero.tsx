@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowDown, Sparkles } from 'lucide-react';
 import { useTenantStore } from '@/app/store/tenant.store';
-import { HERO_SLIDES } from '../model/hero.config';
 
 interface StoreHeroProps {
   onExploreClick: () => void;

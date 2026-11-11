@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import { BRAND_CONFIG } from '@/shared/config/brand.config';
-import { Sparkles, Store } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export interface AppLogoProps {
   /** Tamaño del logo: 'xs' (24px), 'sm' (36px), 'md' (48px), 'lg' (64px), 'xl' (80px) */

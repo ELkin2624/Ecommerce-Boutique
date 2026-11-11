@@ -48,6 +48,7 @@ Thumbs.db
 # Exceptuar ejemplos/plantillas para que el equipo sepa qué variables configurar
 !.env.example
 !.env.template
+!.env.*.example
 !.env.sample
 !**/.env.example
 !**/.env.template

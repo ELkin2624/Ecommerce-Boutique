@@ -1,0 +1,19 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_URL=$_VITE_API_URL'
+      - '--build-arg'
+      - 'VITE_STRIPE_PUBLISHABLE_KEY=$_VITE_STRIPE_PUBLISHABLE_KEY'
+      - '-t'
+      - '$_IMAGE_NAME'
+      - '.'
+images:
+  - '$_IMAGE_NAME'
+substitutions:
+  _VITE_API_URL: 'http://localhost:3000/api/v1'
+  _VITE_STRIPE_PUBLISHABLE_KEY: 'pk_test_51QQeCZDh9sPACDW2wkTfnWJiJdQi5zBdRxKoSoEOdWRjJg0TvIhiMEZ4f6ZlFfA2aGkZkz7rM4m2Vy0SFHpvTl00Fm8ORZim'
+  _IMAGE_NAME: 'gcr.io/$PROJECT_ID/fashionstore-frontend:latest'
+options:
+  logging: CLOUD_LOGGING_ONLY

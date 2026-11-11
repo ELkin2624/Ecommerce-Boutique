@@ -1,0 +1,16 @@
+**/node_modules
+**/dist
+**/dev-dist
+.git
+.vscode
+.idea
+backend/.env
+backend/.env.*
+!backend/.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+movil
+backend-python
+docs
+brain
