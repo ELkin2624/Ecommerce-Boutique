@@ -1,5 +1,6 @@
 import { ENV } from '../config/env';
 import { appStorage } from '../lib/storage';
+import { TENANT_STORAGE_KEYS } from '@/entities/tenant/types';
 
 export interface ApiResponse<T> {
   data: T;
@@ -17,7 +18,16 @@ class ApiClient {
       'Content-Type': 'application/json',
       Accept: 'application/json',
     };
-    const token = customToken || await appStorage.getItem('auth_token');
+
+    const [token, tenantSlug] = await Promise.all([
+      customToken ? Promise.resolve(customToken) : appStorage.getItem('auth_token'),
+      appStorage.getItem(TENANT_STORAGE_KEYS.ACTIVE_SLUG),
+    ]);
+
+    if (tenantSlug) {
+      headers['X-Tenant-Slug'] = tenantSlug;
+    }
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
@@ -27,29 +37,45 @@ class ApiClient {
   private async handleResponse(response: Response): Promise<any> {
     if (!response.ok) {
       const errBody = await response.json().catch(() => ({}));
-      const error: any = new Error(errBody.message || `Error HTTP ${response.status}`);
+      const rawMessage = errBody?.message || errBody?.data?.message;
+      const resolvedMessage = Array.isArray(rawMessage)
+        ? rawMessage[0]
+        : rawMessage || `Error HTTP ${response.status}`;
+      const error: any = new Error(resolvedMessage);
       error.status = response.status;
       throw error;
     }
-    return response.json();
+    const json = await response.json();
+    return json && typeof json === 'object' && 'data' in json && 'statusCode' in json
+      ? json.data
+      : json;
   }
 
   private async refreshTokenRequest(): Promise<string | null> {
-    const refreshToken = await appStorage.getItem('refresh_token');
+    const [refreshToken, tenantSlug] = await Promise.all([
+      appStorage.getItem('refresh_token'),
+      appStorage.getItem(TENANT_STORAGE_KEYS.ACTIVE_SLUG),
+    ]);
     if (!refreshToken) return null;
 
     try {
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      };
+      if (tenantSlug) {
+        headers['X-Tenant-Slug'] = tenantSlug;
+      }
+
       const response = await fetch(`${this.baseUrl}/auth/refresh`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
+        headers,
         body: JSON.stringify({ refreshToken }),
       });
       if (!response.ok) throw new Error('Refresh failed');
-      
-      const data = await response.json();
+
+      const raw = await response.json();
+      const data = raw?.data || raw;
       await appStorage.setItem('auth_token', data.accessToken);
       await appStorage.setItem('refresh_token', data.refreshToken);
       return data.accessToken;

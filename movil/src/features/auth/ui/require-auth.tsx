@@ -30,7 +30,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   if (!isHydrated) {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={AUTH_COLORS.bgNavy} />
+        <StatusBar barStyle="light-content" />
         <View style={s.center}>
           <ActivityIndicator size="large" color={AUTH_COLORS.surfaceSky} />
           <Text style={[s.loadingText, { marginTop: 16 }]}>Verificando sesión...</Text>
@@ -43,7 +43,7 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({
   if (!isAuthenticated) {
     return (
       <SafeAreaView style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={AUTH_COLORS.bgNavy} />
+        <StatusBar barStyle="light-content" />
         <ScrollView
           contentContainerStyle={s.scrollContent}
           showsVerticalScrollIndicator={false}

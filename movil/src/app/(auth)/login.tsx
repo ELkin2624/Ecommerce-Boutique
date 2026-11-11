@@ -19,7 +19,7 @@ export default function LoginScreen() {
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
 
-  const passwordRef = useRef<TextInput>(null);
+  const passwordRef = useRef<any>(null);
 
   const { login, isLoading, error, clearError } = useAuth();
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -61,7 +61,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={s.container} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="light-content" backgroundColor={AUTH_COLORS.bgNavy} />
+      <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={s.keyboardView}

@@ -10,15 +10,19 @@ import { PromoBanner } from '@/entities/promotion/ui/PromoBanner';
 import { ProductCard } from '@/entities/product/ui/ProductCard';
 import { useCatalog } from '@/features/catalog/hooks/useCatalog';
 import { useCartStore } from '@/features/cart/model/useCartStore';
+import { useTenantStore } from '@/features/tenant/store/tenant.store';
 
 export default function HomeScreen() {
   const { products, categories, promotions, loading, selectedCategory, setSelectedCategory, refetch } =
     useCatalog();
   const { totalCount, applyPromotion } = useCartStore();
+  const { currentTenant } = useTenantStore();
+
+  const brandColor = currentTenant?.primaryColor?.trim() || '#0f172a';
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" />
       <Header cartCount={totalCount} />
 
       <ScrollView
@@ -28,6 +32,34 @@ export default function HomeScreen() {
           <RefreshControl refreshing={loading} onRefresh={refetch} colors={['#0f172a']} />
         }
       >
+        {/* Barra de Boutique Activa con Acceso al Directorio de Tiendas */}
+        {currentTenant && (
+          <View style={styles.activeTenantBar}>
+            <View style={styles.activeTenantLeft}>
+              <View style={[styles.tenantBadgeAvatar, { backgroundColor: brandColor }]}>
+                <Text style={styles.tenantBadgeInitial}>
+                  {(currentTenant.name?.[0] || 'B').toUpperCase()}
+                </Text>
+              </View>
+              <View style={styles.tenantTextCol}>
+                <Text style={styles.tenantActiveLabel}>ESTÁS COMPRANDO EN</Text>
+                <Text style={styles.tenantActiveName} numberOfLines={1}>
+                  {currentTenant.name}
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.changeStoreBtn}
+              onPress={() => router.push('/stores' as any)}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="storefront-outline" size={14} color="#0f172a" />
+              <Text style={styles.changeStoreBtnText}>Cambiar tienda</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Banner de Promociones y Cupones Activos */}
         <PromoBanner
           promotions={promotions}
@@ -137,62 +169,69 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 80,
   },
-  fittingCard: {
+  activeTenantBar: {
     marginHorizontal: 16,
-    marginVertical: 6,
+    marginTop: 10,
+    marginBottom: 4,
     backgroundColor: '#f8fafc',
-    borderRadius: 18,
-    padding: 16,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#0f172a',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 1,
   },
-  fittingTextContainer: {
-    flex: 1,
-    paddingRight: 12,
-  },
-  aiTag: {
+  activeTenantLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    backgroundColor: '#e0e7ff',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    marginBottom: 6,
+    flex: 1,
+    marginRight: 10,
   },
-  aiTagText: {
-    fontSize: 9,
-    fontWeight: '900',
-    color: '#4338ca',
-    letterSpacing: 0.5,
-  },
-  fittingTitle: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#0f172a',
-    marginBottom: 4,
-  },
-  fittingSubtitle: {
-    fontSize: 11,
-    color: '#64748b',
-    lineHeight: 15,
-  },
-  fittingIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#0f172a',
+  tenantBadgeAvatar: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  tenantBadgeInitial: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  tenantTextCol: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  tenantActiveLabel: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#64748b',
+    letterSpacing: 0.6,
+  },
+  tenantActiveName: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#0f172a',
+    marginTop: 1,
+  },
+  changeStoreBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+    borderRadius: 10,
+  },
+  changeStoreBtnText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0f172a',
   },
   wholesaleBanner: {
     marginHorizontal: 16,

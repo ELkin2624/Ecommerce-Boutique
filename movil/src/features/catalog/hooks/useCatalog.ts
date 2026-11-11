@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { apiClient } from '@/shared/api/api-client';
+import { useTenantStore } from '@/features/tenant/store/tenant.store';
 import type { Product } from '@/entities/product/types';
 import type { Promotion } from '@/entities/promotion/types';
 
 export function useCatalog() {
+  const activeTenantSlug = useTenantStore((state) => state.currentTenant?.slug);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -13,7 +16,20 @@ export function useCatalog() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  // Al cambiar de tienda, reiniciar filtro de categoría seleccionada
+  useEffect(() => {
+    setSelectedCategory(null);
+  }, [activeTenantSlug]);
+
   const fetchData = useCallback(async () => {
+    if (!activeTenantSlug) {
+      setProducts([]);
+      setCategories([]);
+      setPromotions([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -36,7 +52,7 @@ export function useCatalog() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, selectedCategory]);
+  }, [activeTenantSlug, searchTerm, selectedCategory]);
 
   useEffect(() => {
     fetchData();

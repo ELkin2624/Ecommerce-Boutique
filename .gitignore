@@ -181,6 +181,8 @@ downloads/
 eggs/
 .eggs/
 lib/
+!movil/src/**/lib/
+!movil/src/**/lib/**
 lib64/
 parts/
 sdist/

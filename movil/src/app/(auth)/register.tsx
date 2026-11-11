@@ -45,7 +45,7 @@ interface FieldProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const Field = React.forwardRef<TextInput, FieldProps>(({
+const Field = React.forwardRef<any, FieldProps>(({
   label, icon, value, onChangeText, placeholder,
   keyboardType = 'default', autoCapitalize = 'sentences',
   autoComplete, returnKeyType = 'next', onSubmitEditing,
@@ -110,10 +110,10 @@ export default function RegisterScreen() {
   const [showPassword, setShowPassword] = useState(false);
 
   // Referencias para encadenar campos con "Siguiente"
-  const lastNameRef = useRef<TextInput>(null);
-  const emailRef = useRef<TextInput>(null);
-  const phoneRef = useRef<TextInput>(null);
-  const passwordRef = useRef<TextInput>(null);
+  const lastNameRef = useRef<any>(null);
+  const emailRef = useRef<any>(null);
+  const phoneRef = useRef<any>(null);
+  const passwordRef = useRef<any>(null);
 
   const { register, isLoading, error, clearError } = useAuth();
   const shakeAnim = useRef(new Animated.Value(0)).current;
@@ -157,7 +157,7 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={s.container} edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="light-content" backgroundColor={AUTH_COLORS.bgNavy} />
+      <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={s.keyboardView}

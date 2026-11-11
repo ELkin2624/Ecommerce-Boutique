@@ -11,6 +11,7 @@ import { formatCurrency } from '@/shared/lib/utils';
 import { useCartStore } from '@/features/cart/model/useCartStore';
 import { RequireAuth } from '@/features/auth/ui/require-auth';
 import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useTenantStore } from '@/features/tenant/store/tenant.store';
 import { apiClient } from '@/shared/api/api-client';
 
 interface ReservationItem {
@@ -63,6 +64,7 @@ interface MyOrder {
 export const ProfileScreen: React.FC = () => {
   const { totalCount } = useCartStore();
   const { user, logout } = useAuth();
+  const activeTenantSlug = useTenantStore((state) => state.currentTenant?.slug);
   const [activeTab, setActiveTab] = useState<'reservations' | 'orders'>('reservations');
 
   const [reservations, setReservations] = useState<MyReservation[]>([]);
@@ -72,6 +74,7 @@ export const ProfileScreen: React.FC = () => {
 
   // Consulta de datos reales a la base de datos (NestJS API)
   const fetchUserData = useCallback(async () => {
+    if (!activeTenantSlug) return;
     try {
       setLoading(true);
       const [resData, ordersData] = await Promise.all([
@@ -90,7 +93,7 @@ export const ProfileScreen: React.FC = () => {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [activeTenantSlug]);
 
   useEffect(() => {
     if (user) {
@@ -164,7 +167,7 @@ export const ProfileScreen: React.FC = () => {
   return (
     <RequireAuth fallbackMessage="Inicia sesión para ver tus reservas de probador y tus compras.">
       <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <StatusBar barStyle="dark-content" />
         <Header title="MI CUENTA" subtitle="Boutique Club" cartCount={totalCount} />
 
         <ScrollView

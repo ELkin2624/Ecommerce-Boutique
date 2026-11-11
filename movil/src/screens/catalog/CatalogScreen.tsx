@@ -24,7 +24,7 @@ export const CatalogScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" />
       <Header title="CATÁLOGO" subtitle="Todas las colecciones" cartCount={totalCount} />
 
       {/* Buscador de prendas */}

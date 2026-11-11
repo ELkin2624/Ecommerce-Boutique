@@ -308,7 +308,7 @@ export const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ id }) 
 
   return (
     <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" />
       <Header showBack cartCount={totalCount} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>

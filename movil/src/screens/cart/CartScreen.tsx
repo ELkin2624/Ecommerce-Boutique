@@ -11,6 +11,7 @@ import { formatCurrency } from '@/shared/lib/utils';
 import { useCartStore } from '@/features/cart/model/useCartStore';
 import { apiClient } from '@/shared/api/api-client';
 import { useAuth } from '@/features/auth/hooks/use-auth';
+import { useTenantStore } from '@/features/tenant/store/tenant.store';
 import { CartItemList } from '@/widgets/cart/CartItemList';
 import { CartSummary } from '@/widgets/cart/CartSummary';
 import { CartCheckoutModal, Branch } from '@/widgets/cart/CartCheckoutModal';
@@ -32,6 +33,7 @@ export const CartScreen: React.FC = () => {
   } = useCartStore();
 
   const { isAuthenticated } = useAuth();
+  const activeTenantSlug = useTenantStore((state) => state.currentTenant?.slug);
 
   const [couponCode, setCouponCode] = useState('');
   const [branches, setBranches] = useState<Branch[]>([]);
@@ -40,18 +42,28 @@ export const CartScreen: React.FC = () => {
   const [selectedMethod, setSelectedMethod] = useState<'QR' | 'CARD' | 'RESERVE'>('QR');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Cargar sucursales reales de la base de datos
+  // Cargar sucursales reales de la tienda activa
   useEffect(() => {
+    if (!activeTenantSlug) {
+      setBranches([]);
+      setSelectedBranchId('');
+      return;
+    }
     apiClient
       .get<Branch[]>('/branches')
       .then((data) => {
         if (data && data.length > 0) {
           setBranches(data);
           setSelectedBranchId(data[0].id);
+        } else {
+          setBranches([]);
+          setSelectedBranchId('');
         }
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        setBranches([]);
+      });
+  }, [activeTenantSlug]);
 
   // Iniciar checkout con validaciones de autenticación y stock
   const handleInitiateCheckout = () => {
@@ -206,7 +218,7 @@ export const CartScreen: React.FC = () => {
   if (items.length === 0) {
     return (
       <SafeAreaView style={styles.safeArea} className="flex-1 bg-white">
-        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+        <StatusBar barStyle="dark-content" />
         <Header title="BOLSA DE COMPRAS" subtitle="0 prendas" />
         <View style={styles.emptyContainer} className="flex-1 items-center justify-center p-6 -mt-10">
           <Ionicons name="bag-handle-outline" size={64} color="#cbd5e1" />
@@ -228,7 +240,7 @@ export const CartScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.safeArea} className="flex-1 bg-slate-50">
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+      <StatusBar barStyle="dark-content" />
       <Header title="BOLSA DE COMPRAS" subtitle={`${totalCount} prendas`} />
 
       <ScrollView

@@ -28,15 +28,25 @@ export class TenantMiddleware implements NestMiddleware {
 
     // Extraer subdominio si existe (ej. 'tienda-pepe.fashionstore.app')
     let tenantSubdomain: string | undefined;
-    const host = req.headers.host || '';
-    const hostParts = host.split('.');
-    if (
-      hostParts.length > 2 &&
-      hostParts[0] !== 'www' &&
-      hostParts[0] !== 'api' &&
-      hostParts[0] !== 'localhost'
-    ) {
-      tenantSubdomain = hostParts[0];
+    const rawHost = req.headers.host || '';
+    const host = rawHost.split(':')[0]; // Remover puerto :3000 si viene en la cabecera host
+
+    // No interpretar direcciones IP (192.168.x.x, 127.0.0.1) ni localhost como subdominios
+    const isIpOrLocal =
+      /^(\d{1,3}\.){3}\d{1,3}$/.test(host) ||
+      host === 'localhost' ||
+      host === '127.0.0.1';
+
+    if (!isIpOrLocal) {
+      const hostParts = host.split('.');
+      if (
+        hostParts.length > 2 &&
+        hostParts[0] !== 'www' &&
+        hostParts[0] !== 'api' &&
+        hostParts[0] !== 'localhost'
+      ) {
+        tenantSubdomain = hostParts[0];
+      }
     }
 
     const tenantIdentifier = tenantHeader || tenantQuery || tenantSubdomain;
@@ -44,10 +54,16 @@ export class TenantMiddleware implements NestMiddleware {
     // 2. Rutas globales de la plataforma SaaS donde el contexto de tienda es opcional
     const isGlobalRoute =
       req.originalUrl.includes('/api/v1/saas') ||
+      req.originalUrl.includes('/api/v1/health') ||
       req.originalUrl.includes('/api/docs') ||
       req.originalUrl.includes('/uploads') ||
       req.originalUrl === '/' ||
       req.originalUrl === '';
+
+    // Si es una ruta SaaS global y no se especificó un inquilino explícito, pasar sin error
+    if (isGlobalRoute && !tenantHeader && !tenantQuery) {
+      return next();
+    }
 
     if (!tenantIdentifier) {
       if (isGlobalRoute) {
