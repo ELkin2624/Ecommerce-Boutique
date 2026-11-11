@@ -60,6 +60,16 @@ if [ -z "$DATABASE_URL" ]; then
     exit 1
 fi
 
+# Auto-agregar sslmode=require si no está presente
+if [[ "$DATABASE_URL" != *"sslmode="* ]]; then
+    if [[ "$DATABASE_URL" == *"?"* ]]; then
+        DATABASE_URL="${DATABASE_URL}&sslmode=require"
+    else
+        DATABASE_URL="${DATABASE_URL}?sslmode=require"
+    fi
+    echo "🔒 Agregado sslmode=require automáticamente para Supabase."
+fi
+
 # Secretos JWT
 JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:-$(openssl rand -hex 32 2>/dev/null || echo "secret_access_jwt_$(date +%s)")}
 JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-$(openssl rand -hex 32 2>/dev/null || echo "secret_refresh_jwt_$(date +%s)")}

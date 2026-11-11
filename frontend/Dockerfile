@@ -20,8 +20,8 @@ ENV VITE_API_URL=$VITE_API_URL
 ARG VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51QQeCZDh9sPACDW2wkTfnWJiJdQi5zBdRxKoSoEOdWRjJg0TvIhiMEZ4f6ZlFfA2aGkZkz7rM4m2Vy0SFHpvTl00Fm8ORZim
 ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
 
-# Copiar manifiestos de dependencias
-COPY package.json pnpm-lock.yaml* ./
+# Copiar manifiestos de dependencias y configuración pnpm
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
 
 # Instalar dependencias
 RUN pnpm install --frozen-lockfile || pnpm install
