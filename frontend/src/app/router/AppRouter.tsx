@@ -6,7 +6,6 @@ import { RequireStaff } from './guards/RequireStaff';
 import { RequireClient } from './guards/RequireClient';
 import { RequirePermission } from './guards/RequirePermission';
 import { AppLogo } from '@/shared/ui/AppLogo';
-import { BRAND_CONFIG } from '@/shared/config/brand.config';
 import { ErrorBoundary } from '@/shared/ui/ErrorBoundary';
 
 // Lazy loading SaaS Landing Page (Portal Multi-Tenant & Planes)

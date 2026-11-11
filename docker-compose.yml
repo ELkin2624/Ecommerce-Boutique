@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fashionstore_backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-3000}:8080"
+    environment:
+      - PORT=8080
+      - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_ACCESS_SECRET=${JWT_ACCESS_SECRET:-super_secret_jwt_access_fashionstore_2026}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-super_secret_jwt_refresh_fashionstore_2026}
+      - JWT_ACCESS_EXPIRES_IN=15m
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - RUN_MIGRATIONS=${RUN_MIGRATIONS:-false}
+      - RUN_SEED=${RUN_SEED:-false}
+    volumes:
+      - backend_uploads:/app/uploads
+    networks:
+      - fashionstore_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:3000/api/v1}
+    container_name: fashionstore_frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:8080"
+    environment:
+      - PORT=8080
+    depends_on:
+      - backend
+    networks:
+      - fashionstore_net
+
+volumes:
+  backend_uploads:
+
+networks:
+  fashionstore_net:
+    driver: bridge
