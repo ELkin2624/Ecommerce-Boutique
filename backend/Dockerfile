@@ -23,7 +23,10 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copiar manifiestos de dependencias y configuración de builds pnpm
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
+
+# Aprobar explícitamente builds nativos para evitar ERR_PNPM_IGNORED_BUILDS
+RUN pnpm config set onlyBuiltDependencies '["@parcel/watcher","@prisma/client","@prisma/engines","@scarf/scarf","argon2","prisma","unrs-resolver"]'
 
 # Instalar dependencias (incluyendo devDependencies para compilar)
 RUN pnpm install --frozen-lockfile || pnpm install

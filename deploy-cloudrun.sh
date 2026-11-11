@@ -9,6 +9,12 @@ echo "=========================================================="
 echo "👗 FASHIONSTORE — DESPLIEGUE A GOOGLE CLOUD RUN"
 echo "=========================================================="
 
+# Auto-actualizar repositorio si estamos en git
+if [ -d ".git" ]; then
+    echo "🔄 Sincronizando con los últimos cambios de GitHub..."
+    git pull origin main || true
+fi
+
 # 1. Verificar gcloud CLI
 if ! command -v gcloud &> /dev/null; then
     echo "❌ Error: 'gcloud' CLI no está instalado o no se encuentra en el PATH."

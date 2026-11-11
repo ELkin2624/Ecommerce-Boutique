@@ -21,7 +21,7 @@ ARG VITE_STRIPE_PUBLISHABLE_KEY=pk_test_51QQeCZDh9sPACDW2wkTfnWJiJdQi5zBdRxKoSoE
 ENV VITE_STRIPE_PUBLISHABLE_KEY=$VITE_STRIPE_PUBLISHABLE_KEY
 
 # Copiar manifiestos de dependencias y configuración pnpm
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
+COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* .npmrc* ./
 
 # Instalar dependencias
 RUN pnpm install --frozen-lockfile || pnpm install

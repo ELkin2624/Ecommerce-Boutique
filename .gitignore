@@ -77,6 +77,8 @@ GoogleService-Info.plist
 
 # Tokens de gestores de paquetes
 .npmrc
+!backend/.npmrc
+!frontend/.npmrc
 .pypirc
 .netrc
 
